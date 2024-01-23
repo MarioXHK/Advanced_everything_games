@@ -3,11 +3,14 @@ pygame.font.init()
 font = pygame.font.SysFont('Comic Sans MS', 30)
 
 class button:
-    def __init__(self,color: tuple[int],rectangle: list,text: str = "",textcolor: tuple[int] = (0,0,0),boardercolor: tuple[int] = (255,255,255)):
+    def __init__(self,color: tuple[int],rectangle: list, boardercolor: tuple[int] = (256,-7,69), text: str = "",textcolor: tuple[int] = (0,0,0)):
         self.color = color
         self.box = rectangle
         self.text = font.render(str(text), 1, textcolor)
-        self.bc = boardercolor
+        if 256 in boardercolor:
+            self.bc = color
+        else:
+            self.bc = boardercolor
         self.clicked = False
         self.hover = False
         self.moff = [0,0]
