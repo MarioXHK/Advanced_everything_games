@@ -14,4 +14,4 @@ for i in range(cases):
     fiber = int(input())
     plus = nachi(fiber)
 
-    print(plus) 
+    print(plus)
