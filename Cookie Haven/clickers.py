@@ -10,7 +10,8 @@ class button:
     def __init__(self,color: Color, rectangle: Rect, bordercolor: Color | None = None, text: str = "", textcolor: Color = Color((0, 0, 0))):
         self.color = color
         self.box = rectangle
-        self.text = font.render(str(text), 1, textcolor)
+        self.text = text
+        self.textcolor = textcolor
         if bordercolor == None:
             self.bc = color
         else:
@@ -41,6 +42,8 @@ class button:
         pygame.draw.rect(screen, self.color,self.box)
         if self.hover:
             pygame.draw.rect(screen, self.bc,self.box,5)
+        text = font.render(str(self.text), 1, self.textcolor)
+        screen.blit(text,(self.box.midleft))
 
 class circleButton:
     def __init__(self,color: Color,position: Vector2, radius: float, bordercolor: Color | None = None, text: str = "", textcolor: Color = Color((0, 0, 0))):
