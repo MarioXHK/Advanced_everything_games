@@ -39,12 +39,17 @@ big_cookie = clickers.cookie("cc",Vector2(200,400),150)
 
 font = pygame.font.SysFont('Comic Sans MS', 30)
 
-cookieText = font.render(str(cookies), False, (250,250,250),(85,51,17))
+#CPS, cookies per second
+cps = 0
+
+cookieText = font.render("Cookies: " + str(cookies), False, (250,250,250),(85,51,17))
+cpsText = font.render("Cookies Per Second: " + str(cps), False, (250,250,250),(85,51,17))
+
 
 #Workers (autoclickers)
 buildings = workers.default[:]
 
-buildButtons = [clickers.button(Color(221,153,85),Rect(400,10+i*100,800,90),Color(85,51,17),str(buildings[i].count) + " " + buildings[i].name + "(s)",Color(255,255,255)) for i in range(len(buildings))]
+buildButtons = [clickers.button(Color(221,153,85),Rect(400,10+i*100,800,90),Color(85,51,17),str(buildings[i].count) + " " + buildings[i].name + "(s)    Cost: " + str(buildings[i].getPrice()),Color(255,255,255)) for i in range(len(buildings))]
 
 
 #bool to hold if the mouse is held
@@ -94,10 +99,10 @@ while cursoring:
     for b in range(len(buildButtons)):
         if buildButtons[b].tick(tap,mousePos):
             if buildings[b].getPrice() <= cookies:
-                cookies -= buildings[b].getPrice()
-                buildings[b].buy()
-                print(buildings[b].count)
-                buildings[b].text = str(buildings[b].count) + " " + buildings[b].name + "(s)"
+   
+                cookies -= buildings[b].buy()
+
+                buildButtons[b].text = str(buildings[b].count) + " " + buildings[b].name + "(s)    Cost: " + str(buildings[b].getPrice())
             
     cps = 0
     for b in buildings:
@@ -111,7 +116,7 @@ while cursoring:
             #Then it will go back to not having anything
             precookies -= int(precookies)
         cps += b.giveCookies()
-    print(cps)
+    #print(cps)
 
     
 
@@ -119,17 +124,26 @@ while cursoring:
         cookies += 1
         print("Clicked!")
     
-    
+
+    if wheeled:
+        for bb in buildButtons:
+            bb.box.topleft = (bb.box.topleft[0],bb.box.topleft[1]+wheel*20)
+
+
+
+    #It's rendering time
     screen.fill((238,204,119))
     
     for bb in buildButtons:
         bb.render(screen)
 
 
-    cookieText = font.render(str(cookies), False, (250,250,250),(85,51,17))
+    cookieText = font.render("Cookies: " + str(cookies), False, (250,250,250),(85,51,17))
+    cpsText = font.render("Cookies Per Second: " + str(cps), False, (250,250,250),(85,51,17))
     screen.blit(cookieText, (50,50))
+    screen.blit(cpsText, (50,100))
 
     big_cookie.render(screen)
-
+    #Renders all over the place
     pygame.display.flip()
 pygame.quit()

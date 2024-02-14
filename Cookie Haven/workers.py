@@ -8,7 +8,7 @@ class worker:
         self.name = name
         self.lore = description
         self.count: int = 0
-        self.modifier: float = 0
+        self.modifier: float = 1
         self.adder: int = 0
         self.postAdder: int = 0
     def giveCookies(self) ->  int | float:
@@ -21,8 +21,10 @@ class worker:
             for i in range(2,many):
                 newPrice += self.price*1.15**(self.count + i)
         return int(newPrice*discount)
-    def buy(self, many: int = 1):
+    def buy(self, many: int = 1) -> float | int:
+        priceToPay = self.getPrice(many)
         self.count += many
+        return priceToPay
     def describe(self):
         if self.lore == None:
             return
