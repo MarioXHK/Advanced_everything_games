@@ -27,8 +27,15 @@ def neighborCount(grid: list[list[bool]],pointx: int, pointy: int) -> int:
                 continue
             ex = pointx+m
             why = pointy+l
-            if ex == len(grid[0]) or ex == -1 or why == len(grid) or why == -1:
-                continue
+            if ex == len(grid[0]):
+                ex = 0
+            elif ex == -1:
+                ex = len(grid[0]) - 1
+            if why == len(grid):
+                why = 0
+            elif why == -1:
+                why = len(grid) - 1
+                
             if grid[why][ex]:
                 count += 1
                 
