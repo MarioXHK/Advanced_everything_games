@@ -21,6 +21,14 @@ fire = False
 tap = True
 coins: int = 0
 
+#keyboard variables--------------------------------
+contType = "arrow"
+keys = [0,0,0,0]
+upK = 0
+downK = 1
+leftK = 2
+rightK = 3
+
 #pickaxe variables-----------------------------------
 picks = [tools.pickaxe(mousePos,0,45*r) for r in range(8)]
 
@@ -38,12 +46,35 @@ while crafting:
             tap = True
         if event.type == pygame.MOUSEMOTION:
             mousePos = Vector2(event.pos)
+        if contType == "arrow":
+            if event.type == pygame.KEYDOWN: #keyboard input
+                if event.key == pygame.K_LEFT:
+                    keys[leftK]=True
+                elif event.key == pygame.K_DOWN:
+                    keys[downK]=True
+                elif event.key == pygame.K_UP:
+                    keys[upK]=True
+                elif event.key == pygame.K_RIGHT:
+                    keys[rightK]=True
+            elif event.type == pygame.KEYUP:
+                if event.key == pygame.K_LEFT:
+                    keys[leftK]=False
+
+                elif event.key == pygame.K_UP:
+                    keys[upK]=False
+                elif event.key == pygame.K_RIGHT:
+                    keys[rightK]=False
+                elif event.key == pygame.K_DOWN:
+                    keys[downK]=False
+    
     
     
 
     #Sword movement------------------------------------
     for pickaxe in picks:
-        pickaxe.cent = mousePos
+        
+
+
         pickaxe.move()
     
     #Physics-------------------------------------------
@@ -51,7 +82,7 @@ while crafting:
     fire = False
     #Render--------------------------------------------
     screen.fill((255,255,255))
-    pygame.draw.circle(screen,(127,0,255),mousePos,20)
+    pygame.draw.circle(screen,(127,0,255),pickaxe.cent,20)
     for p in picks:
         p.draw(screen)
 
