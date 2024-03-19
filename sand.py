@@ -29,7 +29,6 @@ def coinflip() -> bool:
 
 
 def neighborCheck(grid: list[list[bool]],pointx: int, pointy: int, checker) -> bool:
-    neighbors = []
     for l in range(-1,2):
         for m in range(-1,2):
             cant = False
@@ -53,10 +52,15 @@ def neighborCheck(grid: list[list[bool]],pointx: int, pointy: int, checker) -> b
                     return True
     return False
 
-def sandCheck(grid: list[list[bool]],pointx: int, pointy: int) -> int:
+# Sand Physics ---------------------------------------------------
+def sandCheck(grid: list[list[bool]],pointx: int, pointy: int, floats: bool = False) -> tuple[int]:
+    #Returns a list, the 1st element determines where the sand should fall. If 0, then nowhere, 1 is left, 2 is falling middle, 3 is right
+    #The second element is the element should be subsituted for air (only if it sinks)
+    b = (0,3)
     if pointy == len(grid) - 1:
-        return 0
+        return (0,0)
     under = True
+    sinks = not floats
     canLeft = True
     canRight = True
     for m in range(-1,2):
@@ -70,32 +74,53 @@ def sandCheck(grid: list[list[bool]],pointx: int, pointy: int) -> int:
             canLeft = False
             continue
             
-        if grid[pointy+1][ex][0] == 0:
+        if grid[pointy+1][ex][0] == 0 or (grid[pointy+1][ex][0] in b and sinks):
             under = False
     if under:
-        return 0
+        return (0,0)
     else:
-        if grid[pointy+1][pointx][0] == 0:
-            return 2
-        elif (grid[pointy+1][pointx-1][0] == 0) and (grid[pointy+1][pointx+1][0] == 0) and canLeft and canRight:
-            doing = coinflip()
-            if doing:
-                return 1
-            else:
-                return 3
-        elif (grid[pointy+1][pointx-1][0] == 0) and canLeft:
-            return 1
-        elif (grid[pointy+1][pointx+1][0] == 0) and canRight:
-            return 3
-    return 0 #To assure something gets returned if everything else is wrong
+        if floats:
+            if grid[pointy+1][pointx][0] == 0:
+                return (2,0)
+            elif (grid[pointy+1][pointx-1][0] == 0) and (grid[pointy+1][pointx+1][0] == 0) and canLeft and canRight:
+                doing = coinflip()
+                if doing:
+                    return (1,0)
+                else:
+                    return (3,0)
+            elif (grid[pointy+1][pointx-1][0] == 0) and canLeft:
+                return (1,0)
+            elif (grid[pointy+1][pointx+1][0] == 0) and canRight:
+                return (3,0)
+        else:
+            if grid[pointy+1][pointx][0] in b:
+                return (2,grid[pointy+1][pointx][0])
+            elif (grid[pointy+1][pointx-1][0] in b) and (grid[pointy+1][pointx+1][0] in b) and canLeft and canRight:
+                doing = coinflip()
+                if doing:
+                    return (1,grid[pointy+1][pointx-1][0])
+                else:
+                    return (3,grid[pointy+1][pointx+1][0])
+            elif (grid[pointy+1][pointx-1][0] in b) and canLeft:
+                return [1,grid[pointy+1][pointx-1][0]]
+            elif (grid[pointy+1][pointx+1][0] in b) and canRight:
+                return (3,grid[pointy+1][pointx+1][0])
+    return [0,0] #To assure something gets returned if everything else is wrong
 
-def stoneCheck(grid: list[list[bool]],pointx: int, pointy: int) -> bool:
+# Stone Physics ---------------------------------------------------
+def stoneCheck(grid: list[list[bool]],pointx: int, pointy: int, floats: bool = False) -> tuple[bool,int]:
     #returns if something's under it
+    b = (0,3)
     if pointy == len(grid) - 1:
-        return True
-    elif grid[pointy+1][pointx][0] != 0:
-        return True
-    return False
+        return [True,0]
+    elif grid[pointy+1][pointx][0] != 0 and floats:
+        return [True,0]
+    elif grid[pointy+1][pointx][0] == 0 and floats:
+        return [False,0]
+    elif grid[pointy+1][pointx][0] in b and not floats:
+        return [False,grid[pointy+1][pointx][0]]
+    else:
+        return [True,0]
 
 def lrWanderCheck(grid: list[list[bool]],pointx: int,pointy: int, floaty: bool = False) -> tuple[bool]:
     canRight = True
@@ -130,26 +155,45 @@ def doStuff(plain):
     grid = deepcopy(plain)
     for a in range(len(plain)):
         for b in range(len(plain[0])):
+            
             #Air
             if plain[a][b][0] == 0:
                 continue
+            
             #Sand
             elif plain[a][b][0] == 1:
+                e = 1
+                if random.randint(1,50) == 1:
+                    if neighborCheck(grid,b,a,3):
+                        e = 10
                 c = sandCheck(grid,b,a)
-                if c == 0:
-                    continue
+                if c[0] == 0:
+                    if e == 1:
+                        continue
+                    else:
+                        grid[a][b] = [e,0]
                 else:
-                    grid[a][b] = [0,0]
-                    grid[a+1][b+(c-2)] = [1,0]
+                    grid[a][b] = [c[1],0]
+                    grid[a+1][b+(c[0]-2)] = [e,0]
             #Stone
             elif plain[a][b][0] == 2:
-                if not stoneCheck(grid,b,a):
-                    grid[a][b] = [0,0]
-                    grid[a+1][b] = [2,0]
+                e = 2
+                if random.randint(1,1000) == 1:
+                    if neighborCheck(grid,b,a,3):
+                        e = 11
+                c = stoneCheck(grid,b,a)
+                if not c[0]:
+                    grid[a][b] = [c[1],0]
+                    grid[a+1][b] = [e,0]
+                else:
+                    if e == 2:
+                        continue
+                    else:
+                        grid[a][b] = [e,0]
             #Water
             elif plain[a][b][0] == 3:
-                c = sandCheck(grid,b,a)
-                if c == 0:
+                c = sandCheck(grid,b,a,True)
+                if c[0] == 0:
                     d = lrWanderCheck(grid,b,a)
                     if not d[0]:
                         continue
@@ -162,15 +206,15 @@ def doStuff(plain):
 
                 else:
                     grid[a][b] = [0,0]
-                    grid[a+1][b+(c-2)] = [3,0]
+                    grid[a+1][b+(c[0]-2)] = [3,0]
             #Sugar
             elif plain[a][b][0] == 4:
                 c = sandCheck(grid,b,a)
-                if c == 0:
+                if c[0] == 0:
                     continue
                 else:
-                    grid[a][b] = [0,0]
-                    if c == 2:
+                    grid[a][b] = [c[1],0]
+                    if c[0] == 2:
                         d = lrWanderCheck(grid,b,a, True)
                         if not d[0]:
                             grid[a+1][b] = [4,0]
@@ -180,60 +224,70 @@ def doStuff(plain):
                             else:
                                 grid[a+1][b-1] = [4,0]
                     else:
-                        grid[a+1][b+(c-2)] = [4,0]
+                        grid[a+1][b+(c[0]-2)] = [4,0]
             #Wall
             elif plain[a][b][0] == 5:
                 continue          
             #Dirt
             elif plain[a][b][0] == 6:
-                c = sandCheck(grid,b,a)
-                if c == 0:
-                    continue
+                e = 6
+                if random.randint(1,100) == 1:
+                    if neighborCheck(grid,b,a,3):
+                        e = 7
+                c = sandCheck(grid,b,a,True)
+                if c[0] == 0:
+                    if e == 6:
+                        continue
+                    else:
+                        grid[a][b] = [e,0]
                 else:
                     grid[a][b] = [0,0]
-                    grid[a+1][b+(c-2)] = [6,0]
+                    grid[a+1][b+(c[0]-2)] = [e,0]
             #Mud
             elif plain[a][b][0] == 7:
-                if not stoneCheck(grid,b,a):
-                    grid[a][b] = [0,0]
+                c = stoneCheck(grid,b,a)
+                if not c[0]:
+                    grid[a][b] = [c[1],0]
                     grid[a+1][b] = [7,0]
             #Plant
             elif plain[a][b][0] == 8:
-                if not stoneCheck(grid,b,a):
-                    grid[a][b] = [0,0]
+                c = stoneCheck(grid,b,a)
+                if not c[0]:
+                    grid[a][b] = [c[1],0]
                     grid[a+1][b] = [8,0]
             #Lava
             elif plain[a][b][0] == 9:
                 c = sandCheck(grid,b,a)
-                if c == 0:
+                if c[0] == 0:
                     if random.randint(1,20) != 20:
                         continue
                     d = lrWanderCheck(grid,b,a)
                     if not d[0]:
                         continue
                     else:
-                        grid[a][b] = [0,0]
+                        grid[a][b] = [c[1],0]
                         if d[1]:
                             grid[a][b+1] = [9,0]
                         else:
                             grid[a][b-1] = [9,0]
 
                 else:
-                    grid[a][b] = [0,0]
-                    grid[a+1][b+(c-2)] = [9,0]
+                    grid[a][b] = [c[1],0]
+                    grid[a+1][b+(c[0]-2)] = [9,0]
             #Wet Sand
             elif plain[a][b][0] == 10:
-                if not stoneCheck(grid,b,a):
-                    grid[a][b] = [0,0]
+                c = stoneCheck(grid,b,a)
+                if not c[0]:
+                    grid[a][b] = [c[1],0]
                     grid[a+1][b] = [10,0]
             #Gravel
             elif plain[a][b][0] == 11:
                 c = sandCheck(grid,b,a)
-                if c == 0:
+                if c[0] == 0:
                     continue
                 else:
-                    grid[a][b] = [0,0]
-                    grid[a+1][b+(c-2)] = [11,0]
+                    grid[a][b] = [c[1],0]
+                    grid[a+1][b+(c[0]-2)] = [11,0]
     return grid
 
 
@@ -275,6 +329,10 @@ while breaking:
                 #Go a step forward every tick until pressed again
             if event.key == pygame.K_LALT:
                 land = [[[0,0] for _ in range(landx)] for i in range(landy)]
+            elif event.key == pygame.K_RALT:
+                land = [[[0,0] for _ in range(landx)] for i in range(landy)]
+                for u in range(10):
+                    land[u] = [[3,0] for _ in range(landx)]
             elif event.key == pygame.K_0:
                 element = 0
             elif event.key == pygame.K_1:
