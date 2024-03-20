@@ -24,6 +24,8 @@ landyy = (1000/landy)
 
 element = 1
 
+brushsize = 0
+
 def coinflip() -> bool:
     return bool(random.getrandbits(1))
 
@@ -53,7 +55,7 @@ def neighborCheck(grid: list[list[bool]],pointx: int, pointy: int, checker) -> b
     return False
 
 # Sand Physics ---------------------------------------------------
-def sandCheck(grid: list[list[bool]],pointx: int, pointy: int, floats: bool = False) -> tuple[int]:
+def sandCheck(grid: list[list[bool]],pointx: int, pointy: int, floats: bool = False, reverse: bool = False) -> tuple[int]:
     #Returns a list, the 1st element determines where the sand should fall. If 0, then nowhere, 1 is left, 2 is falling middle, 3 is right
     #The second element is the element should be subsituted for air (only if it sinks)
     b = (0,3)
@@ -82,28 +84,28 @@ def sandCheck(grid: list[list[bool]],pointx: int, pointy: int, floats: bool = Fa
         if floats:
             if grid[pointy+1][pointx][0] == 0:
                 return (2,0)
-            elif (grid[pointy+1][pointx-1][0] == 0) and (grid[pointy+1][pointx+1][0] == 0) and canLeft and canRight:
+            elif canRight and canLeft and (grid[pointy+1][pointx-1][0] == 0) and (grid[pointy+1][pointx+1][0] == 0):
                 doing = coinflip()
                 if doing:
                     return (1,0)
                 else:
                     return (3,0)
-            elif (grid[pointy+1][pointx-1][0] == 0) and canLeft:
+            elif canLeft and (grid[pointy+1][pointx-1][0] == 0):
                 return (1,0)
-            elif (grid[pointy+1][pointx+1][0] == 0) and canRight:
+            elif canRight and (grid[pointy+1][pointx+1][0] == 0):
                 return (3,0)
         else:
             if grid[pointy+1][pointx][0] in b:
                 return (2,grid[pointy+1][pointx][0])
-            elif (grid[pointy+1][pointx-1][0] in b) and (grid[pointy+1][pointx+1][0] in b) and canLeft and canRight:
+            elif canLeft and canRight and (grid[pointy+1][pointx-1][0] in b) and (grid[pointy+1][pointx+1][0] in b):
                 doing = coinflip()
                 if doing:
                     return (1,grid[pointy+1][pointx-1][0])
                 else:
                     return (3,grid[pointy+1][pointx+1][0])
-            elif (grid[pointy+1][pointx-1][0] in b) and canLeft:
+            elif canLeft and (grid[pointy+1][pointx-1][0] in b):
                 return [1,grid[pointy+1][pointx-1][0]]
-            elif (grid[pointy+1][pointx+1][0] in b) and canRight:
+            elif canRight and (grid[pointy+1][pointx+1][0] in b):
                 return (3,grid[pointy+1][pointx+1][0])
     return [0,0] #To assure something gets returned if everything else is wrong
 
@@ -151,11 +153,16 @@ def lrWanderCheck(grid: list[list[bool]],pointx: int,pointy: int, floaty: bool =
             return (True,True)
     return (False,False)
 
+# The thing that makes all of this possible, it's DOSTUFF!!!!
+
 def doStuff(plain):
     grid = deepcopy(plain)
     for a in range(len(plain)):
         for b in range(len(plain[0])):
             
+            if plain[a][b] != grid[a][b]:
+                continue
+
             #Air
             if plain[a][b][0] == 0:
                 continue
@@ -199,6 +206,7 @@ def doStuff(plain):
                         continue
                     else:
                         grid[a][b] = [0,0]
+
                         if d[1]:
                             grid[a][b+1] = [3,0]
                         else:
@@ -206,6 +214,7 @@ def doStuff(plain):
 
                 else:
                     grid[a][b] = [0,0]
+
                     grid[a+1][b+(c[0]-2)] = [3,0]
             #Sugar
             elif plain[a][b][0] == 4:
@@ -257,23 +266,32 @@ def doStuff(plain):
                     grid[a+1][b] = [8,0]
             #Lava
             elif plain[a][b][0] == 9:
+                e = 9
+                if neighborCheck(grid,b,a,3):
+                    e = 12
                 c = sandCheck(grid,b,a)
                 if c[0] == 0:
                     if random.randint(1,20) != 20:
-                        continue
+                        if e == 9:
+                            continue
+                        else:
+                            grid[a][b] = [e,0]
                     d = lrWanderCheck(grid,b,a)
                     if not d[0]:
-                        continue
+                        if e == 9:
+                            continue
+                        else:
+                            grid[a][b] = [e,0]
                     else:
                         grid[a][b] = [c[1],0]
                         if d[1]:
-                            grid[a][b+1] = [9,0]
+                            grid[a][b+1] = [e,0]
                         else:
-                            grid[a][b-1] = [9,0]
+                            grid[a][b-1] = [e,0]
 
                 else:
                     grid[a][b] = [c[1],0]
-                    grid[a+1][b+(c[0]-2)] = [9,0]
+                    grid[a+1][b+(c[0]-2)] = [e,0]
             #Wet Sand
             elif plain[a][b][0] == 10:
                 c = stoneCheck(grid,b,a)
@@ -288,6 +306,14 @@ def doStuff(plain):
                 else:
                     grid[a][b] = [c[1],0]
                     grid[a+1][b+(c[0]-2)] = [11,0]
+            #Obsidian
+            elif plain[a][b][0] == 12:
+                c = stoneCheck(grid,b,a)
+                if not c[0]:
+                    grid[a][b] = [c[1],0]
+                    grid[a+1][b] = [12,0]
+                else:
+                    continue
     return grid
 
 
@@ -295,7 +321,7 @@ live = False
 alive = False
 ice = False
 
-print("Press the keys for the element!\n1: Sand  2: Stone  3: Water  4: Sugar  5: Wall\n6: Dirt  7: Mud  8: Plant  9: Lava")
+print("Press the keys for the element!\n1: Sand  2: Stone  3: Water  4: Sugar  5: Wall\n6: Dirt  7: Mud  8: Plant  9: Lava  0: Eraser\nQ: Wet sand  W: Gravel  E: Obsidian  R: Steam\nT: Glass  Y: Sugar Water")
 
 fliposwitch = True
 #this makes sure that the sand keeps going in a straight line
@@ -333,6 +359,13 @@ while breaking:
                 land = [[[0,0] for _ in range(landx)] for i in range(landy)]
                 for u in range(10):
                     land[u] = [[3,0] for _ in range(landx)]
+            elif event.key == pygame.K_UP:
+                brushsize += 1
+                print("brush size is now", (brushsize*2-1))
+            elif event.key == pygame.K_DOWN:
+                if 1 < brushsize:
+                    brushsize -= 1
+                    print("brush size is now", (brushsize*2-1))
             elif event.key == pygame.K_0:
                 element = 0
             elif event.key == pygame.K_1:
@@ -357,6 +390,8 @@ while breaking:
                 element = 10
             elif event.key == pygame.K_w:
                 element = 11
+            elif event.key == pygame.K_e:
+                element = 12
     
     clock.tick(60)
 
@@ -372,13 +407,15 @@ while breaking:
     if (not tap) and fliposwitch:
         x = int(mousePos.x/landyx)
         y = int(mousePos.y/landyy)
-        try:
-            if ice:
-                land[y][x] = [0,0]
-            else:
-                land[y][x] = [element,0]
-        except IndexError:
-            print("OUT OF BOUNDS, FOOL!!!")
+        for l in range(0-brushsize,1+brushsize):
+            for m in range(0-brushsize,1+brushsize):
+                try:
+                    if ice:
+                        land[y+l][x+m] = [0,0]
+                    else:
+                        land[y+l][x+m] = [element,0]
+                except IndexError:
+                    print("OUT OF BOUNDS, FOOL!!!")
 
     fire = False
     screen.fill((0,0,0))
@@ -406,6 +443,8 @@ while breaking:
                 pygame.draw.rect(screen,(200,200,50),(j*landyx,i*landyy,landyx,landyy))
             elif land[i][j][0] == 11:
                 pygame.draw.rect(screen,(200,200,200),(j*landyx,i*landyy,landyx,landyy))
+            elif land[i][j][0] == 12:
+                pygame.draw.rect(screen,(30,20,40),(j*landyx,i*landyy,landyx,landyy))
     if not alive:
         live = False
     pygame.display.flip()
