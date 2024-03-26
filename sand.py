@@ -3,15 +3,17 @@
 showfps = False
 
 #the setting that controls if you'd like to do life or not (Experimental sorta)
-werealsodoinglife = True
+werealsodoinglife = False
 
 import pygame
 from pygame import Vector2
+#WHY DOES YOU NOT EVEN THE AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 from copy import deepcopy
 import random
 
-screenx = 500
-screeny = 500
+#How large the screen is
+screenx = 800
+screeny = 600
 
 pygame.init()
 screen = pygame.display.set_mode((screenx,screeny))
@@ -26,8 +28,9 @@ mousePos = Vector2(0,0)
 fire = False
 tap = True
 
-landx = 50
-landy = 50
+#How many pixels are there in the sandbox (x*y of course)
+landx = 80
+landy = 60
 land = [[[0,0] for _ in range(landx)] for i in range(landy)]
 landyx = (screenx/landx)
 landyy = (screeny/landy)
