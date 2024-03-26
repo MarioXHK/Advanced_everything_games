@@ -1075,6 +1075,9 @@ def doStuff(plain,switch):
                 if random.randint(1,1000) == 1:
                     if neighborCount(plain,b,a,[2,11,29,32]) > 3:
                         t += random.randint(1,2)
+                elif random.randint(1,100) == 1:
+                    if neighborCheck(plain,b,a,[3,15]):
+                        e = 34
                 if t >= 100:
                     e = 29
                     t = 0
