@@ -1,3 +1,7 @@
+#Can someone please tell me how to give more resources to this app so I can throttle it and have a smooth 60 fps while my computer combusts into flames
+
+showfps = False
+
 import pygame
 from pygame import Vector2
 from copy import deepcopy
@@ -19,8 +23,8 @@ mousePos = Vector2(0,0)
 fire = False
 tap = True
 
-landx = 40
-landy = 30
+landx = 80
+landy = 60
 land = [[[0,0] for _ in range(landx)] for i in range(landy)]
 landyx = (screenx/landx)
 landyy = (screeny/landy)
@@ -80,7 +84,7 @@ def neighborCheck(grid: list[list[list[int]]],pointx: int, pointy: int, checker:
     return False
 
 #gets the neighbor's ID
-def myNeighbor(grid: list[list[list[int]]],pointx: int, pointy: int, checker: list[int] | tuple[int]) -> int:
+def myNeighbor(grid: list[list[list[int]]],pointx: int, pointy: int, shouldnt: list[int] | tuple[int]) -> int:
     for l in range(-1,2):
         for m in range(-1,2):
             cant = False
@@ -100,9 +104,9 @@ def myNeighbor(grid: list[list[list[int]]],pointx: int, pointy: int, checker: li
             if cant:
                 continue
             else:
-                if grid[why][ex][0] != 0:
+                if grid[why][ex][0] != 0 and not grid[why][ex][0] in shouldnt:
                     return grid[why][ex][0]
-    return False
+    return 0
 
 #Checks the "Temprature" of it's neighbors
 def neighborTempCheck(grid: list[list[list[int]]],pointx: int, pointy: int, checker: list[int] | tuple[int], maths: str = ">", temp: int = 0) -> tuple[bool,int]:
@@ -330,7 +334,10 @@ def checkAbsolutelyEverywhere(grid: list[list[list[int]]], thing) -> bool:
 # The thing that makes all of this possible, it's DOSTUFF!!!!
 
 def doStuff(plain,switch):
+    e = 0
     t = 0
+    sun = checkEverywhere(plain,[20,0])
+    moon = checkEverywhere(plain,[21,0])
     grid = deepcopy(plain)
     for a in range(len(plain)):
         for b in range(len(plain[0])):
@@ -389,7 +396,10 @@ def doStuff(plain,switch):
             #Water
             elif plain[a][b][0] == 3:
                 if coinflip():
-                    if neighborCount(plain,b,a,[22,23,27]) > 3:
+                    if neighborCheck(plain,b,a,[30]):
+                        e = 13
+                        t = 10
+                    elif neighborCount(plain,b,a,[22,23,27]) > 3:
                         e = 27
                 if neighborCheck(plain,b,a,[9]):
                     e = 13
@@ -398,7 +408,7 @@ def doStuff(plain,switch):
                     if neighborCheck(grid,b,a,[18]):
                         e = 18
                 elif random.randint(1,20000) == 1:
-                    if checkEverywhere(plain,[20,0]):
+                    if sun:
                         e = 13
                         t = 10
                 c = sandCheck(grid,b,a,True)
@@ -460,7 +470,7 @@ def doStuff(plain,switch):
             #Dirt
             elif plain[a][b][0] == 6:
                 if random.randint(1,900) == 1:
-                    if neighborCheck(grid,b,a,[8]) and checkEverywhere(plain,[20,0]):
+                    if neighborCheck(grid,b,a,[8]) and sun:
                         e = 8
                 if random.randint(1,100) == 1:
                     if neighborCheck(grid,b,a,[3]):
@@ -477,9 +487,9 @@ def doStuff(plain,switch):
             #Mud
             elif plain[a][b][0] == 7:
                 if random.randint(1,400) == 1:
-                    if neighborCheck(grid,b,a,[8]) and checkEverywhere(plain,[20,0]):
+                    if neighborCheck(grid,b,a,[8]) and sun:
                         e = 8
-                if neighborCheck(plain,b,a,[9]):
+                if neighborCheck(plain,b,a,[9,30]):
                     e = 6
                 if random.randint(1,5000) == 1:
                     if neighborCheck(grid,b,a,[18]):
@@ -514,7 +524,7 @@ def doStuff(plain,switch):
                     t = -10
                 
                 if random.randint(1,10) == 1:
-                    if checkEverywhere(plain,[21,0]):
+                    if moon:
                         t -= 1
                 if t <= -10:
                     
@@ -522,11 +532,13 @@ def doStuff(plain,switch):
                 
                 c = sandCheck(grid,b,a)
                 if c[0] == 0:
-                    if random.randint(1,20) != 20:
+                    if random.randint(1,25) != 1:
                         if e == 9:
                             grid[a][b] = [e,t]
+                            continue
                         else:
                             grid[a][b] = [e,0]
+                            continue
                     d = lrWanderCheck(grid,b,a)
                     if not d[0]:
                         if e == 9:
@@ -545,7 +557,7 @@ def doStuff(plain,switch):
                     grid[a+1][b+(c[0]-2)] = [e,t]
             #Wet Sand
             elif plain[a][b][0] == 10:
-                if neighborCheck(plain,b,a,[9]):
+                if neighborCheck(plain,b,a,[9,30]):
                     e = 14
                     t = 1
                 else:
@@ -630,8 +642,9 @@ def doStuff(plain,switch):
                     
             #Sugar Water
             elif plain[a][b][0] == 15:
-                
-                if neighborCheck(plain,b,a,[9]):
+                if coinflip() and neighborCheck(plain,b,a,[30]):
+                    e = 4
+                elif neighborCheck(plain,b,a,[9]):
                     e = 4
                 elif random.randint(1,2500) == 1:
                     if neighborCheck(grid,b,a,[18]):
@@ -671,7 +684,7 @@ def doStuff(plain,switch):
             #Clouds
             elif plain[a][b][0] == 16:
                 if random.randint(1,800) == 1:
-                    if checkEverywhere(plain,[21,0]):
+                    if moon:
                         e = 22 
                     else:
                         e = 3
@@ -739,6 +752,9 @@ def doStuff(plain,switch):
                 if neighborCheck(plain,b,a,[9]):
                     e = 14
                     t = 3
+                elif coinflip() and neighborCheck(plain,b,a,[30]):
+                    e = 14
+                    t = 0
                 else:
                     n = neighborTempCheck(plain,b,a,[14])
                     if n[0]:
@@ -763,10 +779,10 @@ def doStuff(plain,switch):
             #Snow
             elif plain[a][b][0] == 22:
                 if random.randint(1,100) == 1:
-                    if checkEverywhere(plain,[20,0]):
+                    if sun:
                         e = 3
                 if random.randint(1,10) == 1:
-                    if (not checkEverywhere(plain,[21,0])) and neighborCheck(plain,b,a,(3,15)):
+                    if (not moon) and neighborCheck(plain,b,a,(3,15)):
                         e = 3
                 if neighborCheck(plain,b,a,(9,13,20)):
                     e = 3
@@ -803,12 +819,12 @@ def doStuff(plain,switch):
             #Ice
             elif plain[a][b][0] == 23:
                 if random.randint(1,200) == 1:
-                    if checkEverywhere(plain,[20,0]):
+                    if sun:
                         e = 3
                 if coinflip():
                     if neighborCheck(plain,b,a,(13,20)):
                         e = 3
-                if neighborCheck(plain,b,a,[9]):
+                if neighborCheck(plain,b,a,[9,30]):
                     e = 3
                 if random.randint(1,1000) == 1:
                     if neighborCheck(grid,b,a,(3,15)):
@@ -878,12 +894,12 @@ def doStuff(plain,switch):
             #Sludge
             elif plain[a][b][0] == 27:
                 if random.randint(1,50) == 1:
-                    if checkEverywhere(plain,[20,0]):
+                    if sun:
                         e = 3
-                if random.randint(1,500) == 1 and not checkEverywhere(plain,[21,0]):
+                if random.randint(1,500) == 1 and not moon:
                         e = 3
                 if coinflip():
-                    if (not checkEverywhere(plain,[21,0])) and neighborCheck(plain,b,a,(3,15)):
+                    if (not moon) and neighborCheck(plain,b,a,(3,15)):
                         e = 3
                 if coinflip() and e != 27:
                     if neighborCount(plain,b,a,[22,23,27]) > 3:
@@ -907,6 +923,46 @@ def doStuff(plain,switch):
                         grid[a+1][b+(c[0]-2)] = [e,0]
 
             
+            #Flower things
+            elif plain[a][b][0] == 28:
+                if random.randint(1,15) == 1:
+                    if neighborCheck(plain,b,a,[9,30]):
+                        if coinflip():
+                            e = 30
+                            t = 5
+                        else:
+                            e = 32
+                #Seed
+                if plain[a][b][1] == 0:
+                    c = sandCheck(grid,b,a)
+                    if c[0] == 0:
+                        if random.randint(1,100) == 1 and neighborCheck(plain,b,a,(7,8,10,18,27,32)):
+                            grid[a][b] = [e,random.randint(2,8)]
+                        else:
+                            grid[a][b] = [e,t]
+                    else:
+                        grid[a][b] = [c[1],0]
+                        grid[a+1][b+(c[0]-2)] = [e,t]
+                #Stem
+                elif plain[a][b][1] > 1 and a - 1 != 0:
+                    t -= 1
+                    grid[a-1][b] = [e,t]
+                    t = -1
+                    grid[a][b] = [e,t]
+                #Bloom
+                elif plain[a][b][1] != -1:
+                    grid[a][b] = [36,random.randint(0,11)]
+                    c = random.randint(0,11)
+                    if a + 1 != len(plain):
+                        grid[a+1][b] = [36,c]
+                    if a - 1 != -1 and grid[a-1][b][0] == 0:
+                        grid[a-1][b] = [36,c]
+                    if b + 1 != len(plain[0]) and grid[a][b+1][0] == 0:
+                        grid[a][b+1] = [36,c]
+                    if b - 1 != -1 and grid[a][b-1][0] == 0:
+                        grid[a][b-1] = [36,c]
+                    
+                
             #Oil (Pls don't take americuh)
             elif plain[a][b][0] == 29:
                 if random.randint(1,15) == 1:
@@ -945,11 +1001,17 @@ def doStuff(plain,switch):
             #Fire
             elif plain[a][b][0] == 30:
                 flame = False
-                if random.randint(1,4) == 1 and t > 0:
-                    t -= 1
+                if (random.randint(1,4) == 1 or moon) and t > 0:
+                    if not sun:
+                        t -= 1
+                    else:
+                        if coinflip():
+                            t -= 1
                 if neighborCheck(plain,b,a,(4,8,15,18,20,24,28,29,31)):
                     t = 5
                     flame = True
+                elif neighborCheck(plain,b,a,[33]):
+                    t = 2
                 elif coinflip():
                     o = neighborTempCheck(plain,b,a,[30],">",t)
                     if o[0]:
@@ -1032,16 +1094,100 @@ def doStuff(plain,switch):
                                 grid[a+1][b-1] = [e,t]
                     else:
                         grid[a+1][b+(c[0]-2)] = [e,t]
+            
+            #Cloner (Yes, I went there)
+            elif plain[a][b][0] == 33:
+                if plain[a][b][1] == 0:
+                    grid[a][b][1] = myNeighbor(grid,b,a,[33])
+                else:
+                    if a + 1 != len(plain) and grid[a+1][b][0] == 0:
+                        grid[a+1][b] = [plain[a][b][1],0]
+                    if a - 1 != -1 and grid[a-1][b][0] == 0:
+                        grid[a-1][b] = [plain[a][b][1],0]
+                    if b + 1 != len(plain[0]) and grid[a][b+1][0] == 0:
+                        grid[a][b+1] = [plain[a][b][1],0]
+                    if b - 1 != -1 and grid[a][b-1][0] == 0:
+                        grid[a][b-1] = [plain[a][b][1],0]
+            
+            #Clay
+            elif plain[a][b][0] == 34:
+                if neighborCheck(plain,b,a,[9,30]):
+                    e = 17
+                
+                if random.randint(1,10) == 1:
+                    if moon:
+                        t -= 1
+                if t <= -10:
+                    
+                    e = 12
+                
+                c = sandCheck(grid,b,a)
+                if c[0] == 0:
+                    if random.randint(1,40) != 1:
+                        if e == 17:
+                            grid[a][b] = [e,t]
+                            continue
+                        else:
+                            grid[a][b] = [e,0]
+                            continue
+                    d = lrWanderCheck(grid,b,a)
+                    if not d[0]:
+                        if e == 17:
+                            grid[a][b] = [e,t]
+                        else:
+                            grid[a][b] = [e,0]
+                    else:
+                        grid[a][b] = [c[1],0]
+                        if d[1]:
+                            grid[a][b+1] = [e,t]
+                        else:
+                            grid[a][b-1] = [e,t]
+
+                else:
+                    grid[a][b] = [c[1],0]
+                    grid[a+1][b+(c[0]-2)] = [e,t]
+            
+            #VOID
+            elif plain[a][b][0] == 35:
+                if a + 1 != len(plain) and grid[a+1][b][0] != 35:
+                    grid[a+1][b] = [0,0]
+                if a - 1 != -1 and grid[a-1][b][0] != 35:
+                    grid[a-1][b] = [0,0]
+                if b + 1 != len(plain[0]) and grid[a][b+1][0] != 35:
+                    grid[a][b+1] = [0,0]
+                if b - 1 != -1 and grid[a][b-1][0] != 35:
+                    grid[a][b-1] = [0,0]
+            
+            #Petal (Hidden)
+            elif plain[a][b][0] == 36:
+                if random.randint(1,15) == 1:
+                    if neighborCheck(plain,b,a,[9,30]):
+                        if coinflip():
+                            e = 30
+                            t = 5
+                        else:
+                            e = 32
+                if neighborCheck(plain,b,a,[8,28,36]):
+                    c = [True]
+                else:
+                    c = stoneCheck(grid,b,a)
+                if not c[0]:
+                    grid[a][b] = [c[1],0]
+                    grid[a+1][b] = [e,t]
+                else:
+                    grid[a][b] = [e,t]
+                    
     return grid
 
 
 live = False
 alive = False
 ice = False
+fps = 60
 
 def remindMe() -> None:
     print("Press the keys for the element!\n1: Sand  2: Stone  3: Water  4: Sugar  5: Wall\n6: Dirt  7: Mud  8: Plant  9: Lava  0: Eraser")
-    print("Q: Wet sand  W: Gravel  E: Obsidian  R: Steam\nT: Glass  Y: Sugar Water  U: Cloud  I: Brick\nA: Algae  S: Glass shards  D: Sun  F: Moon")
+    print("Q: Wet sand  W: Gravel  E: Obsidian  R: Steam\nT: Glass  Y: Sugar Water  U: Cloud  I: Brick O: Clay\nP: Void  A: Algae  S: Glass shards  D: Sun  F: Moon")
     print("G: Snow  H: Ice  J: Sugar Crystal  K: Packed Ice\nL: Life particle (think the game of life) (WIP, for now it just despenses random carp)")
     print("Z: Sludge  X: Flower Seed  C: Oil  V: Fire\nB: Wood  N: Ash  M: Cloner")
     print("To show this again, hit backspace")
@@ -1052,7 +1198,6 @@ fliposwitch = True
 #this makes sure that the sand keeps going in a straight line while placing it when it's active, and also some other stuff
 
 while breaking:
-    
     d = 0
     for event in pygame.event.get(): #Event Queue (or whatever it's called)
         if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
@@ -1105,6 +1250,11 @@ while breaking:
                     print("brush size is now", (brushsize*2+1))
             elif event.key == pygame.K_BACKSPACE:
                 remindMe()
+            elif event.key == pygame.K_TAB:
+                if showfps:
+                    showfps = False
+                else:
+                    showfps = True
             elif event.key == pygame.K_0:
                 element = 0
             elif event.key == pygame.K_1:
@@ -1180,7 +1330,10 @@ while breaking:
                 element = 35
     
     clock.tick(60)
-
+    if showfps and fps != int(clock.get_fps()):
+        fps = int(clock.get_fps())
+        print("fps:", fps)
+    
     if live:
         land = doStuff(land,fliposwitch)
 
@@ -1195,8 +1348,8 @@ while breaking:
         y = int(mousePos.y/landyy)
         for l in range(0-brushsize,1+brushsize):
             for m in range(0-brushsize,1+brushsize):
+                t = 0
                 try:
-                    t = 0
                     if element == 13 or element == 30:
                         t = 5
                     elif element == 19:
@@ -1269,7 +1422,10 @@ while breaking:
             elif land[i][j][0] == 27:
                 pygame.draw.rect(screen,(170,210,250),(j*landyx,i*landyy,landyx,landyy))
             elif land[i][j][0] == 28:
-                pygame.draw.rect(screen,(40,20,10),(j*landyx,i*landyy,landyx,landyy))
+                if land[i][j][1] == 0:
+                    pygame.draw.rect(screen,(40,20,10),(j*landyx,i*landyy,landyx,landyy))
+                else:
+                    pygame.draw.rect(screen,(0,255,0),(j*landyx,i*landyy,landyx,landyy))
             elif land[i][j][0] == 29:
                 pygame.draw.rect(screen,(24,24,24),(j*landyx,i*landyy,landyx,landyy))
             elif land[i][j][0] == 30:
@@ -1279,6 +1435,44 @@ while breaking:
             elif land[i][j][0] == 32:
                 cool = 100-land[i][j][1]//2
                 pygame.draw.rect(screen,(cool,cool,cool),(j*landyx,i*landyy,landyx,landyy))
+            elif land[i][j][0] == 33:
+                cool = 0
+                if land[i][j][1] != 0:
+                    cool = 100+random.randint(-20,20)
+                pygame.draw.rect(screen,(100+cool,cool//2,255),(j*landyx,i*landyy,landyx,landyy))
+            elif land[i][j][0] == 34:
+                pygame.draw.rect(screen,(160,170,180),(j*landyx,i*landyy,landyx,landyy))
+            elif land[i][j][0] == 35:
+                pygame.draw.rect(screen,(10,10,10),(j*landyx,i*landyy,landyx,landyy))
+            elif land[i][j][0] == 36:
+                colour = (255,255,255)
+                if land[i][j][1] == 1:
+                    colour = (255,0,0)
+                elif land[i][j][1] == 2:
+                    colour = (255,128,0)
+                elif land[i][j][1] == 3:
+                    colour = (255,255,0)
+                elif land[i][j][1] == 4:
+                    colour = (128,255,0)
+                elif land[i][j][1] == 5:
+                    colour = (0,255,0)
+                elif land[i][j][1] == 6:
+                    colour = (0,255,128)
+                elif land[i][j][1] == 7:
+                    colour = (255,255,255)
+                elif land[i][j][1] == 8:
+                    colour = (0,128,255)
+                elif land[i][j][1] == 9:
+                    colour = (0,0,255)
+                elif land[i][j][1] == 8:
+                    colour = (128,0,255)
+                elif land[i][j][1] == 9:
+                    colour = (255,0,255)
+                elif land[i][j][1] == 10:
+                    colour = (128,0,255)
+                elif land[i][j][1] == 11:
+                    colour = (128,128,128)
+                pygame.draw.rect(screen,colour,(j*landyx,i*landyy,landyx,landyy))
     if not alive:
         live = False
     pygame.display.flip()
