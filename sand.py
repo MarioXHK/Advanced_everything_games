@@ -1,5 +1,5 @@
 #Can someone please tell me how to give more resources to this app so I can throttle it and have a smooth 60 fps while my computer combusts into flames
-
+#Some optimization help would be nice too
 showfps = False
 
 import pygame
@@ -7,8 +7,8 @@ from pygame import Vector2
 from copy import deepcopy
 import random
 
-screenx = 800
-screeny = 600
+screenx = 500
+screeny = 500
 
 pygame.init()
 screen = pygame.display.set_mode((screenx,screeny))
@@ -23,8 +23,8 @@ mousePos = Vector2(0,0)
 fire = False
 tap = True
 
-landx = 80
-landy = 60
+landx = 50
+landy = 50
 land = [[[0,0] for _ in range(landx)] for i in range(landy)]
 landyx = (screenx/landx)
 landyy = (screeny/landy)
@@ -58,7 +58,7 @@ def neighborCount(grid: list[list[list[int]]],pointx: int, pointy: int, checker:
                 
     return count
 
-#Checks if a neightbor is in the checker list
+#Checks if a neighbor is in the checker list
 def neighborCheck(grid: list[list[list[int]]],pointx: int, pointy: int, checker: list[int] | tuple[int]) -> bool:
     for l in range(-1,2):
         for m in range(-1,2):
@@ -1124,15 +1124,29 @@ def doStuff(plain,switch):
                     
                     e = 12
                 
-                c = sandCheck(grid,b,a)
+                c = sandCheck(grid,b,a,True)
                 if c[0] == 0:
                     if random.randint(1,40) != 1:
-                        if e == 17:
-                            grid[a][b] = [e,t]
-                            continue
+                        if random.randint(1,10) == 1:
+                            d = udWanderCheck(grid,b,a,True)
                         else:
-                            grid[a][b] = [e,0]
+                            d = [False]
+                        if not d[0]:
+                            if e == 17:
+                                grid[a][b] = [e,t]
+                                continue
+                            else:
+                                grid[a][b] = [e,0]
+                                continue
+                        else:
+                            grid[a][b] = [d[2],0]
+
+                            if d[1]:
+                                grid[a+1][b] = [e,0]
+                            else:
+                                grid[a-1][b] = [e,0]
                             continue
+                        
                     d = lrWanderCheck(grid,b,a)
                     if not d[0]:
                         if e == 17:
