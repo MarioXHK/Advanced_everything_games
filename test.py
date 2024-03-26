@@ -1,5 +1,1 @@
-ex = [1]
-ap = (1,2)
-fello = [ex,ap]
-for i in fello:
-    print(tuple(i))
+print(tuple([(1,2,3,4,5,6,7,8),(1,2,3,4,5,6,7,8)]))

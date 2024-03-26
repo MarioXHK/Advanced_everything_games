@@ -348,6 +348,35 @@ def doStuff(plain,switch):
             e = plain[a][b][0]
             t = plain[a][b][1]
             
+            au = False
+            ad = False
+            al = False
+            ar = False
+            
+            if a + 1 < len(plain):
+                ad = True
+            if a - 1 > -1:
+                au = True
+            if b + 1 < len(plain[0]):
+                ar = True
+            if b - 1 > -1:
+                al = True
+            
+            miniplain = []
+            minigrid = []
+            for i in range(0-int(au),1+int(ad)):
+                p = []
+                g = []
+                for j in range(0-int(al),1+int(ar)):
+                    p.append(tuple(plain[a+i][b+j]))
+                    g.append(tuple(grid[a+i][b+j]))
+                miniplain.append(tuple(p))
+                minigrid.append(tuple(g))
+            miniplain = tuple(miniplain)
+            minigrid = tuple(minigrid)
+            
+            
+            
             #Air
             if plain[a][b][0] == 0:
                 if not werealsodoinglife:
