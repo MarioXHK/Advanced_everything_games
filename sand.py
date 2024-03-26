@@ -912,7 +912,8 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 #Life WORKING?!!~?!?!?!@43TUHREGAGR\\\
                 elif plain[a][b][0] == 26:
                     if lifeIG:
-                        l = neighborCount(miniplain,[26])
+                        #Now life has a few more rules that tell it that it's neighbors don't have to be it's own kind of life, but can be of different kinds of life or things that allow for life! (This should have very interesting effects)
+                        l = neighborCount(miniplain,(4,8,15,21,24,26,28,31))
                         if l < 2 or l > 3:
                             grid[a][b] = [0,0]
                     else:
