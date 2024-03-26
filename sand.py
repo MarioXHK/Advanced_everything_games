@@ -165,9 +165,9 @@ def sandCheck(grid: list[list[list[int]]],pointx: int, pointy: int, floats: bool
     under = True
     if not floats:
         if gas:
-            b = [0,1,3,4,6,8,9,11,15,27,32]
+            b = [0,1,3,4,6,8,9,11,15,27,28,32,34]
         else:
-            b = [0,3,15]
+            b = [0,3,15,27,29,34]
         if grid[pointy][pointx][0] in b:
             b.remove(grid[pointy][pointx][0])
         b = tuple(b)
@@ -212,9 +212,9 @@ def stoneCheck(grid: list[list[list[int]]],pointx: int, pointy: int, floats: boo
     b = (0,0)
     if not floats:
         if gas:
-            b = [0,1,3,4,6,8,9,11,15,27,32]
+            b = [0,1,3,4,6,8,9,11,15,27,28,32,34]
         else:
-            b = [0,3,15,27]
+            b = [0,3,15,27,29,34]
         if grid[pointy][pointx][0] in b:
             b.remove(grid[pointy][pointx][0])
         b = tuple(b)
@@ -309,7 +309,7 @@ def udWanderCheck(grid: list[list[list[int]]],pointx: int,pointy: int, waterlike
 def lrCheck(plain: list[list[int]],pointx: int, idcIfUnsupportable: bool = False) -> bool:
     if pointx + 1 == len(plain) or pointx - 1 == -1:
         return False
-    unsupportable = (0,1,3,4,6,8,9,10,11,13,15,16,18,19,22,23)
+    unsupportable = (0,1,3,4,6,8,9,10,11,13,15,16,18,19,22,23,27,28,29,30,32,35,36)
     if idcIfUnsupportable:
         unsupportable = [0]
     if plain[pointx-1][0] in unsupportable or plain[pointx+1][0] in unsupportable:
