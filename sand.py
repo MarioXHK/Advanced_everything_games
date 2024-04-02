@@ -38,6 +38,48 @@ landyy = (screeny/landy)
 element = 1
 brushsize = 0
 
+elementNames = {
+    0:"Air",
+    1:"Sand",
+    2:"Stone",
+    3:"Water",
+    4:"Sugar",
+    5:"Wall",
+    6:"Dirt",
+    7:"Mud",
+    8:"Plant",
+    9:"Lava",
+    10:"Wet Sand",
+    11:"Gravel",
+    12:"Obsidian",
+    13:"Steam",
+    14:"Glass",
+    15:"Sugar Water",
+    16:"Clouds",
+    17:"Brick",
+    18:"Algae",
+    19:"Glass Shards",
+    20:"The Sun",
+    21:"The Moon",
+    22:"Snow",
+    23:"Ice",
+    24:"Sugar Crystals",
+    25:"Packed Ice",
+    26:"Life Particle",
+    27:"Sludge",
+    28:"Flower Seed",
+    29:"Oil",
+    30:"Fire",
+    31:"Wood",
+    32:"Ash",
+    33:"Cloner",
+    34:"Clay",
+    35:"Void",
+    36:"Petal (Hidden)",
+    37:"Cancer Particle (Hidden)"
+}
+
+
 def coinflip() -> bool:
     return bool(random.getrandbits(1))
 
@@ -284,6 +326,17 @@ def checkEverywhere(grid: list[list[list[int]]], thing) -> bool:
         if thing in grid[i]:
             return True
     return False
+
+def randomelement(randTemp:bool = True) -> list[int]:
+    e = random.randint(0,36)
+    t = 0
+    if randTemp:
+        if e == 30:
+            t = random.randint(0,5)
+        else:
+            t = random.randint(0,10)
+    return [e,t]
+
 
 #same as checksEverywhere but only checks the ID of an element (less optimized I guess but less specific)
 def checkAbsolutelyEverywhere(grid: list[list[list[int]]], thing) -> bool:
@@ -941,7 +994,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                             grid[a][b] = [26,0]
                         continue
                     else:
-                        grid[a][b] = [random.randint(0,36),random.randint(0,5)]
+                        grid[a][b] = randomelement()
                         continue
                 
                 
@@ -1248,12 +1301,12 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                     else:
                         grid[a][b] = [e,t]
                 
-                #Cancer (Doesn't know how to die)
+                #Cancer (Doesn't know how to die) (Hidden)
                 elif plain[a][b][0] == 37:
                     if lifeIG:
                         continue
                     else:
-                        grid[a][b] = [random.randint(0,36),random.randint(0,5)]
+                        grid[a][b] = randomelement()
             except IndexError:
                 print("Error in doing element", grid[a][b], "index out of range (Did you remember to put the element ID in the corisponding mini-allowed tuple?)")
     return grid
@@ -1419,8 +1472,9 @@ while breaking:
             elif event.key == pygame.K_RSHIFT:
                 try:
                     element = int(input("Enter the element ID\n"))
+                    print("Set element to", elementNames[element])
                 except:
-                    print("THAT'S NOT A VALID NUMBER!!!")
+                    print("THAT'S NOT A VALID NUMBER FOR AN ELEMENT!!!")
     
     clock.tick(60)
     if showfps and fps != int(clock.get_fps()):
