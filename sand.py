@@ -299,10 +299,12 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
     e = 0
     t = 0
     #I'll take my small victories in optimization where I can
-    requireminip = (1,2,3,4,6,7,8,9,10,14,15,17,18,19,22,23,24,25,27,28,29,30,31,32,33,34,36)
+    requireminip = [1,2,3,4,6,7,8,9,10,14,15,17,18,19,22,23,24,25,27,28,29,30,31,32,33,34,36]
     if lifeIG:
-        requireminip = (0,1,2,3,4,6,7,8,9,10,14,15,17,18,19,22,23,24,25,26,27,28,29,30,31,32,33,34,36)
-    requireminig = (1,2,3,4,6,7,8,9,10,11,12,13,14,15,16,17,18,22,23,24,25,27,28,29,30,32,34,36)
+        requireminip.append(0)
+        requireminip.append(26)
+    requireminip = tuple(requireminip)
+    requireminig = (1,2,3,4,6,7,8,9,10,11,12,13,14,15,16,17,18,19,22,23,24,25,27,28,29,30,32,34,36)
     sun = checkEverywhere(plain,[20,0])
     moon = checkEverywhere(plain,[21,0])
     grid = deepcopy(plain)
@@ -369,9 +371,15 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                     if not lifeIG:
                         continue
                     #I need to optimize this more it's laggy as hell currently :(
-                    l = neighborCount(miniplain,[26])
+                    l = neighborCount(miniplain,[37])
                     if l == 3:
-                        grid[a][b] = [26,0]
+                        grid[a][b] = [37,0]
+                        continue
+                    else:
+                        l = neighborCount(miniplain,[26])
+                        if l == 3:
+                            grid[a][b] = [26,0]
+                            continue
                 
                 #Sand
                 
@@ -456,6 +464,11 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 elif plain[a][b][0] == 4:
                     if neighborCheck(miniplain,(9,20,21)):
                         e = 24
+                    elif random.randint(1,5) == 1:
+                        if neighborCheck(miniplain,[30]):
+                            e = 30
+                            t = 5
+                    
                     c = sandCheck(minigrid,localPos)
                     if c[0] == 0:
                         if random.randint(1,100) == 1:
@@ -878,6 +891,11 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                     elif random.randint(1,5000) == 1:
                         if neighborCheck(miniplain,[3,15]):
                             e = 4
+                    elif random.randint(1,50) == 1:
+                        if neighborCheck(miniplain,[30]):
+                            e = 30
+                            t = 5
+                    
                     o = lrCheck(miniplain[localPos[0]],localPos[1])
                     if o:
                         if e == 24:
@@ -916,11 +934,15 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 elif plain[a][b][0] == 26:
                     if lifeIG:
                         #Now life has a few more rules that tell it that it's neighbors don't have to be it's own kind of life, but can be of different kinds of life or things that allow for life! (This should have very interesting effects)
-                        l = neighborCount(miniplain,(4,8,15,21,24,26,28,31))
+                        l = neighborCount(miniplain,(4,8,15,21,24,26,28,31,37))
                         if l < 2 or l > 3:
                             grid[a][b] = [0,0]
+                        else:
+                            grid[a][b] = [26,0]
+                        continue
                     else:
-                        grid[a][b] = [random.randint(0,36),random.randint(1,10)]
+                        grid[a][b] = [random.randint(0,36),random.randint(0,5)]
+                        continue
                 
                 
                 #Sludge
@@ -1225,6 +1247,13 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                         grid[a+1][b] = [e,t]
                     else:
                         grid[a][b] = [e,t]
+                
+                #Cancer (Doesn't know how to die)
+                elif plain[a][b][0] == 37:
+                    if lifeIG:
+                        continue
+                    else:
+                        grid[a][b] = [random.randint(0,36),random.randint(0,5)]
             except IndexError:
                 print("Error in doing element", grid[a][b], "index out of range (Did you remember to put the element ID in the corisponding mini-allowed tuple?)")
     return grid
@@ -1236,10 +1265,11 @@ ice = False
 fps = 60
 
 def remindMe() -> None:
-    print("Press the keys for the element!\n1: Sand  2: Stone  3: Water  4: Sugar  5: Wall\n6: Dirt  7: Mud  8: Plant  9: Lava  0: Eraser")
-    print("Q: Wet sand  W: Gravel  E: Obsidian  R: Steam\nT: Glass  Y: Sugar Water  U: Cloud  I: Brick O: Clay\nP: Void  A: Algae  S: Glass shards  D: Sun  F: Moon")
-    print("G: Snow  H: Ice  J: Sugar Crystal  K: Packed Ice\nL: Life particle (think the game of life, If turned off it will just be random)")
-    print("Z: Sludge  X: Flower Seed  C: Oil  V: Fire\nB: Wood  N: Ash  M: Cloner")
+    print("Press the keys for the element!  1: Sand  2: Stone  3: Water  4: Sugar  5: Wall  6: Dirt  7: Mud  8: Plant  9: Lava  0: Eraser")
+    print("Q: Wet sand  W: Gravel  E: Obsidian  R: Steam  T: Glass  Y: Sugar Water  U: Cloud  I: Brick O: Clay  P: Void  A: Algae")
+    print("G: Snow  H: Ice  J: Sugar Crystal  K: Packed Ice  L: Life particle (think the game of life, If turned off it will just be random)")
+    print("Z: Sludge  X: Flower Seed  C: Oil  V: Fire  B: Wood  N: Ash  M: Cloner  S: Glass shards  D: Sun  F: Moon")
+    print("To start the sandbox, press Ctrl. To go a single step in the sandbox, press Space.\nTo clear the sandbox, press the left Alt key. To clear the sandbox and have there be an ocean, hit the right Alt key.\nIf you want it to be lava, hit the Del key. Sugar water ocean? Right Ctrl.\nTo activate the game of life and all it's whimsy, press the CAPS LOCK key. To get an element that's not on this list, press the Right Shift key then enter the element's ID (number) in the console.\nTo change the brush size, hit up to grow it, hit down to shrink it.")
     print("To show this again, hit backspace")
 
 remindMe()
@@ -1305,6 +1335,13 @@ while breaking:
                     showfps = False
                 else:
                     showfps = True
+            elif event.key == pygame.K_CAPSLOCK:
+                if werealsodoinglife:
+                    werealsodoinglife = False
+                    print("Destroying life")
+                else:
+                    werealsodoinglife = True
+                    print("Doing life")
             elif event.key == pygame.K_0:
                 element = 0
             elif event.key == pygame.K_1:
@@ -1378,6 +1415,12 @@ while breaking:
                 element = 34
             elif event.key == pygame.K_p:
                 element = 35
+            #For elements that aren't here
+            elif event.key == pygame.K_RSHIFT:
+                try:
+                    element = int(input("Enter the element ID\n"))
+                except:
+                    print("THAT'S NOT A VALID NUMBER!!!")
     
     clock.tick(60)
     if showfps and fps != int(clock.get_fps()):
@@ -1523,6 +1566,8 @@ while breaking:
                 elif land[i][j][1] == 11:
                     colour = (128,128,128)
                 pygame.draw.rect(screen,colour,(j*landyx,i*landyy,landyx,landyy))
+            elif land[i][j][0] == 37:
+                pygame.draw.rect(screen,(random.randint(0,250),random.randint(0,100),random.randint(150,250)),(j*landyx,i*landyy,landyx,landyy))
     if not alive:
         live = False
     pygame.display.flip()
