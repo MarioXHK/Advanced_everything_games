@@ -1529,7 +1529,12 @@ while breaking:
             elif land[i][j][0] == 8:
                 pygame.draw.rect(screen,(0,255,0),(j*landyx,i*landyy,landyx,landyy))
             elif land[i][j][0] == 9:
-                pygame.draw.rect(screen,(255,0,0),(j*landyx,i*landyy,landyx,landyy))
+                cool = 200+land[i][j][1]*10+random.randint(0,50)
+                if cool > 255:
+                    cool = 255
+                elif cool < 0:
+                    cool = 0
+                pygame.draw.rect(screen,(cool,random.randint(0,50),0),(j*landyx,i*landyy,landyx,landyy))
             elif land[i][j][0] == 10:
                 pygame.draw.rect(screen,(200,200,50),(j*landyx,i*landyy,landyx,landyy))
             elif land[i][j][0] == 11:
