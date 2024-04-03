@@ -12,8 +12,8 @@ from copy import deepcopy
 import random
 
 #How large the screen is
-screenx = 800
-screeny = 600
+screenx = 400
+screeny = 400
 
 pygame.init()
 screen = pygame.display.set_mode((screenx,screeny))
@@ -29,8 +29,8 @@ fire = False
 tap = True
 
 #How many pixels are there in the sandbox (x*y of course)
-landx = 80
-landy = 60
+landx = 40
+landy = 40
 land = [[[0,0] for _ in range(landx)] for i in range(landy)]
 landyx = (screenx/landx)
 landyy = (screeny/landy)
@@ -76,9 +76,23 @@ elementNames = {
     34:"Clay",
     35:"Void",
     36:"Petal (Hidden)",
-    37:"Cancer Particle (Hidden)"
+    37:"Cancer Particle (Hidden)",
+    38:"Iron",
+    40:"Iron Brick",
+    41:"Smart Remover",
+    42:"Smart Converter",
+    43:"Electricity",
+    44:"Rustish Iron",
+    45:"Rust"
 }
 
+#File Variables
+illegals = ('\\','/',':','*','?','"','<','>','|')
+
+
+
+
+#Function definitions
 
 def coinflip() -> bool:
     return bool(random.getrandbits(1))
@@ -1115,11 +1129,15 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                             if coinflip():
                                 t -= 1
                     if neighborCheck(miniplain,(4,8,15,18,20,24,28,29,31)):
-                        t = 5
+                        if moon:
+                            if (coinflip() or sun) and t < 2:
+                                t = 2
+                        else:
+                            t = 5
                         flame = True
                     elif neighborCheck(miniplain,[33]):
                         t = 2
-                    elif coinflip():
+                    elif random.randint(1,10) == 1:
                         o = neighborTempCheck(miniplain,[30],">",t)
                         if o[0]:
                             t = o[1] - 1
@@ -1318,12 +1336,12 @@ ice = False
 fps = 60
 
 def remindMe() -> None:
-    print("Press the keys for the element!  1: Sand  2: Stone  3: Water  4: Sugar  5: Wall  6: Dirt  7: Mud  8: Plant  9: Lava  0: Eraser")
+    print("Press the keys for the element!  1: Sand  2: Stone  3: Water  4: Sugar  5: Wall  6: Dirt  7: Mud  8: Plant  9: Lava ")
     print("Q: Wet sand  W: Gravel  E: Obsidian  R: Steam  T: Glass  Y: Sugar Water  U: Cloud  I: Brick O: Clay  P: Void  A: Algae")
     print("G: Snow  H: Ice  J: Sugar Crystal  K: Packed Ice  L: Life particle (think the game of life, If turned off it will just be random)")
     print("Z: Sludge  X: Flower Seed  C: Oil  V: Fire  B: Wood  N: Ash  M: Cloner  S: Glass shards  D: Sun  F: Moon")
     print("To start the sandbox, press Ctrl. To go a single step in the sandbox, press Space.\nTo clear the sandbox, press the left Alt key. To clear the sandbox and have there be an ocean, hit the right Alt key.\nIf you want it to be lava, hit the Del key. Sugar water ocean? Right Ctrl.\nTo activate the game of life and all it's whimsy, press the CAPS LOCK key. To get an element that's not on this list, press the Right Shift key then enter the element's ID (number) in the console.\nTo change the brush size, hit up to grow it, hit down to shrink it.")
-    print("To show this again, hit backspace")
+    print("To save your sandbox, press either enter key. To load a sandbox, press the 0 key. To show this again, hit backspace")
 
 remindMe()
 
@@ -1395,8 +1413,6 @@ while breaking:
                 else:
                     werealsodoinglife = True
                     print("Doing life")
-            elif event.key == pygame.K_0:
-                element = 0
             elif event.key == pygame.K_1:
                 element = 1
             elif event.key == pygame.K_2:
@@ -1475,6 +1491,104 @@ while breaking:
                     print("Set element to", elementNames[element])
                 except:
                     print("THAT'S NOT A VALID NUMBER FOR AN ELEMENT!!!")
+            #The ultimate thing: SAVING!
+            elif event.key == pygame.K_KP_ENTER or event.key == pygame.K_RETURN:
+                alive = False
+                print("What would you like to name your file? (If it's a save that already exists, it will override the save)")
+                filename = input()
+                legal = True
+                for char in filename:
+                    if char in illegals:
+                        print("File cannot contain an illegal character!", illegals)
+                        legal = False
+                        break
+                if legal:
+                    print("Saving", filename+ ".txt to your saves folder... (You better not close your program!)")
+                    try:
+                        thefile = open('sandsaves/'+filename+'.txt', 'w')
+                        data = []
+                        data.append(str(landx))
+                        data.append(str(landy))
+                        data.append(str(screenx))
+                        data.append(str(screeny))
+                        for ay in range(len(land)):
+                            for bx in range(len(land[0])):
+                                data.append(str(land[ay][bx][0]))
+                                data.append(str(land[ay][bx][1]))
+                        writing = ' '.join(data)
+                        thefile.write(writing)
+                        thefile.close()
+                        print("Save successful!")
+                    except FileNotFoundError as e:
+                        print(f'An error occured: {e}')
+                        print("Maybe you don't have a sandsaves folder for the saves to go to. (You'll have to make it manually)")
+                    except:
+                        print(f'An error occured, but we don\'t know how!')
+                        print("Please contact the creator of this sandbox to see what the issue could be")
+            #What's the use of saving if you can't LOAD?
+            elif event.key == pygame.K_0:
+                alive = False
+                print("What file would you like to load?")
+                filename = input()
+                legal = True
+                for char in filename:
+                    if char in illegals:
+                        print("File cannot contain an illegal character!", illegals)
+                        legal = False
+                        break
+                if legal:
+                    backupx = landx
+                    backupy = landy
+                    bacnupsx = screenx
+                    backupsy = screeny
+                    backupland = deepcopy(land)
+                    backupscreen = screen
+                    fail = True
+                    print("Loading", filename+ ".txt from your saves folder...")
+                    try:
+                        thefile = open('sandsaves/'+filename+'.txt', 'r')
+                        reading = thefile.read().split()
+                        thefile.close()
+                        print(filename, "read with", len(reading), "numbers!")
+                        for inny in range(len(reading)):
+                            reading[inny] = int(reading[inny])
+                        landx = reading[0]
+                        landy = reading[1]
+                        screenx = reading[2]
+                        screeny = reading[3]
+                        print("Grid size:", landx, "by", landy, "pixels on a", screenx, "by", screeny, "gaming window.")
+                        land = []
+                        for ay in range(landy):
+                            land.append([])
+                            for bx in range(landx):
+                                pxl = (bx+(landx*ay)) * 2 + 4
+                                land[ay].append([reading[pxl],reading[pxl+1]])
+                        
+                        screen = pygame.display.set_mode((screenx,screeny))
+                        #The loading should go smoothly from here so we don't have to worry about these variables being screwed
+                        landyx = (screenx/landx)
+                        landyy = (screeny/landy)
+                        fail = False
+                        print("Load successful!")
+                    except FileNotFoundError as e:
+                        print(f'An error occured: {e}')
+                        print("Try again with a file that exists. (Maybe you don't have any :/))")
+                    except TypeError as e:
+                        print(f'An error occured: {e}')
+                        print("Your file might have more than just numbers in it.")
+                    except IndexError as e:
+                        print(f'An error occured: {e}')
+                        print("It's possible your grid isn't matching up with the data in a way!")
+                    except:
+                        print(f'An error occured, but we don\'t know how!')
+                        print("Please contact the creator of this sandbox to see what the issue could be")
+                    if fail:
+                        landx = backupx
+                        landy = backupy
+                        screenx = bacnupsx
+                        screeny = backupsy
+                        land = deepcopy(backupland)
+                        screen = backupscreen
     
     clock.tick(60)
     if showfps and fps != int(clock.get_fps()):
