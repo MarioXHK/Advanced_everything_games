@@ -89,10 +89,11 @@ elementNames = {
     47:"Salt Water",
     48:"Salt Crystal",
     49:"Leaf",
-    50:"Milk",
+    50:"Jammer",
     51:"Antisand",
     52:"Antistone",
-    53:"Antiwater"
+    53:"Antiwater",
+    54:"Identity Crisis"
 }
 
 #File Variables
@@ -383,16 +384,17 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
     #I'll take my small victories in optimization where I can
     
     #The tuple that holds the elements that are required to have a mini plane map
-    requireminip = [1,2,3,4,6,7,8,9,10,14,15,17,18,19,22,23,24,25,27,28,29,30,31,32,33,34,36,38,39,40,41,42]
+    requireminip = [1,2,3,4,6,7,8,9,10,14,15,17,18,19,22,23,24,25,27,28,29,30,31,32,33,34,36,38,39,40,41,42,44]
     if lifeIG:
         requireminip.append(0)
         requireminip.append(26)
     requireminip = tuple(requireminip)
     
     #The tuple that holds the elements that are required to have a mini grid map
-    requireminig = (1,2,3,4,6,7,8,9,10,11,12,13,14,15,16,17,18,19,22,23,24,25,27,28,29,30,32,34,36,39,40,41,42,43)
+    requireminig = (1,2,3,4,6,7,8,9,10,11,12,13,14,15,16,17,18,19,22,23,24,25,27,28,29,30,32,34,36,39,40,41,42,43,44,45)
     sun = checkEverywhere(plain,[20,0])
     moon = checkEverywhere(plain,[21,0])
+    jam = checkAbsolutelyEverywhere(plain,50)
     grid = deepcopy(plain)
     for a in range(len(plain)):
         for b in range(len(plain[0])):
@@ -495,7 +497,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 elif plain[a][b][0] == 2:
                     if random.randint(1,1000) == 1:
-                        if neighborCheck(miniplain,[3,15]):
+                        if neighborCheck(miniplain,[3,15,47]):
                             e = 11
                     c = stoneCheck(minigrid,localPos)
                     if not c[0]:
@@ -546,7 +548,9 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                         grid[a][b] = [0,0]
 
                         grid[a+1][b+(c[0]-2)] = [e,t]
+                
                 #Sugar
+                
                 elif plain[a][b][0] == 4:
                     if neighborCheck(miniplain,(9,20,21)):
                         e = 24
@@ -585,9 +589,12 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                             grid[a+1][b+(c[0]-2)] = [e,0]
                 
                 #Wall
+                
                 elif plain[a][b][0] == 5:
                     continue          
+                
                 #Dirt
+                
                 elif plain[a][b][0] == 6:
                     if random.randint(1,900) == 1:
                         if neighborCheck(miniplain,[8]) and sun:
@@ -604,7 +611,9 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                     else:
                         grid[a][b] = [0,0]
                         grid[a+1][b+(c[0]-2)] = [e,0]
+                
                 #Mud
+                
                 elif plain[a][b][0] == 7:
                     if random.randint(1,400) == 1:
                         if neighborCheck(miniplain,[8]) and sun:
@@ -625,7 +634,9 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                             continue
                         else:
                             grid[a][b] = [e,0]
+                
                 #Plant
+                
                 elif plain[a][b][0] == 8:
                     if coinflip():
                         if neighborCheck(miniplain,[30]):
@@ -637,7 +648,9 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                         grid[a+1][b] = [e,t]
                     else:
                         grid[a][b] = [e,t]
+                
                 #Lava
+                
                 elif plain[a][b][0] == 9:
                     if neighborCheck(miniplain,(3,7,10,13,15,18,22,23,25,27)):
                         t -= 2
@@ -681,7 +694,9 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                     else:
                         grid[a][b] = [c[1],0]
                         grid[a+1][b+(c[0]-2)] = [e,t]
+                
                 #Wet Sand
+                
                 elif plain[a][b][0] == 10:
                     if neighborCheck(miniplain,[9,30]):
                         e = 14
@@ -702,6 +717,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                             grid[a][b] = [e,0]
                 
                 #Gravel
+                
                 elif plain[a][b][0] == 11:
                     c = sandCheck(minigrid,localPos)
                     if c[0] == 0:
@@ -709,7 +725,9 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                     else:
                         grid[a][b] = [c[1],0]
                         grid[a+1][b+(c[0]-2)] = [11,0]
+                
                 #Obsidian
+                
                 elif plain[a][b][0] == 12:
                     c = stoneCheck(minigrid,localPos)
                     if not c[0]:
@@ -717,7 +735,9 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                         grid[a+1][b] = [12,0]
                     else:
                         continue
+                
                 #Steam
+                
                 elif plain[a][b][0] == 13:
                     if random.randint(1,20) == 1 and t > 0:
                         t -= 1
@@ -753,6 +773,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                             grid[a-1][b+(c[0]-2)] = [e,t]
                         
                 #Glass
+                
                 elif plain[a][b][0] == 14:
                     if coinflip() and t > 0:
                         t -= 1
@@ -767,6 +788,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                         continue
                         
                 #Sugar Water
+                
                 elif plain[a][b][0] == 15:
                     if coinflip() and neighborCheck(miniplain,[30]):
                         e = 4
@@ -808,6 +830,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                         grid[a+1][b+(c[0]-2)] = [e,0]
                 
                 #Clouds
+                
                 elif plain[a][b][0] == 16:
                     if random.randint(1,800) == 1:
                         if moon:
@@ -847,6 +870,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                         continue
                 
                 #Brick
+                
                 elif plain[a][b][0] == 17:
                     o = lrCheck(miniplain[localPos[0]],localPos[1])
                     if o:
@@ -859,6 +883,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                         continue
                 
                 #Algae
+                
                 elif plain[a][b][0] == 18:
                     if random.randint(1,6) == 1:
                         if neighborCheck(miniplain,[9,30]):
@@ -878,6 +903,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                         grid[a+1][b+(c[0]-2)] = [e,0]
                 
                 #Glass shards or dust or whatever you wanna see it as
+                
                 elif plain[a][b][0] == 19:
                     if neighborCheck(miniplain,[9]):
                         e = 14
@@ -900,13 +926,16 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                         grid[a][b] = [c[1],0]
                         grid[a+1][b+(c[0]-2)] = [e,t]
                 #Sun
+                
                 elif plain[a][b][0] == 20:
                     continue
                 #Moon
+                
                 elif plain[a][b][0] == 21:
                     continue
                 
                 #Snow
+                
                 elif plain[a][b][0] == 22:
                     if random.randint(1,100) == 1:
                         if sun:
@@ -947,6 +976,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                             grid[a][b] = [e,0]
                 
                 #Ice
+                
                 elif plain[a][b][0] == 23:
                     if random.randint(1,200) == 1:
                         if sun:
@@ -970,6 +1000,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                             grid[a][b] = [e,0]
                 
                 #Sugar Crystal
+                
                 elif plain[a][b][0] == 24:
                     if random.randint(1,7000) == 1:
                         if neighborCheck(miniplain,[18]):
@@ -999,6 +1030,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                             grid[a][b] = [e,0]
                 
                 #Packed Ice
+                
                 elif plain[a][b][0] == 25:
                     if random.randint(1,5) == 1:
                         if neighborCheck(miniplain,[9]):
@@ -1017,21 +1049,28 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                             grid[a][b] = [e,0]
                 
                 #Life WORKING?!!~?!?!?!@43TUHREGAGR\\\
+                
                 elif plain[a][b][0] == 26:
                     if lifeIG:
                         #Now life has a few more rules that tell it that it's neighbors don't have to be it's own kind of life, but can be of different kinds of life or things that allow for life! (This should have very interesting effects)
                         l = neighborCount(miniplain,(4,8,15,21,24,26,28,31,37))
-                        if l < 2 or l > 3:
-                            grid[a][b] = [0,0]
+                        if jam:
+                            if l < random.randint(0,10) or l > random.randint(0,10):
+                                grid[a][b] = [0,0]
+                            else:
+                                grid[a][b] = [26,0]
                         else:
-                            grid[a][b] = [26,0]
+                            if l < 2 or l > 3:
+                                grid[a][b] = [0,0]
+                            else:
+                                grid[a][b] = [26,0]
                         continue
                     else:
                         grid[a][b] = randomelement()
                         continue
                 
-                
                 #Sludge
+                
                 elif plain[a][b][0] == 27:
                     if random.randint(1,50) == 1:
                         if sun:
@@ -1062,9 +1101,12 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                         else:
                             grid[a+1][b+(c[0]-2)] = [e,0]
 
-                
                 #Flower things
+                
                 elif plain[a][b][0] == 28:
+                    if jam:
+                        t = 1
+                        continue
                     if random.randint(1,4) == 1:
                         if neighborCheck(miniplain,[9,30]):
                             if coinflip():
@@ -1101,9 +1143,9 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                             grid[a][b+1] = [36,c]
                         if b - 1 != -1 and grid[a][b-1][0] == 0:
                             grid[a][b-1] = [36,c]
-                        
-                    
+                           
                 #Oil (Pls don't take americuh)
+                
                 elif plain[a][b][0] == 29:
                     if random.randint(1,15) == 1:
                         if neighborCheck(miniplain,[9,30]):
@@ -1138,10 +1180,12 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                         grid[a][b] = [0,0]
 
                         grid[a+1][b+(c[0]-2)] = [e,0]
+                
                 #Fire
+                
                 elif plain[a][b][0] == 30:
                     flame = False
-                    if (random.randint(1,4) == 1 or moon) and t > 0:
+                    if (random.randint(1,4) == 1 or moon or jam) and t > 0:
                         if not sun:
                             t -= 1
                         else:
@@ -1198,6 +1242,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                             grid[a-1][b+(c[0]-2)] = [e,t]
                 
                 #Wood
+                
                 elif plain[a][b][0] == 31:
                     if coinflip():
                         if neighborCount(miniplain,(9,30)) > random.randint(1,5):
@@ -1215,6 +1260,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                         grid[a][b] = [e,t]
                 
                 #Ash
+                
                 elif plain[a][b][0] == 32:
                     if random.randint(1,1000) == 1:
                         if neighborCount(miniplain,[2,11,29,32]) > 3:
@@ -1224,6 +1270,8 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                             e = 34
                     if t >= 100:
                         e = 29
+                        t = 0
+                    elif jam:
                         t = 0
                     c = sandCheck(minigrid,localPos)
                     if c[0] == 0:
@@ -1243,9 +1291,12 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                             grid[a+1][b+(c[0]-2)] = [e,t]
                 
                 #Cloner (Yes, I went there)
+                
                 elif plain[a][b][0] == 33:
-                    if plain[a][b][1] == 0:
-                        grid[a][b][1] = myNeighbor(miniplain,[33])
+                    if jam:
+                        t = 0
+                    elif plain[a][b][1] == 0:
+                        t = myNeighbor(miniplain,[33])
                     else:
                         if a + 1 != len(plain) and grid[a+1][b][0] == 0:
                             grid[a+1][b] = [plain[a][b][1],0]
@@ -1255,8 +1306,10 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                             grid[a][b+1] = [plain[a][b][1],0]
                         if b - 1 != -1 and grid[a][b-1][0] == 0:
                             grid[a][b-1] = [plain[a][b][1],0]
+                    grid[a][b] = [e,t]
                 
                 #Clay
+                
                 elif plain[a][b][0] == 34:
                     if neighborCheck(miniplain,[9,30]):
                         e = 17
@@ -1309,7 +1362,10 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                         grid[a+1][b+(c[0]-2)] = [e,t]
                 
                 #VOID
+                
                 elif plain[a][b][0] == 35:
+                    if jam:
+                        continue
                     if a + 1 != len(plain) and grid[a+1][b][0] != 35:
                         grid[a+1][b] = [0,0]
                     if a - 1 != -1 and grid[a-1][b][0] != 35:
@@ -1320,6 +1376,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                         grid[a][b-1] = [0,0]
                 
                 #Petal (Hidden)
+                
                 elif plain[a][b][0] == 36:
                     if random.randint(1,15) == 1:
                         if neighborCheck(miniplain,[9,30]):
@@ -1339,15 +1396,26 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                         grid[a][b] = [e,t]
                 
                 #Cancer (Doesn't know how to die) (Hidden)
+                
                 elif plain[a][b][0] == 37:
                     if lifeIG:
+                        if jam:
+                            #This makes it obey Life's rules
+                            if l < 2 or l > 3:
+                                grid[a][b] = [0,0]
+                            else:
+                                grid[a][b] = [37,0]
                         continue
                     else:
                         grid[a][b] = randomelement()
                 
                 #Iron
+                
                 elif plain[a][b][0] == 38:
-                    if t == 1:
+                    if random.randint(1,1000) == 1:
+                        if neighborCheck(miniplain,[3,15,47]):
+                            e = 44
+                    if t == 1 or jam:
                         t = 2
                     elif (neighborCheck(miniplain,[43]) or neighborTempCheck(miniplain,(38,39,40,47),"==",1)[0]) and t == 0:
                         t = 1
@@ -1356,8 +1424,12 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                     grid[a][b] = [e,t] 
                 
                 #Iron Sand
+                
                 elif plain[a][b][0] == 39:
-                    if t == 1:
+                    if random.randint(1,1000) == 1:
+                        if neighborCheck(miniplain,[3,15,47]):
+                            e = 45
+                    if t == 1 or jam:
                         t = 2
                     elif (neighborCheck(miniplain,[43]) or neighborTempCheck(miniplain,(38,39,40,47),"==",1)[0]) and t == 0:
                         t = 1
@@ -1371,8 +1443,12 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                         grid[a+1][b+(c[0]-2)] = [e,t]
                 
                 #Iron Brick
+                
                 elif plain[a][b][0] == 40:
-                    if t == 1:
+                    if random.randint(1,1000) == 1:
+                        if neighborCheck(miniplain,[3,15,47]):
+                            e = 44
+                    if t == 1 or jam:
                         t = 2
                     elif (neighborCheck(miniplain,[43]) or neighborTempCheck(miniplain,(38,39,40,47),"==",1)[0]) and t == 0:
                         t = 1
@@ -1390,8 +1466,13 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                         grid[a][b] = [e,t]
                 
                 #Smart Remover (Based on the bacteria mod from minecraft)
+                
                 elif plain[a][b][0] == 41:
-                    if t == 0:
+                    if jam:
+                        t = 0
+                        if random.randint(1,4) == 1:
+                            e = 0
+                    elif t == 0:
                         if a + 1 != len(plain) and grid[a+1][b][0] != 0 and plain[a+1][b][1] != 41:
                             t = grid[a+1][b][0]
                     elif t != 41:
@@ -1414,8 +1495,13 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                         grid[a][b] = [e,t]
                 
                 #Smart Converter (Probably my most complicated element yet since it's temprature is off the charts!)
+                
                 elif plain[a][b][0] == 42:
-                    if t == 0:
+                    if jam:
+                        t = 0
+                        if random.randint(1,4) == 1:
+                            e = 0
+                    elif t == 0:
                         if a + 1 != len(plain) and grid[a+1][b][0] != 0 and grid[a+1][b][1] != 42 and a - 1 != -1 and grid[a-1][b][0] != 0 and grid[a-1][b][1] != 42:
                             #This is complex, lemme explain
                             
@@ -1448,9 +1534,10 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 
                 #Electricity
+                
                 elif plain[a][b][0] == 43:
                     c = sandCheck(minigrid,localPos,True)
-                    if c[0] == 0:
+                    if c[0] == 0 or jam:
                         grid[a][b] = [0,0]
                     else:
                         grid[a][b] = [c[1],0]
@@ -1465,6 +1552,39 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                                     grid[a+1][b-1] = [e,0]
                         else:
                             grid[a+1][b+(c[0]-2)] = [e,0]
+                
+                #Rusted Iron
+                
+                elif plain[a][b][0] == 44:
+                    if random.randint(1,1000) == 1:
+                        if neighborCheck(miniplain,[3,15,47]):
+                            e = 45
+                    c = stoneCheck(minigrid,localPos)
+                    if not c[0]:
+                        grid[a][b] = [c[1],0]
+                        grid[a+1][b] = [e,0]
+                    else:
+                        grid[a][b] = [e,0]
+                
+                elif plain[a][b][0] == 45:
+                    c = sandCheck(minigrid,localPos)
+                    if c[0] == 0:
+                        if e == 1:
+                            continue
+                        else:
+                            grid[a][b] = [e,t]
+                    else:
+                        grid[a][b] = [c[1],0]
+                        grid[a+1][b+(c[0]-2)] = [e,t]
+                
+                #Jammer
+                
+                elif plain[a][b][0] == 50:
+                    t += 1
+                    if t <= 50:
+                        grid[a][b] = [e,t]
+                    else:
+                        grid[a][b] = [0,0]
             except IndexError:
                 print("Error in doing element", grid[a][b], "index out of range (Did you remember to put the element ID in the corisponding mini-allowed tuple?)")
     return grid
@@ -1479,7 +1599,7 @@ def remindMe() -> None:
     print("Press the keys for the element!  1: Sand  2: Stone  3: Water  4: Sugar  5: Wall  6: Dirt  7: Mud  8: Plant  9: Lava ")
     print("Q: Iron  W: Gravel  E: Obsidian  R: Steam  T: Glass  Y: Sugar Water  U: Cloud  I: Brick O: Clay  P: Void  A: Algae")
     print("G: Snow  H: Ice  J: Sugar Crystal  K: Packed Ice  L: Life particle (think the game of life, If turned off it will just be random)")
-    print("Z: Electricity  X: Flower Seed  C: Oil  V: Fire  B: Wood  N: Ash  M: Cloner  S: Glass shards  D: Sun  F: Moon")
+    print("Z: Electricity  X: Flower Seed  C: Oil  V: Fire  B: Wood  N: Jammer (Screws stuff up)  M: Cloner  S: Glass shards  D: Sun  F: Moon")
     print("To start the sandbox, press Ctrl. To go a single step in the sandbox, press Space.\nTo clear the sandbox, press the left Alt key. To clear the sandbox and have there be an ocean, hit the right Alt key.\nIf you want it to be lava, hit the Del key. Sugar water ocean? Right Ctrl.\nTo activate the game of life and all it's whimsy, press the CAPS LOCK key. To get an element that's not on this list, press the Right Shift key then enter the element's ID (number) in the console.\nTo change the brush size, hit up to grow it, hit down to shrink it.")
     print("To save your sandbox, press either enter key. To load a sandbox, press the 0 key. To show this again, hit backspace")
 
@@ -1616,7 +1736,7 @@ while breaking:
             elif event.key == pygame.K_b:
                 element = 31
             elif event.key == pygame.K_n:
-                element = 32
+                element = 50
             #Oops I just realized that I forgot to include o and p
             elif event.key == pygame.K_m:
                 element = 33
@@ -1709,7 +1829,7 @@ while breaking:
                         landyx = (screenx/landx)
                         landyy = (screeny/landy)
                         fail = False
-                        if (not werealsodoinglife) and (checkEverywhere(land,26) or checkEverywhere(land,37)):
+                        if (not werealsodoinglife) and (checkEverywhere(land,[26,0]) or checkEverywhere(land,[37,0])):
                             print("Warning! This save contains life particles and life isn't enabled. You should probably enable it for the intended experience!")
                         print("Load successful!")
                     except FileNotFoundError as e:
@@ -1914,6 +2034,16 @@ while breaking:
                     pygame.draw.rect(screen,(255,255,0),(j*landyx,i*landyy,landyx,landyy))
                 else:
                     pygame.draw.rect(screen,(255,255,128),(j*landyx,i*landyy,landyx,landyy))
+            elif land[i][j][0] == 44:
+                pygame.draw.rect(screen,(180,130,100),(j*landyx,i*landyy,landyx,landyy))
+            elif land[i][j][0] == 45:
+                pygame.draw.rect(screen,(60,30,15),(j*landyx,i*landyy,landyx,landyy))
+            
+            elif land[i][j][0] == 50:
+                if fliposwitch:
+                    pygame.draw.rect(screen,(255,255,255),(j*landyx,i*landyy,landyx,landyy))
+                else:
+                    pygame.draw.rect(screen,(255,0,0),(j*landyx,i*landyy,landyx,landyy))
     if not alive:
         live = False
     pygame.display.flip()
