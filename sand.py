@@ -75,15 +75,24 @@ elementNames = {
     33:"Cloner",
     34:"Clay",
     35:"Void",
-    36:"Petal (Hidden)",
-    37:"Cancer Particle (Hidden)",
+    36:"Petal",
+    37:"Cancer Particle",
     38:"Iron",
+    39:"Iron Sand",
     40:"Iron Brick",
     41:"Smart Remover",
     42:"Smart Converter",
     43:"Electricity",
     44:"Rustish Iron",
-    45:"Rust"
+    45:"Rust",
+    46:"Salt",
+    47:"Salt Water",
+    48:"Salt Crystal",
+    49:"Leaf",
+    50:"Milk",
+    51:"Antisand",
+    52:"Antistone",
+    53:"Antiwater"
 }
 
 #File Variables
@@ -360,18 +369,28 @@ def checkAbsolutelyEverywhere(grid: list[list[list[int]]], thing) -> bool:
                 return True
     return False
 
-# The thing that makes all of this possible, it's DOSTUFF!!!!
+
+
+# ======================================================================================
+# ----------- The thing that makes all of this possible, it's DOSTUFF!!!! --------------
+# ======================================================================================
+
+
 
 def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
     e = 0
     t = 0
     #I'll take my small victories in optimization where I can
-    requireminip = [1,2,3,4,6,7,8,9,10,14,15,17,18,19,22,23,24,25,27,28,29,30,31,32,33,34,36]
+    
+    #The tuple that holds the elements that are required to have a mini plane map
+    requireminip = [1,2,3,4,6,7,8,9,10,14,15,17,18,19,22,23,24,25,27,28,29,30,31,32,33,34,36,38,39,40,41,42]
     if lifeIG:
         requireminip.append(0)
         requireminip.append(26)
     requireminip = tuple(requireminip)
-    requireminig = (1,2,3,4,6,7,8,9,10,11,12,13,14,15,16,17,18,19,22,23,24,25,27,28,29,30,32,34,36)
+    
+    #The tuple that holds the elements that are required to have a mini grid map
+    requireminig = (1,2,3,4,6,7,8,9,10,11,12,13,14,15,16,17,18,19,22,23,24,25,27,28,29,30,32,34,36,39,40,41,42,43)
     sun = checkEverywhere(plain,[20,0])
     moon = checkEverywhere(plain,[21,0])
     grid = deepcopy(plain)
@@ -1325,6 +1344,127 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                         continue
                     else:
                         grid[a][b] = randomelement()
+                
+                #Iron
+                elif plain[a][b][0] == 38:
+                    if t == 1:
+                        t = 2
+                    elif (neighborCheck(miniplain,[43]) or neighborTempCheck(miniplain,(38,39,40,47),"==",1)[0]) and t == 0:
+                        t = 1
+                    elif t == 2:
+                        t = 0
+                    grid[a][b] = [e,t] 
+                
+                #Iron Sand
+                elif plain[a][b][0] == 39:
+                    if t == 1:
+                        t = 2
+                    elif (neighborCheck(miniplain,[43]) or neighborTempCheck(miniplain,(38,39,40,47),"==",1)[0]) and t == 0:
+                        t = 1
+                    elif t == 2:
+                        t = 0
+                    c = sandCheck(minigrid,localPos)
+                    if c[0] == 0:
+                        grid[a][b] = [e,t]
+                    else:
+                        grid[a][b] = [c[1],0]
+                        grid[a+1][b+(c[0]-2)] = [e,t]
+                
+                #Iron Brick
+                elif plain[a][b][0] == 40:
+                    if t == 1:
+                        t = 2
+                    elif (neighborCheck(miniplain,[43]) or neighborTempCheck(miniplain,(38,39,40,47),"==",1)[0]) and t == 0:
+                        t = 1
+                    elif t == 2:
+                        t = 0
+                    o = lrCheck(miniplain[localPos[0]],localPos[1])
+                    if o:
+                        grid[a][b] = [e,t]
+                        continue
+                    c = stoneCheck(minigrid,localPos)
+                    if not c[0]:
+                        grid[a][b] = [c[1],0]
+                        grid[a+1][b] = [e,t]
+                    else:
+                        grid[a][b] = [e,t]
+                
+                #Smart Remover (Based on the bacteria mod from minecraft)
+                elif plain[a][b][0] == 41:
+                    if t == 0:
+                        if a + 1 != len(plain) and grid[a+1][b][0] != 0 and plain[a+1][b][1] != 41:
+                            t = grid[a+1][b][0]
+                    elif t != 41:
+                        if a + 1 != len(plain) and grid[a+1][b][0] == t:
+                            grid[a+1][b] = [e,t]
+                        if a - 1 != -1 and grid[a-1][b][0] == t:
+                            grid[a-1][b] = [e,t]
+                        if b + 1 != len(plain[0]) and grid[a][b+1][0] == t:
+                            grid[a][b+1] = [e,t]
+                        if b - 1 != -1 and grid[a][b-1][0] == t:
+                            grid[a][b-1] = [e,t]
+                        if not neighborCheck(miniplain,[t]) or neighborCount(miniplain,[41]) == 0:
+                            e = 0
+                            t = 0
+                    c = stoneCheck(minigrid,localPos,True)
+                    if not c[0]:
+                        grid[a][b] = [c[1],0]
+                        grid[a+1][b] = [e,t]
+                    else:
+                        grid[a][b] = [e,t]
+                
+                #Smart Converter (Probably my most complicated element yet since it's temprature is off the charts!)
+                elif plain[a][b][0] == 42:
+                    if t == 0:
+                        if a + 1 != len(plain) and grid[a+1][b][0] != 0 and grid[a+1][b][1] != 42 and a - 1 != -1 and grid[a-1][b][0] != 0 and grid[a-1][b][1] != 42:
+                            #This is complex, lemme explain
+                            
+                            t = grid[a-1][b][0]*1000
+                            #This gets the value of the pixel above it and multiplies it by 1000, so when we do our lil // later, we can get this element back
+                            
+                            t += grid[a+1][b][0]
+                            #This gets the value of the pixel below it and adds it to the temp, so when we can do our lil % later and get this element back too!
+                    else:
+                        rt = t//1000 #The element that's gonna REPLACE the converted element
+                        ct = t%1000 #The element that's gonna get CONVERTED into the replaced element
+                        if rt != 42 and ct != 42:
+                            if a + 1 != len(plain) and grid[a+1][b][0] == ct:
+                                grid[a+1][b] = [e,t]
+                            if a - 1 != -1 and grid[a-1][b][0] == ct:
+                                grid[a-1][b] = [e,t]
+                            if b + 1 != len(plain[0]) and grid[a][b+1][0] == ct:
+                                grid[a][b+1] = [e,t]
+                            if b - 1 != -1 and grid[a][b-1][0] == ct:
+                                grid[a][b-1] = [e,t]
+                            if not neighborCheck(miniplain,[ct]) or neighborCount(miniplain,[42]) == 0:
+                                e = rt
+                                t = 0
+                    c = stoneCheck(minigrid,localPos,True)
+                    if not c[0]:
+                        grid[a][b] = [c[1],0]
+                        grid[a+1][b] = [e,t]
+                    else:
+                        grid[a][b] = [e,t]
+                
+                
+                #Electricity
+                elif plain[a][b][0] == 43:
+                    c = sandCheck(minigrid,localPos,True)
+                    if c[0] == 0:
+                        grid[a][b] = [0,0]
+                    else:
+                        grid[a][b] = [c[1],0]
+                        if c[0] == 2:
+                            d = lrWanderCheck(minigrid,localPos,True)
+                            if not d[0]:
+                                grid[a+1][b] = [e,0]
+                            else:
+                                if d[1]:
+                                    grid[a+1][b+1] = [e,0]
+                                else:
+                                    grid[a+1][b-1] = [e,0]
+                        else:
+                            grid[a+1][b+(c[0]-2)] = [e,0]
             except IndexError:
                 print("Error in doing element", grid[a][b], "index out of range (Did you remember to put the element ID in the corisponding mini-allowed tuple?)")
     return grid
@@ -1337,9 +1477,9 @@ fps = 60
 
 def remindMe() -> None:
     print("Press the keys for the element!  1: Sand  2: Stone  3: Water  4: Sugar  5: Wall  6: Dirt  7: Mud  8: Plant  9: Lava ")
-    print("Q: Wet sand  W: Gravel  E: Obsidian  R: Steam  T: Glass  Y: Sugar Water  U: Cloud  I: Brick O: Clay  P: Void  A: Algae")
+    print("Q: Iron  W: Gravel  E: Obsidian  R: Steam  T: Glass  Y: Sugar Water  U: Cloud  I: Brick O: Clay  P: Void  A: Algae")
     print("G: Snow  H: Ice  J: Sugar Crystal  K: Packed Ice  L: Life particle (think the game of life, If turned off it will just be random)")
-    print("Z: Sludge  X: Flower Seed  C: Oil  V: Fire  B: Wood  N: Ash  M: Cloner  S: Glass shards  D: Sun  F: Moon")
+    print("Z: Electricity  X: Flower Seed  C: Oil  V: Fire  B: Wood  N: Ash  M: Cloner  S: Glass shards  D: Sun  F: Moon")
     print("To start the sandbox, press Ctrl. To go a single step in the sandbox, press Space.\nTo clear the sandbox, press the left Alt key. To clear the sandbox and have there be an ocean, hit the right Alt key.\nIf you want it to be lava, hit the Del key. Sugar water ocean? Right Ctrl.\nTo activate the game of life and all it's whimsy, press the CAPS LOCK key. To get an element that's not on this list, press the Right Shift key then enter the element's ID (number) in the console.\nTo change the brush size, hit up to grow it, hit down to shrink it.")
     print("To save your sandbox, press either enter key. To load a sandbox, press the 0 key. To show this again, hit backspace")
 
@@ -1432,7 +1572,7 @@ while breaking:
             elif event.key == pygame.K_9:
                 element = 9
             elif event.key == pygame.K_q:
-                element = 10
+                element = 38
             elif event.key == pygame.K_w:
                 element = 11
             elif event.key == pygame.K_e:
@@ -1466,7 +1606,7 @@ while breaking:
             elif event.key == pygame.K_l:
                 element = 26
             elif event.key == pygame.K_z:
-                element = 27
+                element = 43
             elif event.key == pygame.K_x:
                 element = 28
             elif event.key == pygame.K_c:
@@ -1569,6 +1709,8 @@ while breaking:
                         landyx = (screenx/landx)
                         landyy = (screeny/landy)
                         fail = False
+                        if (not werealsodoinglife) and (checkEverywhere(land,26) or checkEverywhere(land,37)):
+                            print("Warning! This save contains life particles and life isn't enabled. You should probably enable it for the intended experience!")
                         print("Load successful!")
                     except FileNotFoundError as e:
                         print(f'An error occured: {e}')
@@ -1741,6 +1883,37 @@ while breaking:
                 pygame.draw.rect(screen,colour,(j*landyx,i*landyy,landyx,landyy))
             elif land[i][j][0] == 37:
                 pygame.draw.rect(screen,(random.randint(0,250),random.randint(0,100),random.randint(150,250)),(j*landyx,i*landyy,landyx,landyy))
+            elif land[i][j][0] == 38:
+                if land[i][j][1] == 1:
+                    pygame.draw.rect(screen,(255,255,20),(j*landyx,i*landyy,landyx,landyy))
+                else:
+                    pygame.draw.rect(screen,(180,180,170),(j*landyx,i*landyy,landyx,landyy))
+            elif land[i][j][0] == 39:
+                if land[i][j][1] == 1:
+                    pygame.draw.rect(screen,(255,255,20),(j*landyx,i*landyy,landyx,landyy))
+                else:
+                    pygame.draw.rect(screen,(200,200,190),(j*landyx,i*landyy,landyx,landyy))
+            elif land[i][j][0] == 40:
+                if land[i][j][1] == 1:
+                    pygame.draw.rect(screen,(255,255,20),(j*landyx,i*landyy,landyx,landyy))
+                else:
+                    pygame.draw.rect(screen,(200,200,150),(j*landyx,i*landyy,landyx,landyy))
+            elif land[i][j][0] == 41:
+                cool = 0
+                if land[i][j][1] != 0:
+                    cool = random.randint(-20,20)
+                pygame.draw.rect(screen,(100,20+cool//2,240),(j*landyx,i*landyy,landyx,landyy))
+            elif land[i][j][0] == 42:
+                cool = 0
+                if land[i][j][1] != 0:
+                    cool = random.randint(-50,50)
+                pygame.draw.rect(screen,(200+cool,50+cool,50+cool),(j*landyx,i*landyy,landyx,landyy))
+            
+            elif land[i][j][0] == 43:
+                if coinflip():
+                    pygame.draw.rect(screen,(255,255,0),(j*landyx,i*landyy,landyx,landyy))
+                else:
+                    pygame.draw.rect(screen,(255,255,128),(j*landyx,i*landyy,landyx,landyy))
     if not alive:
         live = False
     pygame.display.flip()
