@@ -353,7 +353,7 @@ def checkEverywhere(grid: list[list[list[int]]], thing) -> bool:
     return False
 
 def randomelement(randTemp:bool = True) -> list[int]:
-    e = random.randint(0,50)
+    e = random.randint(0,55)
     t = 0
     if randTemp:
         if e == 30:
@@ -385,14 +385,14 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
     #I'll take my small victories in optimization where I can
     
     #The tuple that holds the elements that are required to have a mini plane map
-    requireminip = [1,2,3,4,6,7,8,9,10,14,15,17,18,19,22,23,24,25,27,28,29,30,31,32,33,34,36,38,39,40,41,42,44,45,46,47,48,49]
+    requireminip = [1,2,3,4,6,7,8,9,10,14,15,17,18,19,22,23,24,25,27,28,29,30,31,32,33,34,36,38,39,40,41,42,44,45,46,47,48,49,54,55]
     if lifeIG:
         requireminip.append(0)
         requireminip.append(26)
     requireminip = tuple(requireminip)
     
     #The tuple that holds the elements that are required to have a mini grid map
-    requireminig = (1,2,3,4,6,7,8,9,10,11,12,13,14,15,16,17,18,19,22,23,24,25,27,28,29,30,32,34,36,39,40,41,42,43,44,45,46,47,48,49)
+    requireminig = (1,2,3,4,6,7,8,9,10,11,12,13,14,15,16,17,18,19,22,23,24,25,27,28,29,30,32,34,36,39,40,41,42,43,44,45,46,47,48,49,51,52,53,54,55)
     
     conductors = (38,39,40,44,47,55)
     #Self explanitory
@@ -1715,6 +1715,193 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                         else:
                             grid[a+1][b+(c[0]-2)] = [e,0]
                 
+                
+                #Antisand
+                
+                elif plain[a][b][0] == 51:
+                    c = sandCheck(minigrid,localPos,False,True)
+                    if c[0] == 0:
+                        grid[a][b] = [e,t]
+                        continue
+                    else:
+                        grid[a][b] = [c[1],0]
+                        grid[a-1][b+(c[0]-2)] = [e,t]
+                
+                #Antistone
+                
+                elif plain[a][b][0] == 52:
+                    c = stoneCheck(minigrid,localPos,False,True)
+                    if not c[0]:
+                        grid[a][b] = [c[1],0]
+                        grid[a-1][b] = [e,0]
+                    else:
+                        grid[a][b] = [e,0]
+                
+                #Antiwater
+                
+                elif plain[a][b][0] == 53:
+                    c = sandCheck(minigrid,localPos,True,True)
+                    if c[0] == 0:
+                        d = lrWanderCheck(minigrid,localPos,False,True,True)
+                        if not d[0]:
+                            if e == 3:
+                                continue
+                            else:
+                                grid[a][b] = [e,t]
+                        else:
+                            grid[a][b] = [0,0]
+
+                            if d[1]:
+                                grid[a][b+1] = [e,t]
+                            else:
+                                grid[a][b-1] = [e,t]
+
+                    else:
+                        grid[a][b] = [0,0]
+
+                        grid[a-1][b+(c[0]-2)] = [e,t]
+                
+                #IDENTITY NOT FOUND =( https://www.youtube.com/watch?v=4bLf2wDJA5s
+                elif plain[a][b][0] == 54:
+                    
+                    idk = random.randint(1,6)
+                    t = idk
+                    if jam:
+                        e = idk
+                    
+                    #Sandbit
+                    
+                    if idk == 1:
+                        if neighborCheck(miniplain,[9,30]):
+                            e = 14
+                            t = 2
+                        else:
+                            n = neighborTempCheck(miniplain,[14])
+                            if n[0]:
+                                e = 14
+                                t = n[1]-1
+                            elif random.randint(1,50) == 1:
+                                if neighborCheck(miniplain,(3,15)):
+                                    e = 10
+                        c = sandCheck(minigrid,localPos)
+                        if c[0] == 0:
+                            if e == 1:
+                                continue
+                            else:
+                                grid[a][b] = [e,t]
+                        else:
+                            grid[a][b] = [c[1],0]
+                            grid[a+1][b+(c[0]-2)] = [e,t]
+                    
+                    #Stonebit
+                    
+                    elif idk == 2:
+                        if random.randint(1,1000) == 1:
+                            if neighborCheck(miniplain,[3,15,47]):
+                                e = 11
+                        c = stoneCheck(minigrid,localPos)
+                        if not c[0]:
+                            grid[a][b] = [c[1],0]
+                            grid[a+1][b] = [e,t]
+                        else:
+                            grid[a][b] = [e,t]
+                    
+                    #Waterbit
+                    
+                    elif idk == 3:
+                        if coinflip():
+                            if neighborCheck(miniplain,[30]):
+                                e = 13
+                                t = 10
+                            elif neighborCount(miniplain,[22,23,27]) > 3:
+                                e = 27
+                        if neighborCheck(miniplain,[9]):
+                            e = 13
+                            t = 15
+                        elif random.randint(1,10000) == 1:
+                            if neighborCheck(miniplain,[18]):
+                                e = 18
+                        elif random.randint(1,20000) == 1:
+                            if sun:
+                                e = 13
+                                t = 10
+                        c = sandCheck(minigrid,localPos,True)
+                        if c[0] == 0:
+                            d = lrWanderCheck(minigrid,localPos)
+                            if not d[0]:
+                                grid[a][b] = [e,t]
+                            else:
+                                grid[a][b] = [0,0]
+
+                                if d[1]:
+                                    grid[a][b+1] = [e,t]
+                                else:
+                                    grid[a][b-1] = [e,t]
+
+                        else:
+                            grid[a][b] = [0,0]
+
+                            grid[a+1][b+(c[0]-2)] = [e,t]
+                    
+                    #Sugarbit
+                    
+                    elif idk == 4:
+                        if neighborCheck(miniplain,(9,20,21)):
+                            e = 24
+                        elif random.randint(1,5) == 1:
+                            if neighborCheck(miniplain,[30]):
+                                e = 30
+                                t = 5
+                        
+                        c = sandCheck(minigrid,localPos)
+                        if c[0] == 0:
+                            if random.randint(1,100) == 1:
+                                if neighborCheck(miniplain,[3]):
+                                    e = 15
+                            elif random.randint(1,5000) == 1:
+                                if neighborCheck(miniplain,[18]):
+                                    e = 18
+                            grid[a][b] = [e,t] 
+                            continue
+                        else:
+                            if random.randint(1,10) == 1:
+                                if neighborCheck(miniplain,[3]):
+                                    e = 15
+                            grid[a][b] = [c[1],0]
+                            if c[0] == 2:
+                                d = lrWanderCheck(minigrid,localPos, True)
+                                if not d[0]:
+                                    grid[a+1][b] = [e,t]
+                                else:
+                                    if d[1]:
+                                        grid[a+1][b+1] = [e,t]
+                                    else:
+                                        grid[a+1][b-1] = [e,t]
+                            else:
+                                grid[a+1][b+(c[0]-2)] = [e,t]
+                    
+                    #Wallbit
+                    
+                    elif idk == 5:
+                        continue          
+                    
+                    #Dirtbit
+                    
+                    elif idk == 6:
+                        if random.randint(1,900) == 1:
+                            if neighborCheck(miniplain,[8]) and sun:
+                                e = 8
+                        if random.randint(1,100) == 1:
+                            if neighborCheck(miniplain,[3]):
+                                e = 7
+                        c = sandCheck(minigrid,localPos,True)
+                        if c[0] == 0:
+                            grid[a][b] = [e,t]
+                            continue
+                        else:
+                            grid[a][b] = [0,0]
+                            grid[a+1][b+(c[0]-2)] = [e,t]
+                
                 #Jammer
                 
                 elif plain[a][b][0] == 50:
@@ -1723,6 +1910,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                         grid[a][b] = [e,t]
                     else:
                         grid[a][b] = [0,0]
+                
             except IndexError:
                 print("Error in doing element", grid[a][b], "index out of range (Did you remember to put the element ID in the corisponding mini-allowed tuple?)")
     return grid
@@ -2015,6 +2203,8 @@ while breaking:
                         t = 5
                     elif element == 19:
                         t = random.randint(0,255)
+                    elif element == 54:
+                        t = random.randint(1,6)
                     if ice:
                         land[y+l][x+m] = [0,t]
                     else:
@@ -2189,9 +2379,31 @@ while breaking:
                     pygame.draw.rect(screen,(255,255,255),(j*landyx,i*landyy,landyx,landyy))
                 else:
                     pygame.draw.rect(screen,(255,0,0),(j*landyx,i*landyy,landyx,landyy))
-            
+            elif land[i][j][0] == 51:
+                pygame.draw.rect(screen,(0,0,255),(j*landyx,i*landyy,landyx,landyy))
+            elif land[i][j][0] == 52:
+                pygame.draw.rect(screen,(105,105,105),(j*landyx,i*landyy,landyx,landyy))
+            elif land[i][j][0] == 53:
+                pygame.draw.rect(screen,(255,255,0),(j*landyx,i*landyy,landyx,landyy))
+            elif land[i][j][0] == 54:
+                if land[i][j][1] == 1:
+                    pygame.draw.rect(screen,(255,255,0),(j*landyx,i*landyy,landyx,landyy))
+                elif land[i][j][1] == 2:
+                    pygame.draw.rect(screen,(150,150,150),(j*landyx,i*landyy,landyx,landyy))
+                elif land[i][j][1] == 3:
+                    pygame.draw.rect(screen,(0,0,255),(j*landyx,i*landyy,landyx,landyy))
+                elif land[i][j][1] == 4:
+                    pygame.draw.rect(screen,(250,250,250),(j*landyx,i*landyy,landyx,landyy))
+                elif land[i][j][1] == 5:
+                    pygame.draw.rect(screen,(100,100,100),(j*landyx,i*landyy,landyx,landyy))
+                elif land[i][j][1] == 6:
+                    pygame.draw.rect(screen,(200,100,50),(j*landyx,i*landyy,landyx,landyy))
+                else:
+                    pygame.draw.rect(screen,(255,0,255),(j*landyx,i*landyy,landyx,landyy))
             elif land[i][j][0] == 55:
                 pygame.draw.rect(screen,(255,200+random.randint(0,55),200+random.randint(0,55)),(j*landyx,i*landyy,landyx,landyy))
+            elif land[i][j][0] != 0:
+                pygame.draw.rect(screen,(255,0,255),(j*landyx,i*landyy,landyx,landyy))
     if not alive:
         live = False
     pygame.display.flip()
