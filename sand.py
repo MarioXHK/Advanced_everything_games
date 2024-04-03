@@ -1,7 +1,7 @@
 #Can someone please tell me how to give more resources to this app so I can throttle it and have a smooth 60 fps while my computer combusts into flames
 #Some optimization help would be nice too
 showfps = False
-
+usesavefolder = False
 #the setting that controls if you'd like to do life or not (Experimental sorta)
 werealsodoinglife = False
 
@@ -2130,7 +2130,10 @@ while breaking:
                 if legal:
                     print("Saving", filename+ ".txt to your saves folder... (You better not close your program!)")
                     try:
-                        thefile = open('sandsaves/'+filename+'.txt', 'w')
+                        if usesavefolder:
+                            thefile = open('sandsaves/'+filename+'.txt', 'w')
+                        else:
+                            thefile = open(filename+'.txt', 'w')
                         data = []
                         data.append(str(landx))
                         data.append(str(landy))
@@ -2171,7 +2174,10 @@ while breaking:
                     fail = True
                     print("Loading", filename+ ".txt from your saves folder...")
                     try:
-                        thefile = open('sandsaves/'+filename+'.txt', 'r')
+                        if usesavefolder:
+                            thefile = open('sandsaves/'+filename+'.txt', 'r')
+                        else:
+                            thefile = open(filename+'.txt', 'r')
                         reading = thefile.read().split()
                         thefile.close()
                         print(filename, "read with", len(reading), "numbers!")
