@@ -338,7 +338,7 @@ def lrCheck(plain: list[list[int]],posx: int, idcIfUnsupportable: bool = False) 
     if len(plain) == 1 or len(plain) == 2:
         return False
 
-    unsupportable = (0,1,3,4,6,8,9,10,11,13,15,16,18,19,22,23,27,28,29,30,32,35,36)
+    unsupportable = (0,1,3,4,6,8,9,10,11,13,15,16,18,19,22,23,27,28,29,30,32,35,36,39,43,45,46,47,51,53,55)
     if idcIfUnsupportable:
         unsupportable = [0]
     if plain[posx-1][0] in unsupportable or plain[posx+1][0] in unsupportable:
@@ -477,7 +477,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 #Sand
                 
                 elif plain[a][b][0] == 1:
-                    if neighborCheck(miniplain,[9,30]):
+                    if neighborCheck(miniplain,(9,30,55)):
                         e = 14
                         t = 2
                     else:
@@ -523,7 +523,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                             t = 10
                         elif neighborCount(miniplain,[22,23,27]) > 3:
                             e = 27
-                    if neighborCheck(miniplain,[9]):
+                    if neighborCheck(miniplain,(9,55)):
                         e = 13
                         t = 15
                     elif random.randint(1,10000) == 1:
@@ -623,7 +623,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                     if random.randint(1,400) == 1:
                         if neighborCheck(miniplain,[8]) and sun:
                             e = 8
-                    if neighborCheck(miniplain,[9,30]):
+                    if neighborCheck(miniplain,(9,30,55)):
                         e = 6
                     elif random.randint(1,100) == 1:
                         if neighborCheck(miniplain,(46,47,48)):
@@ -706,7 +706,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 #Wet Sand
                 
                 elif plain[a][b][0] == 10:
-                    if neighborCheck(miniplain,[9,30]):
+                    if neighborCheck(miniplain,(9,30,55)):
                         e = 14
                         t = 1
                     elif random.randint(1,100) == 1:
@@ -801,7 +801,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 #Sugar Water
                 
                 elif plain[a][b][0] == 15:
-                    if neighborCheck(miniplain,[9]) or (coinflip() and neighborCheck(miniplain,[30])):
+                    if neighborCheck(miniplain,(9,55)) or (coinflip() and neighborCheck(miniplain,[30])):
                         if coinflip():
                             e = 4
                         else:
@@ -898,7 +898,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 elif plain[a][b][0] == 18:
                     if random.randint(1,6) == 1:
-                        if neighborCheck(miniplain,[9,30]):
+                        if neighborCheck(miniplain,(9,30,55)):
                             if coinflip():
                                 e = 30
                                 t = 5
@@ -917,7 +917,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 #Glass shards or dust or whatever you wanna see it as
                 
                 elif plain[a][b][0] == 19:
-                    if neighborCheck(miniplain,[9]):
+                    if neighborCheck(miniplain,(9,55)):
                         e = 14
                         t = 3
                     elif coinflip() and neighborCheck(miniplain,[30]):
@@ -955,7 +955,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                     if random.randint(1,10) == 1:
                         if (not moon) and neighborCheck(miniplain,(3,15)):
                             e = 3
-                    if neighborCheck(miniplain,(9,13,20)):
+                    if neighborCheck(miniplain,(9,13,20,30,55)):
                         e = 3
                     if random.randint(1,5000) == 1:
                         e = 3
@@ -996,7 +996,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                     if coinflip():
                         if neighborCheck(miniplain,(13,20)):
                             e = 3
-                    if neighborCheck(miniplain,[9,30]):
+                    if neighborCheck(miniplain,(9,30,55)):
                         e = 3
                     if random.randint(1,1000) == 1:
                         if neighborCheck(miniplain,(3,15)):
@@ -1045,7 +1045,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 elif plain[a][b][0] == 25:
                     if random.randint(1,5) == 1:
-                        if neighborCheck(miniplain,[9]):
+                        if neighborCheck(miniplain,(9,55)):
                             e = 23
                     o = lrCheck(miniplain[localPos[0]],localPos[1])
                     if o:
@@ -1098,7 +1098,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                     if random.randint(1,20) == 1:
                         if neighborCount(miniplain,[22,23,27]) > 4:
                             e = 23
-                    if neighborCheck(miniplain,(9,13,20)):
+                    if neighborCheck(miniplain,(9,13,20,30,55)):
                         e = 13
                     c = sandCheck(minigrid,localPos)
                     if c[0] == 0:
@@ -1120,7 +1120,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                         t = 1
                         continue
                     if random.randint(1,4) == 1:
-                        if neighborCheck(miniplain,[9,30]):
+                        if neighborCheck(miniplain,(9,30,55)):
                             if coinflip():
                                 e = 30
                                 t = 5
@@ -1160,7 +1160,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 elif plain[a][b][0] == 29:
                     if random.randint(1,15) == 1:
-                        if neighborCheck(miniplain,[9,30]):
+                        if neighborCheck(miniplain,(9,30,55)):
                             e = 30
                             t = 5
                     c = sandCheck(minigrid,localPos,True)
@@ -1257,14 +1257,14 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 elif plain[a][b][0] == 31:
                     if coinflip():
-                        if neighborCount(miniplain,(9,30)) > random.randint(1,5):
+                        if neighborCount(miniplain,(9,30,55)) > random.randint(1,5):
                             e = 32
                     elif random.randint(1,20) == 1:
                         if neighborCheck(miniplain,[30]):
                             e = 30
                             t = 5
                     elif random.randint(1,40) == 1:
-                        if neighborCheck(miniplain,[9]):
+                        if neighborCheck(miniplain,(9,55)):
                             e = 30
                             t = 5
                     
@@ -1323,7 +1323,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 #Clay
                 
                 elif plain[a][b][0] == 34:
-                    if neighborCheck(miniplain,[9,30]):
+                    if neighborCheck(miniplain,(9,30,55)):
                         e = 17
                     
                     if random.randint(1,10) == 1:
@@ -1391,7 +1391,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 elif plain[a][b][0] == 36:
                     if random.randint(1,15) == 1:
-                        if neighborCheck(miniplain,[9,30]):
+                        if neighborCheck(miniplain,(9,30,55)):
                             if coinflip():
                                 e = 30
                                 t = 5
@@ -1604,7 +1604,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 #Salt
                 
                 elif plain[a][b][0] == 46:
-                    if neighborCheck(miniplain,[9]):
+                    if neighborCheck(miniplain,(9,55)):
                         e = 55
                     c = sandCheck(minigrid,localPos)
                     if c[0] == 0:
@@ -1629,7 +1629,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                     elif t == 2:
                         t = 0
                     
-                    if neighborCheck(miniplain,[9]) or (coinflip() and neighborCheck(miniplain,[30])):
+                    if neighborCheck(miniplain,(9,55)) or (coinflip() and neighborCheck(miniplain,[30])):
                         if coinflip():
                             e = 46
                         else:
@@ -1664,7 +1664,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 #Salt Crystal
                 
                 elif plain[a][b][0] == 48:
-                    if neighborCheck(miniplain,[9]):
+                    if neighborCheck(miniplain,(9,55)):
                         e = 55
                     elif random.randint(1,5000) == 1:
                         if neighborCheck(miniplain,[3,47]):
@@ -1687,7 +1687,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 elif plain[a][b][0] == 49:
                     
-                    if neighborCheck(miniplain,[9,30]):
+                    if neighborCheck(miniplain,(9,30,55)):
                         if coinflip():
                             e = 30
                             t = 5
@@ -1772,7 +1772,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                     #Sandbit
                     
                     if idk == 1:
-                        if neighborCheck(miniplain,[9,30]):
+                        if neighborCheck(miniplain,(9,30,55)):
                             e = 14
                             t = 2
                         else:
@@ -1815,7 +1815,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                                 t = 10
                             elif neighborCount(miniplain,[22,23,27]) > 3:
                                 e = 27
-                        if neighborCheck(miniplain,[9]):
+                        if neighborCheck(miniplain,(9,55)):
                             e = 13
                             t = 15
                         elif random.randint(1,10000) == 1:
@@ -1910,6 +1910,45 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                         grid[a][b] = [e,t]
                     else:
                         grid[a][b] = [0,0]
+
+                #Molten Salt (Yes, it's a thing)
+                
+                elif plain[a][b][0] == 55:
+                    if t == 1 or jam:
+                        t = 2
+                    elif (neighborCheck(miniplain,[43]) or neighborTempCheck(miniplain,conductors,"==",1)[0]) and t == 0:
+                        t = 1
+                    elif t == 2:
+                        t = 0
+                    
+                    if random.randint(1,25) == 1:
+                        e = 46
+                    #Too salty to just go away...
+                    c = sandCheck(minigrid,localPos)
+                    if c[0] == 0:
+                        if random.randint(1,25) != 1:
+                            if e == 9:
+                                grid[a][b] = [e,t]
+                                continue
+                            else:
+                                grid[a][b] = [e,t]
+                                continue
+                        d = lrWanderCheck(minigrid,localPos)
+                        if not d[0]:
+                            if e == 9:
+                                grid[a][b] = [e,t]
+                            else:
+                                grid[a][b] = [e,t]
+                        else:
+                            grid[a][b] = [c[1],0]
+                            if d[1]:
+                                grid[a][b+1] = [e,t]
+                            else:
+                                grid[a][b-1] = [e,t]
+
+                    else:
+                        grid[a][b] = [c[1],0]
+                        grid[a+1][b+(c[0]-2)] = [e,t]
                 
             except IndexError:
                 print("Error in doing element", grid[a][b], "index out of range (Did you remember to put the element ID in the corisponding mini-allowed tuple?)")
