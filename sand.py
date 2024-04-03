@@ -12,8 +12,8 @@ from copy import deepcopy
 import random
 
 #How large the screen is
-screenx = 400
-screeny = 400
+screenx = 600
+screeny = 450
 
 pygame.init()
 screen = pygame.display.set_mode((screenx,screeny))
@@ -29,8 +29,8 @@ fire = False
 tap = True
 
 #How many pixels are there in the sandbox (x*y of course)
-landx = 40
-landy = 40
+landx = 60
+landy = 45
 land = [[[0,0] for _ in range(landx)] for i in range(landy)]
 landyx = (screenx/landx)
 landyy = (screeny/landy)
@@ -392,7 +392,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
     requireminip = tuple(requireminip)
     
     #The tuple that holds the elements that are required to have a mini grid map
-    requireminig = (1,2,3,4,6,7,8,9,10,11,12,13,14,15,16,17,18,19,22,23,24,25,27,28,29,30,32,34,36,39,40,41,42,43,44,45,46,47,48,49,51,52,53,54,55)
+    requireminig = (1,2,3,4,6,7,8,9,10,11,12,13,14,15,16,17,18,19,22,23,24,25,27,28,29,30,32,34,36,39,40,41,42,43,44,45,46,47,48,49,51,52,53,54,55,56)
     
     conductors = (38,39,40,44,47,55)
     #Self explanitory
@@ -1197,6 +1197,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 elif e == 30:
                     flame = False
+                    
                     if (random.randint(1,4) == 1 or moon or jam) and t > 0:
                         if not sun:
                             t -= 1
@@ -1216,8 +1217,12 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                         o = neighborTempCheck(miniplain,[30],">",t)
                         if o[0]:
                             t = o[1] - 1
-                    if t <= 0:
-                        e = 0
+                    if neighborCheck(miniplain,(3,15,47)):
+                        e = 56
+                        t *= 2
+                    elif t <= 0:
+                        e = 56
+                        t = 10
                     if flame and random.randint(1,5) != 1:
                         c = [0]
                     else:
@@ -1228,10 +1233,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                         else:
                             d = lrWanderCheck(minigrid,localPos,False,False,True)
                         if not d[0]:
-                            if e == 30:
-                                grid[a][b] = [e,t]
-                            else:
-                                grid[a][b] = [e,0]
+                            grid[a][b] = [e,t]
                         else:
                             grid[a][b] = [d[2],0]
 
@@ -1950,6 +1952,39 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                         grid[a][b] = [c[1],0]
                         grid[a+1][b+(c[0]-2)] = [e,t]
                 
+                #Smoke
+                
+                elif e == 56:
+                    if random.randint(1,10) == 1:
+                        t -= 1
+                    if t <= 0:
+                        e = 0
+                    c = sandCheck(minigrid,localPos,False,True,True)
+                    if c[0] == 0:
+                        d = lrWanderCheck(minigrid,localPos,False,False,True)
+                        if not d[0]:
+                            grid[a][b] = [e,t]
+                        else:
+                            grid[a][b] = [d[2],0]
+
+                            if d[1]:
+                                grid[a][b+1] = [e,t]
+                            else:
+                                grid[a][b-1] = [e,t]
+                    else:
+                        grid[a][b] = [c[1],t]
+                        if c[0] == 2:
+                            d = lrWanderCheck(minigrid,localPos,True,False,True)
+                            if not d[0]:
+                                grid[a-1][b] = [e,t]
+                            else:
+                                if d[1]:
+                                    grid[a-1][b+1] = [e,t]
+                                else:
+                                    grid[a-1][b-1] = [e,t]
+                        else:
+                            grid[a-1][b+(c[0]-2)] = [e,t]
+                
             except IndexError:
                 print("Error in doing element", grid[a][b], "index out of range (Did you remember to put the element ID in the corisponding mini-allowed tuple?)")
     return grid
@@ -2244,7 +2279,7 @@ while breaking:
             for m in range(0-brushsize,1+brushsize):
                 t = 0
                 try:
-                    if element == 13 or element == 30:
+                    if element == 13 or element == 30 or element == 56:
                         t = 5
                     elif element == 19:
                         t = random.randint(0,255)
@@ -2449,6 +2484,8 @@ while breaking:
                     pygame.draw.rect(screen,(255,0,255),(j*landyx,i*landyy,landyx,landyy))
             elif el == 55:
                 pygame.draw.rect(screen,(255,200+random.randint(0,55),200+random.randint(0,55)),(j*landyx,i*landyy,landyx,landyy))
+            elif el == 56:
+                pygame.draw.rect(screen,(et*5,et*5,et*5),(j*landyx,i*landyy,landyx,landyy))
             elif el != 0:
                 pygame.draw.rect(screen,(255,0,255),(j*landyx,i*landyy,landyx,landyy))
     if not alive:
