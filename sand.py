@@ -460,7 +460,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 #Air
                 
-                if plain[a][b][0] == 0:
+                if e == 0:
                     if not lifeIG:
                         continue
                     #I need to optimize this more it's laggy as hell currently :(
@@ -476,7 +476,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 #Sand
                 
-                elif plain[a][b][0] == 1:
+                elif e == 1:
                     if neighborCheck(miniplain,(9,30,55)):
                         e = 14
                         t = 2
@@ -500,7 +500,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 #Stone
                 
-                elif plain[a][b][0] == 2:
+                elif e == 2:
                     if random.randint(1,1000) == 1:
                         if neighborCheck(miniplain,[3,15,47]):
                             e = 11
@@ -516,7 +516,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 #Water
                 
-                elif plain[a][b][0] == 3:
+                elif e == 3:
                     if coinflip():
                         if neighborCheck(miniplain,[30]):
                             e = 13
@@ -556,7 +556,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 #Sugar
                 
-                elif plain[a][b][0] == 4:
+                elif e == 4:
                     if neighborCheck(miniplain,(9,20,21)):
                         e = 24
                     elif random.randint(1,5) == 1:
@@ -595,12 +595,12 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 #Wall
                 
-                elif plain[a][b][0] == 5:
+                elif e == 5:
                     continue          
                 
                 #Dirt
                 
-                elif plain[a][b][0] == 6:
+                elif e == 6:
                     if random.randint(1,900) == 1:
                         if neighborCheck(miniplain,[8]) and sun:
                             e = 8
@@ -619,7 +619,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 #Mud
                 
-                elif plain[a][b][0] == 7:
+                elif e == 7:
                     if random.randint(1,400) == 1:
                         if neighborCheck(miniplain,[8]) and sun:
                             e = 8
@@ -645,7 +645,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 #Plant
                 
-                elif plain[a][b][0] == 8:
+                elif e == 8:
                     if coinflip():
                         if neighborCheck(miniplain,[30]):
                             e = 31
@@ -659,7 +659,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 #Lava
                 
-                elif plain[a][b][0] == 9:
+                elif e == 9:
                     if neighborCheck(miniplain,(3,7,10,13,15,18,22,23,25,27)):
                         t -= 2
                         if neighborCheck(miniplain,(3,15,22,23,25,27)):
@@ -705,7 +705,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 #Wet Sand
                 
-                elif plain[a][b][0] == 10:
+                elif e == 10:
                     if neighborCheck(miniplain,(9,30,55)):
                         e = 14
                         t = 1
@@ -729,7 +729,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 #Gravel
                 
-                elif plain[a][b][0] == 11:
+                elif e == 11:
                     c = sandCheck(minigrid,localPos)
                     if c[0] == 0:
                         continue
@@ -739,7 +739,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 #Obsidian
                 
-                elif plain[a][b][0] == 12:
+                elif e == 12:
                     c = stoneCheck(minigrid,localPos)
                     if not c[0]:
                         grid[a][b] = [c[1],0]
@@ -749,7 +749,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 #Steam
                 
-                elif plain[a][b][0] == 13:
+                elif e == 13:
                     if random.randint(1,20) == 1 and t > 0:
                         t -= 1
                     if t <= 0 and random.randint(1,34) == 1:
@@ -785,7 +785,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                         
                 #Glass
                 
-                elif plain[a][b][0] == 14:
+                elif e == 14:
                     if coinflip() and t > 0:
                         t -= 1
                     o = lrCheck(miniplain[localPos[0]],localPos[1])
@@ -800,7 +800,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                         
                 #Sugar Water
                 
-                elif plain[a][b][0] == 15:
+                elif e == 15:
                     if neighborCheck(miniplain,(9,55)) or (coinflip() and neighborCheck(miniplain,[30])):
                         if coinflip():
                             e = 4
@@ -843,7 +843,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 #Clouds
                 
-                elif plain[a][b][0] == 16:
+                elif e == 16:
                     if random.randint(1,800) == 1:
                         if moon:
                             e = 22 
@@ -883,7 +883,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 #Brick
                 
-                elif plain[a][b][0] == 17:
+                elif e == 17:
                     o = lrCheck(miniplain[localPos[0]],localPos[1])
                     if o:
                         continue
@@ -896,7 +896,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 #Algae
                 
-                elif plain[a][b][0] == 18:
+                elif e == 18:
                     if random.randint(1,6) == 1:
                         if neighborCheck(miniplain,(9,30,55)):
                             if coinflip():
@@ -916,7 +916,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 #Glass shards or dust or whatever you wanna see it as
                 
-                elif plain[a][b][0] == 19:
+                elif e == 19:
                     if neighborCheck(miniplain,(9,55)):
                         e = 14
                         t = 3
@@ -939,16 +939,16 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                         grid[a+1][b+(c[0]-2)] = [e,t]
                 #Sun
                 
-                elif plain[a][b][0] == 20:
+                elif e == 20:
                     continue
                 #Moon
                 
-                elif plain[a][b][0] == 21:
+                elif e == 21:
                     continue
                 
                 #Snow
                 
-                elif plain[a][b][0] == 22:
+                elif e == 22:
                     if random.randint(1,100) == 1:
                         if sun:
                             e = 3
@@ -989,7 +989,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 #Ice
                 
-                elif plain[a][b][0] == 23:
+                elif e == 23:
                     if random.randint(1,200) == 1:
                         if sun:
                             e = 3
@@ -1013,7 +1013,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 #Sugar Crystal
                 
-                elif plain[a][b][0] == 24:
+                elif e == 24:
                     if random.randint(1,7000) == 1:
                         if neighborCheck(miniplain,[18]):
                             e = 18
@@ -1043,7 +1043,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 #Packed Ice
                 
-                elif plain[a][b][0] == 25:
+                elif e == 25:
                     if random.randint(1,5) == 1:
                         if neighborCheck(miniplain,(9,55)):
                             e = 23
@@ -1062,7 +1062,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 #Life WORKING?!!~?!?!?!@43TUHREGAGR\\\
                 
-                elif plain[a][b][0] == 26:
+                elif e == 26:
                     if lifeIG:
                         #Now life has a few more rules that tell it that it's neighbors don't have to be it's own kind of life, but can be of different kinds of life or things that allow for life! (This should have very interesting effects)
                         l = neighborCount(miniplain,(4,8,15,21,24,26,28,31,37))
@@ -1083,7 +1083,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 #Sludge
                 
-                elif plain[a][b][0] == 27:
+                elif e == 27:
                     if random.randint(1,50) == 1:
                         if sun:
                             e = 3
@@ -1115,7 +1115,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
 
                 #Flower things
                 
-                elif plain[a][b][0] == 28:
+                elif e == 28:
                     if jam:
                         t = 1
                         continue
@@ -1158,7 +1158,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                            
                 #Oil (Pls don't take americuh)
                 
-                elif plain[a][b][0] == 29:
+                elif e == 29:
                     if random.randint(1,15) == 1:
                         if neighborCheck(miniplain,(9,30,55)):
                             e = 30
@@ -1195,7 +1195,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 #Fire
                 
-                elif plain[a][b][0] == 30:
+                elif e == 30:
                     flame = False
                     if (random.randint(1,4) == 1 or moon or jam) and t > 0:
                         if not sun:
@@ -1255,7 +1255,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 #Wood
                 
-                elif plain[a][b][0] == 31:
+                elif e == 31:
                     if coinflip():
                         if neighborCount(miniplain,(9,30,55)) > random.randint(1,5):
                             e = 32
@@ -1273,7 +1273,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 #Ash
                 
-                elif plain[a][b][0] == 32:
+                elif e == 32:
                     if random.randint(1,1000) == 1:
                         if neighborCount(miniplain,[2,11,29,32]) > 3:
                             t += random.randint(1,2)
@@ -1304,7 +1304,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 #Cloner (Yes, I went there)
                 
-                elif plain[a][b][0] == 33:
+                elif e == 33:
                     if jam:
                         t = 0
                     elif plain[a][b][1] == 0:
@@ -1322,7 +1322,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 #Clay
                 
-                elif plain[a][b][0] == 34:
+                elif e == 34:
                     if neighborCheck(miniplain,(9,30,55)):
                         e = 17
                     
@@ -1375,7 +1375,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 #VOID
                 
-                elif plain[a][b][0] == 35:
+                elif e == 35:
                     if jam:
                         continue
                     if a + 1 != len(plain) and grid[a+1][b][0] != 35:
@@ -1389,7 +1389,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 #Petal (Hidden)
                 
-                elif plain[a][b][0] == 36:
+                elif e == 36:
                     if random.randint(1,15) == 1:
                         if neighborCheck(miniplain,(9,30,55)):
                             if coinflip():
@@ -1409,7 +1409,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 #Cancer (Doesn't know how to die) (Hidden)
                 
-                elif plain[a][b][0] == 37:
+                elif e == 37:
                     if lifeIG:
                         if jam:
                             #This makes it obey Life's rules
@@ -1423,7 +1423,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 #Iron
                 
-                elif plain[a][b][0] == 38:
+                elif e == 38:
                     if random.randint(1,1000) == 1:
                         if neighborCheck(miniplain,[3,15,47]):
                             e = 44
@@ -1437,7 +1437,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 #Iron Sand
                 
-                elif plain[a][b][0] == 39:
+                elif e == 39:
                     if random.randint(1,1000) == 1:
                         if neighborCheck(miniplain,[3,15,47]):
                             e = 45
@@ -1456,7 +1456,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 #Iron Brick
                 
-                elif plain[a][b][0] == 40:
+                elif e == 40:
                     if random.randint(1,1000) == 1:
                         if neighborCheck(miniplain,[3,15,47]):
                             e = 44
@@ -1479,7 +1479,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 #Smart Remover (Based on the bacteria mod from minecraft)
                 
-                elif plain[a][b][0] == 41:
+                elif e == 41:
                     if jam:
                         t = 0
                         if random.randint(1,4) == 1:
@@ -1508,7 +1508,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 #Smart Converter (Probably my most complicated element yet since it's temprature is off the charts!)
                 
-                elif plain[a][b][0] == 42:
+                elif e == 42:
                     if jam:
                         t = 0
                         if random.randint(1,4) == 1:
@@ -1547,7 +1547,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 #Electricity
                 
-                elif plain[a][b][0] == 43:
+                elif e == 43:
                     c = sandCheck(minigrid,localPos,True)
                     if c[0] == 0 or jam:
                         grid[a][b] = [0,0]
@@ -1567,7 +1567,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 #Rusted Iron
                 
-                elif plain[a][b][0] == 44:
+                elif e == 44:
                     if random.randint(1,1000) == 1:
                         if neighborCheck(miniplain,[3,15,47]):
                             e = 45
@@ -1590,7 +1590,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 #Rust
                 
-                elif plain[a][b][0] == 45:
+                elif e == 45:
                     c = sandCheck(minigrid,localPos)
                     if c[0] == 0:
                         if e == 1:
@@ -1603,7 +1603,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 #Salt
                 
-                elif plain[a][b][0] == 46:
+                elif e == 46:
                     if neighborCheck(miniplain,(9,55)):
                         e = 55
                     c = sandCheck(minigrid,localPos)
@@ -1621,7 +1621,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 #Salt Water
                 
-                elif plain[a][b][0] == 47:
+                elif e == 47:
                     if t == 1 or jam:
                         t = 2
                     elif (neighborCheck(miniplain,[43]) or neighborTempCheck(miniplain,conductors,"==",1)[0]) and t == 0:
@@ -1663,7 +1663,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 #Salt Crystal
                 
-                elif plain[a][b][0] == 48:
+                elif e == 48:
                     if neighborCheck(miniplain,(9,55)):
                         e = 55
                     elif random.randint(1,5000) == 1:
@@ -1685,7 +1685,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 #leaf
                 
-                elif plain[a][b][0] == 49:
+                elif e == 49:
                     
                     if neighborCheck(miniplain,(9,30,55)):
                         if coinflip():
@@ -1718,7 +1718,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 #Antisand
                 
-                elif plain[a][b][0] == 51:
+                elif e == 51:
                     c = sandCheck(minigrid,localPos,False,True)
                     if c[0] == 0:
                         grid[a][b] = [e,t]
@@ -1729,7 +1729,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 #Antistone
                 
-                elif plain[a][b][0] == 52:
+                elif e == 52:
                     c = stoneCheck(minigrid,localPos,False,True)
                     if not c[0]:
                         grid[a][b] = [c[1],0]
@@ -1739,7 +1739,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 #Antiwater
                 
-                elif plain[a][b][0] == 53:
+                elif e == 53:
                     c = sandCheck(minigrid,localPos,True,True)
                     if c[0] == 0:
                         d = lrWanderCheck(minigrid,localPos,False,True,True)
@@ -1762,7 +1762,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                         grid[a-1][b+(c[0]-2)] = [e,t]
                 
                 #IDENTITY NOT FOUND =( https://www.youtube.com/watch?v=4bLf2wDJA5s
-                elif plain[a][b][0] == 54:
+                elif e == 54:
                     
                     idk = random.randint(1,6)
                     t = idk
@@ -1904,7 +1904,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 #Jammer
                 
-                elif plain[a][b][0] == 50:
+                elif e == 50:
                     t += 1
                     if t <= 50:
                         grid[a][b] = [e,t]
@@ -1913,7 +1913,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
 
                 #Molten Salt (Yes, it's a thing)
                 
-                elif plain[a][b][0] == 55:
+                elif e == 55:
                     if t == 1 or jam:
                         t = 2
                     elif (neighborCheck(miniplain,[43]) or neighborTempCheck(miniplain,conductors,"==",1)[0]) and t == 0:
@@ -2255,193 +2255,195 @@ while breaking:
     screen.fill((0,0,0))
     for i in range(len(land)):
         for j in range(len(land[0])):
-            if land[i][j][0] == 1:
+            el = land[i][j][0]
+            et = land[i][j][1]
+            if el == 1:
                 pygame.draw.rect(screen,(255,255,0),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 2:
+            elif el == 2:
                 pygame.draw.rect(screen,(150,150,150),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 3:
+            elif el == 3:
                 pygame.draw.rect(screen,(0,0,255),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 4:
+            elif el == 4:
                 pygame.draw.rect(screen,(250,250,250),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 5:
+            elif el == 5:
                 pygame.draw.rect(screen,(100,100,100),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 6:
+            elif el == 6:
                 pygame.draw.rect(screen,(200,100,50),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 7:
+            elif el == 7:
                 pygame.draw.rect(screen,(150,50,10),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 8:
+            elif el == 8:
                 pygame.draw.rect(screen,(0,255,0),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 9:
-                cool = 200+land[i][j][1]*10+random.randint(0,50)
+            elif el == 9:
+                cool = 200+et*10+random.randint(0,50)
                 if cool > 255:
                     cool = 255
                 elif cool < 0:
                     cool = 0
                 pygame.draw.rect(screen,(cool,random.randint(0,50),0),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 10:
+            elif el == 10:
                 pygame.draw.rect(screen,(200,200,50),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 11:
+            elif el == 11:
                 pygame.draw.rect(screen,(200,200,200),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 12:
+            elif el == 12:
                 pygame.draw.rect(screen,(30,20,40),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 13:
+            elif el == 13:
                 pygame.draw.rect(screen,(128,200,255),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 14:
+            elif el == 14:
                 pygame.draw.rect(screen,(0,255,255),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 15:
+            elif el == 15:
                 pygame.draw.rect(screen,(0,128,255),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 16:
+            elif el == 16:
                 pygame.draw.rect(screen,(230,230,230),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 17:
+            elif el == 17:
                 pygame.draw.rect(screen,(150,90,60),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 18:
+            elif el == 18:
                 pygame.draw.rect(screen,(0,128,0),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 19:
-                random.seed(land[i][j][1])
+            elif el == 19:
+                random.seed(et)
                 pygame.draw.rect(screen,(random.randint(0,50),50+random.randint(0,200),100+random.randint(0,150)),(j*landyx,i*landyy,landyx,landyy))
                 random.seed()
-            elif land[i][j][0] == 20:
+            elif el == 20:
                 pygame.draw.rect(screen,(255,255,128),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 21:
+            elif el == 21:
                 pygame.draw.rect(screen,(10,60,180),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 22:
+            elif el == 22:
                 pygame.draw.rect(screen,(240,250,255),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 23:
+            elif el == 23:
                 pygame.draw.rect(screen,(200,255,255),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 24:
+            elif el == 24:
                 pygame.draw.rect(screen,(240,220,255),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 25:
+            elif el == 25:
                 pygame.draw.rect(screen,(100,200,230),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 26:
+            elif el == 26:
                 pygame.draw.rect(screen,(255,255,255),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 27:
+            elif el == 27:
                 pygame.draw.rect(screen,(170,210,250),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 28:
-                if land[i][j][1] == 0:
+            elif el == 28:
+                if et == 0:
                     pygame.draw.rect(screen,(40,20,10),(j*landyx,i*landyy,landyx,landyy))
                 else:
                     pygame.draw.rect(screen,(0,255,0),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 29:
+            elif el == 29:
                 pygame.draw.rect(screen,(24,24,24),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 30:
-                pygame.draw.rect(screen,(random.randint(150,200+land[i][j][1]*10),random.randint(50,100+land[i][j][1]*random.randint(20,30)),0),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 31:
+            elif el == 30:
+                pygame.draw.rect(screen,(random.randint(150,200+et*10),random.randint(50,100+et*random.randint(20,30)),0),(j*landyx,i*landyy,landyx,landyy))
+            elif el == 31:
                 pygame.draw.rect(screen,(140,70,30),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 32:
-                cool = 100-land[i][j][1]//2
+            elif el == 32:
+                cool = 100-et//2
                 pygame.draw.rect(screen,(cool,cool,cool),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 33:
+            elif el == 33:
                 cool = 0
-                if land[i][j][1] != 0:
+                if et != 0:
                     cool = 100+random.randint(-20,20)
                 pygame.draw.rect(screen,(100+cool,cool//2,255),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 34:
+            elif el == 34:
                 pygame.draw.rect(screen,(160,170,180),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 35:
+            elif el == 35:
                 pygame.draw.rect(screen,(10,10,10),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 36:
+            elif el == 36:
                 colour = (255,255,255)
-                if land[i][j][1] == 1:
+                if et == 1:
                     colour = (255,0,0)
-                elif land[i][j][1] == 2:
+                elif et == 2:
                     colour = (255,128,0)
-                elif land[i][j][1] == 3:
+                elif et == 3:
                     colour = (255,255,0)
-                elif land[i][j][1] == 4:
+                elif et == 4:
                     colour = (128,255,0)
-                elif land[i][j][1] == 5:
+                elif et == 5:
                     colour = (0,255,0)
-                elif land[i][j][1] == 6:
+                elif et == 6:
                     colour = (0,255,128)
-                elif land[i][j][1] == 7:
+                elif et == 7:
                     colour = (255,255,255)
-                elif land[i][j][1] == 8:
+                elif et == 8:
                     colour = (0,128,255)
-                elif land[i][j][1] == 9:
+                elif et == 9:
                     colour = (0,0,255)
-                elif land[i][j][1] == 8:
+                elif et == 8:
                     colour = (128,0,255)
-                elif land[i][j][1] == 9:
+                elif et == 9:
                     colour = (255,0,255)
-                elif land[i][j][1] == 10:
+                elif et == 10:
                     colour = (128,0,255)
-                elif land[i][j][1] == 11:
+                elif et == 11:
                     colour = (128,128,128)
                 pygame.draw.rect(screen,colour,(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 37:
+            elif el == 37:
                 pygame.draw.rect(screen,(random.randint(0,250),random.randint(0,100),random.randint(150,250)),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 38:
-                if land[i][j][1] == 1:
+            elif el == 38:
+                if et == 1:
                     pygame.draw.rect(screen,(255,255,20),(j*landyx,i*landyy,landyx,landyy))
                 else:
                     pygame.draw.rect(screen,(180,180,170),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 39:
-                if land[i][j][1] == 1:
+            elif el == 39:
+                if et == 1:
                     pygame.draw.rect(screen,(255,255,20),(j*landyx,i*landyy,landyx,landyy))
                 else:
                     pygame.draw.rect(screen,(200,200,190),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 40:
-                if land[i][j][1] == 1:
+            elif el == 40:
+                if et == 1:
                     pygame.draw.rect(screen,(255,255,20),(j*landyx,i*landyy,landyx,landyy))
                 else:
                     pygame.draw.rect(screen,(200,200,150),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 41:
+            elif el == 41:
                 cool = 0
-                if land[i][j][1] != 0:
+                if et != 0:
                     cool = random.randint(-20,20)
                 pygame.draw.rect(screen,(100,20+cool//2,240),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 42:
+            elif el == 42:
                 cool = 0
-                if land[i][j][1] != 0:
+                if et != 0:
                     cool = random.randint(-50,50)
                 pygame.draw.rect(screen,(200+cool,50+cool,50+cool),(j*landyx,i*landyy,landyx,landyy))
             
-            elif land[i][j][0] == 43:
+            elif el == 43:
                 if coinflip():
                     pygame.draw.rect(screen,(255,255,0),(j*landyx,i*landyy,landyx,landyy))
                 else:
                     pygame.draw.rect(screen,(255,255,128),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 44:
+            elif el == 44:
                 pygame.draw.rect(screen,(180,130,100),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 45:
+            elif el == 45:
                 pygame.draw.rect(screen,(60,30,15),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 46:
+            elif el == 46:
                 pygame.draw.rect(screen,(255,255,255),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 47:
+            elif el == 47:
                 pygame.draw.rect(screen,(128,128,255),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 48:
+            elif el == 48:
                 pygame.draw.rect(screen,(200,230,255),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 49:
+            elif el == 49:
                 pygame.draw.rect(screen,(0,150,0),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 50:
+            elif el == 50:
                 if fliposwitch:
                     pygame.draw.rect(screen,(255,255,255),(j*landyx,i*landyy,landyx,landyy))
                 else:
                     pygame.draw.rect(screen,(255,0,0),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 51:
+            elif el == 51:
                 pygame.draw.rect(screen,(0,0,255),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 52:
+            elif el == 52:
                 pygame.draw.rect(screen,(105,105,105),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 53:
+            elif el == 53:
                 pygame.draw.rect(screen,(255,255,0),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 54:
-                if land[i][j][1] == 1:
+            elif el == 54:
+                if et == 1:
                     pygame.draw.rect(screen,(255,255,0),(j*landyx,i*landyy,landyx,landyy))
-                elif land[i][j][1] == 2:
+                elif et == 2:
                     pygame.draw.rect(screen,(150,150,150),(j*landyx,i*landyy,landyx,landyy))
-                elif land[i][j][1] == 3:
+                elif et == 3:
                     pygame.draw.rect(screen,(0,0,255),(j*landyx,i*landyy,landyx,landyy))
-                elif land[i][j][1] == 4:
+                elif et == 4:
                     pygame.draw.rect(screen,(250,250,250),(j*landyx,i*landyy,landyx,landyy))
-                elif land[i][j][1] == 5:
+                elif et == 5:
                     pygame.draw.rect(screen,(100,100,100),(j*landyx,i*landyy,landyx,landyy))
-                elif land[i][j][1] == 6:
+                elif et == 6:
                     pygame.draw.rect(screen,(200,100,50),(j*landyx,i*landyy,landyx,landyy))
                 else:
                     pygame.draw.rect(screen,(255,0,255),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] == 55:
+            elif el == 55:
                 pygame.draw.rect(screen,(255,200+random.randint(0,55),200+random.randint(0,55)),(j*landyx,i*landyy,landyx,landyy))
-            elif land[i][j][0] != 0:
+            elif el != 0:
                 pygame.draw.rect(screen,(255,0,255),(j*landyx,i*landyy,landyx,landyy))
     if not alive:
         live = False
