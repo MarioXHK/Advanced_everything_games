@@ -2384,7 +2384,7 @@ while breaking:
                 land = [[[0,0] for _ in range(landx)] for i in range(landy)]
                 for u in range(10):
                     land[u] = [[15,0] for _ in range(landx)]
-            elif event.key == pygame.K_HOME:
+            elif event.key == pygame.K_END:
                 land = [[[0,0] for _ in range(landx)] for i in range(landy)]
                 for u in range(10):
                     land[u] = [[9,0] for _ in range(landx)]
@@ -2907,7 +2907,7 @@ while breaking:
             elif el == 63:
                 pygame.draw.rect(screen,(130,80,60),(j*landyx,i*landyy,landyx,landyy))
             elif el == 64:
-                pygame.draw.rect(screen,(220,250,220),(j*landyx,i*landyy,landyx,landyy))
+                pygame.draw.rect(screen,(170,250,190),(j*landyx,i*landyy,landyx,landyy))
             elif el == 65:
                 pygame.draw.rect(screen,(0,255,0),(j*landyx,i*landyy,landyx,landyy))
             elif el == 66:
