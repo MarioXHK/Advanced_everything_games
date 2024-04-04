@@ -4,12 +4,16 @@ showfps = False
 usesavefolder = False
 #the setting that controls if you'd like to do life or not (Experimental sorta)
 werealsodoinglife = False
+eyedropper = False
+
+oob = 0
 
 import pygame
 from pygame import Vector2
 #WHY DOES YOU NOT EVEN THE AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 from copy import deepcopy
 import random
+import time
 
 #How large the screen is
 screenx = 600
@@ -2201,7 +2205,8 @@ def remindMe() -> None:
     print("G: Snow  H: Ice  J: Sugar Crystal  K: Sapling  L: Life particle (think the game of life, If turned off it will just be random)")
     print("Z: Electricity  X: Flower Seed  C: Oil  V: Fire  B: Wood  N: Jammer (Screws stuff up)  M: Cloner  S: Glass shards  D: Sun  F: Moon")
     print("Left click to place down the element, Right click to use the eraser. You will have to discover the rest of the elements on your own through trial and error :)")
-    print("To start the sandbox, press Ctrl. To go a single step in the sandbox, press Space.\nTo clear the sandbox, press the left Alt key. To clear the sandbox and have there be an ocean, hit the right Alt key.\nIf you want it to be lava, hit the Del key. Sugar water ocean? Right Ctrl.\nTo activate the game of life and all it's whimsy, press the CAPS LOCK key. To get an element that's not on this list, press the Right Shift key then enter the element's ID (number) in the console.\nTo change the brush size, hit up to grow it, hit down to shrink it.")
+    print("To get an element that's not on this list, press the Right Shift key then enter the element's ID (number) in the console.\nAlternatively, you can eyedrop (copy) an element from the sandbox by pressing period")
+    print("To start the sandbox, press Ctrl. To go a single step in the sandbox, press Space.\nTo clear the sandbox, press the left Alt key. To clear the sandbox and have there be an ocean, hit the right Alt key.\nIf you want it to be lava, hit the Del key. Sugar water ocean? Right Ctrl.\nTo activate the game of life and all it's whimsy, press the CAPS LOCK key. To change the brush size, hit up to grow it, hit down to shrink it.")
     print("To save your sandbox, press either enter key. To load a sandbox, press the 0 key. To show this again, hit backspace")
 
 remindMe()
@@ -2355,14 +2360,20 @@ while breaking:
                         print("Set to an unknown element:", element)
                 except:
                     print("THAT'S NOT A VALID NUMBER FOR AN ELEMENT!!!")
+            elif event.key == pygame.K_PERIOD:
+                eyedropper = True
+                print("Pick an element from the sandbox to copy")
+                alive = False
+            
+            
             #The ultimate thing: SAVING!
             elif event.key == pygame.K_KP_ENTER or event.key == pygame.K_RETURN:
                 alive = False
                 print("What would you like to name your file? (If it's a save that already exists, it will override the save)")
                 filename = input()
                 legal = True
-                for char in filename:
-                    if char in illegals:
+                for char in illegals:
+                    if char in filename:
                         print("File cannot contain an illegal character!", illegals)
                         legal = False
                         break
@@ -2398,8 +2409,8 @@ while breaking:
                 print("What file would you like to load?")
                 filename = input()
                 legal = True
-                for char in filename:
-                    if char in illegals:
+                for char in illegals:
+                    if char in filename:
                         print("File cannot contain an illegal character!", illegals)
                         legal = False
                         break
@@ -2483,20 +2494,31 @@ while breaking:
             for m in range(0-brushsize,1+brushsize):
                 t = 0
                 try:
-                    if element == 13 or element == 30 or element == 56:
-                        t = 5
-                    elif element == 19:
-                        t = random.randint(0,255)
-                    elif element == 54:
-                        t = random.randint(1,6)
-                    elif element == 61:
-                        t = 2
-                    if ice:
-                        land[y+l][x+m] = [0,t]
+                    if eyedropper:
+                        element = land[y+l][x+m][0]
+                        print("Copied", end = " ")
+                        eyedropper = False
+                        try:
+                            print(elementNames[element], end = " ")
+                        except:
+                            print("An unknown element", end = " ")
+                        print("from the sandbox. (ID:", str(element)+")")
+                        time.sleep(0.5)#To assure you don't accidentally screw something up (I had to import an entire library here just for this one command ;w;)
                     else:
-                        land[y+l][x+m] = [element,t]
+                        if element == 13 or element == 30 or element == 56:
+                            t = 5
+                        elif element == 19:
+                            t = random.randint(0,255)
+                        elif element == 54:
+                            t = random.randint(1,6)
+                        elif element == 61:
+                            t = 2
+                        if ice:
+                            land[y+l][x+m] = [0,t]
+                        else:
+                            land[y+l][x+m] = [element,t]
                 except IndexError:
-                    print("oob!", end = " ")
+                    oob += 1
 
     fire = False
     screen.fill((0,0,0))
@@ -2726,3 +2748,20 @@ while breaking:
     pygame.display.flip()
 pygame.quit()
 print("Process exit with code: \"Pee pee poo poo caca do do fart we wa woooooo\"")
+print("You went out of bounds", oob, "times!")
+if oob == 0:
+    print("Good job!")
+elif oob < 10:
+    print("Almost good")
+elif oob < 20:
+    print("Pls do better uwu")
+elif oob < 50:
+    print("Trace in the screen next time!!")
+elif oob < 100:
+    print("You can only draw in the screen, please don't make me remind you again!")
+elif oob < 1000:
+    print("Please stop going out of bounds so much, it's annoying")
+elif oob < 1000000:
+    print("Please remain inside these boundaries.")
+else:
+    print("Are you trying to enter the backrooms or something???")
