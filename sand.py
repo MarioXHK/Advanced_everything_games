@@ -104,7 +104,9 @@ elementNames = {
     58:"Gold",
     59:"Covered Wire",
     60:"Strange Matter",
-    61:"Shockwave"
+    61:"Shockwave",
+    62:"Sapling",
+    63:"Broken Brick"
 }
 
 #File Variables
@@ -348,7 +350,7 @@ def lrCheck(plain: list[list[int]],posx: int, idcIfUnsupportable: bool = False) 
     if len(plain) == 1 or len(plain) == 2:
         return False
 
-    unsupportable = (0,1,3,4,6,8,9,10,11,13,15,16,18,19,22,23,27,28,29,30,32,35,36,39,43,45,46,47,51,53,55)
+    unsupportable = (0,1,3,4,6,8,9,10,11,13,15,16,18,19,22,23,27,28,29,30,32,35,36,39,43,45,46,47,51,53,55,56,60,61,63)
     if idcIfUnsupportable:
         unsupportable = [0]
     if plain[posx-1][0] in unsupportable or plain[posx+1][0] in unsupportable:
@@ -363,7 +365,7 @@ def checkEverywhere(grid: list[list[list[int]]], thing) -> bool:
     return False
 
 def randomelement(randTemp:bool = True) -> list[int]:
-    e = random.randint(0,55)
+    e = random.randint(0,63)
     t = 0
     if randTemp:
         if e == 30:
@@ -402,7 +404,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
     requireminip = tuple(requireminip)
     
     #The tuple that holds the elements that are required to have a mini grid map
-    requireminig = (1,2,3,4,6,7,8,9,10,11,12,13,14,15,16,17,18,19,22,23,24,25,27,28,29,30,32,34,36,39,40,41,42,43,44,45,46,47,48,49,51,52,53,54,55,56,57,58,60,62)
+    requireminig = (1,2,3,4,6,7,8,9,10,11,12,13,14,15,16,17,18,19,22,23,24,25,27,28,29,30,32,34,36,39,40,41,42,43,44,45,46,47,48,49,51,52,53,54,55,56,57,58,60,62,63)
     
     conductors = (38,39,40,44,47,55,58,59)
     #Self explanitory
@@ -897,15 +899,19 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 #Brick
                 
                 elif e == 17:
+                    if coinflip():
+                        if neighborCheck(miniplain,[61]):
+                            e = 63
                     o = lrCheck(miniplain[localPos[0]],localPos[1])
                     if o:
+                        grid[a][b] = [e,t]
                         continue
                     c = stoneCheck(minigrid,localPos)
                     if not c[0]:
                         grid[a][b] = [c[1],0]
-                        grid[a+1][b] = [e,0]
+                        grid[a+1][b] = [e,t]
                     else:
-                        continue
+                        grid[a][b] = [e,t]
                 
                 #Algae
                 
@@ -1219,7 +1225,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                         else:
                             if coinflip():
                                 t -= 1
-                    if neighborCheck(miniplain,(4,8,15,18,20,24,28,29,31)):
+                    if neighborCheck(miniplain,(4,8,15,18,20,24,28,29,31,36,49,53,57)):
                         if moon:
                             if (coinflip() or sun) and t < 2:
                                 t = 2
@@ -2186,6 +2192,15 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                         if b - 1 != -1 and grid[a][b-1][0] == 0:
                             grid[a][b-1] = [49,0]
                 
+                #Broken Brick
+                
+                elif e == 63:
+                    c = stoneCheck(minigrid,localPos)
+                    if not c[0]:
+                        grid[a][b] = [c[1],0]
+                        grid[a+1][b] = [e,t]
+                    else:
+                        grid[a][b] = [e,t]
                 
                 
             except IndexError:
@@ -2512,7 +2527,7 @@ while breaking:
                         elif element == 54:
                             t = random.randint(1,6)
                         elif element == 61:
-                            t = 2
+                            t = 3
                         if ice:
                             land[y+l][x+m] = [0,t]
                         else:
@@ -2740,6 +2755,8 @@ while breaking:
                     pygame.draw.rect(screen,(32,24,16),(j*landyx,i*landyy,landyx,landyy))
                 else:
                     pygame.draw.rect(screen,(140,70,30),(j*landyx,i*landyy,landyx,landyy))
+            elif el == 63:
+                pygame.draw.rect(screen,(130,80,60),(j*landyx,i*landyy,landyx,landyy))
             
             elif el != 0:
                 pygame.draw.rect(screen,(255,0,255),(j*landyx,i*landyy,landyx,landyy))
