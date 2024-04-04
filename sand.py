@@ -191,9 +191,9 @@ def sandCheck(grid: list[list[list[int]]],pos: list[int] | tuple[int], floats: b
     under = True
     if not floats:
         if gas:
-            b = [0,1,3,4,6,8,9,11,15,27,28,32,34,45,46,47]
+            b = [0,1,3,4,6,8,9,11,15,27,28,32,34,45,46,47,56]
         else:
-            b = [0,3,15,27,29,34,47]
+            b = [0,3,15,27,29,34,47,56]
         if grid[pos[0]][pos[1]][1] in b:
             b.remove(grid[pos[0]][pos[1]][1])
         b = tuple(b)
@@ -239,9 +239,9 @@ def stoneCheck(grid: list[list[list[int]]],pos: list[int] | tuple[int], floats: 
     b = (0,0)
     if not floats:
         if gas:
-            b = [0,1,3,4,6,8,9,11,15,27,28,32,34,45,46,47]
+            b = [0,1,3,4,6,8,9,11,15,27,28,32,34,45,46,47,56]
         else:
-            b = [0,3,15,27,29,34,47]
+            b = [0,3,15,27,29,34,47,56]
         if grid[pos[0]][pos[1]][1] in b:
             b.remove(grid[pos[0]][pos[1]][1])
         b = tuple(b)
@@ -256,7 +256,7 @@ def stoneCheck(grid: list[list[list[int]]],pos: list[int] | tuple[int], floats: 
 def lrWanderCheck(grid: list[list[list[int]]],pos: list[int] | tuple[int], floaty: bool = False, waterlike: bool = False, reverse: bool = False) -> tuple[bool,bool,int]:
     b = (0,0)
     if waterlike:
-        b = [0,3,15,27,29,34,47]
+        b = [0,3,15,27,29,34,47,56]
         if grid[pos[0]][pos[1]][1] in b:
             b.remove(grid[pos[0]][pos[1]][1])
         b = tuple(b)
@@ -309,7 +309,7 @@ def lrWanderCheck(grid: list[list[list[int]]],pos: list[int] | tuple[int], float
 def udWanderCheck(grid: list[list[list[int]]],pos: list[int] | tuple[int], waterlike: bool = False) -> tuple[bool,bool,int]:
     b = (0,0)
     if waterlike:
-        b = [3,15,27,29,34,47]
+        b = [3,15,27,29,34,47,56]
         if grid[pos[0]][pos[1]][1] in b:
             b.remove(grid[pos[0]][pos[1]][1])
         b = tuple(b)
@@ -642,7 +642,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 elif e == 7:
                     if random.randint(1,400) == 1:
-                        if neighborCheck(miniplain,[8]) and sun:
+                        if sun and neighborCheck(miniplain,[8]):
                             e = 8
                     if neighborCheck(miniplain,(9,30,55)):
                         e = 6
@@ -650,7 +650,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                         if neighborCheck(miniplain,(46,47,48)):
                             e = 6
                     elif random.randint(1,40) == 1:
-                        if sun and neighborCount(miniplain,(3,10,7,15,27) < 6):
+                        if sun and neighborCount(miniplain,(3,10,7,15,27)) < 3:
                             e = 6
                     if random.randint(1,5000) == 1:
                         if neighborCheck(miniplain,[18]):
@@ -734,7 +734,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                         if neighborCheck(miniplain,(46,47,48)):
                             e = 1
                     elif random.randint(1,40) == 1:
-                        if sun and neighborCount(miniplain,(3,10,7,15,27) < 6):
+                        if sun and neighborCount(miniplain,(3,10,7,15,27)) < 3:
                             e = 1
                     else:
                         n = neighborTempCheck(miniplain,[14])
