@@ -3,8 +3,6 @@
 showfps = False
 usesavefolder = False
 #the setting that controls if you'd like to do life or not (Experimental sorta)
-werealsodoinglife = False
-eyedropper = False
 
 oob = 0
 
@@ -38,6 +36,8 @@ landy = 45
 land = [[[0,0] for _ in range(landx)] for i in range(landy)]
 landyx = (screenx/landx)
 landyy = (screeny/landy)
+
+#Element Variables
 
 element = 1
 brushsize = 0
@@ -108,6 +108,12 @@ elementNames = {
     62:"Sapling",
     63:"Broken Brick"
 }
+
+werealsodoinglife = False
+eyedropper = False
+dither = False
+elementary = False
+elements = []
 
 #File Variables
 illegals = ('\\','//',':','*','?','"','<','>','|')
@@ -643,6 +649,9 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                     elif random.randint(1,100) == 1:
                         if neighborCheck(miniplain,(46,47,48)):
                             e = 6
+                    elif random.randint(1,40) == 1:
+                        if sun and neighborCount(miniplain,(3,10,7,15,27) < 6):
+                            e = 6
                     if random.randint(1,5000) == 1:
                         if neighborCheck(miniplain,[18]):
                             e = 18
@@ -723,6 +732,9 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                         t = 1
                     elif random.randint(1,100) == 1:
                         if neighborCheck(miniplain,(46,47,48)):
+                            e = 1
+                    elif random.randint(1,40) == 1:
+                        if sun and neighborCount(miniplain,(3,10,7,15,27) < 6):
                             e = 1
                     else:
                         n = neighborTempCheck(miniplain,[14])
@@ -2219,9 +2231,9 @@ def remindMe() -> None:
     print("Q: Iron  W: Gravel  E: Obsidian  R: Steam  T: Glass  Y: Salt  U: Cloud  I: Brick O: Clay  P: Void  A: Algae")
     print("G: Snow  H: Ice  J: Sugar Crystal  K: Sapling  L: Life particle (think the game of life, If turned off it will just be random)")
     print("Z: Electricity  X: Flower Seed  C: Oil  V: Fire  B: Wood  N: Jammer (Screws stuff up)  M: Cloner  S: Glass shards  D: Sun  F: Moon")
-    print("Left click to place down the element, Right click to use the eraser. You will have to discover the rest of the elements on your own through trial and error :)")
+    print("Left click to place down the element, Right click to use the eraser. You will have to discover the rest of the elements on your own through trial and error :)\nTo do multiple elements with a brush, press the comma for it to be random of some elements. To dither the brush, press the slash key.")
     print("To get an element that's not on this list, press the Right Shift key then enter the element's ID (number) in the console.\nAlternatively, you can eyedrop (copy) an element from the sandbox by pressing period")
-    print("To start the sandbox, press Ctrl. To go a single step in the sandbox, press Space.\nTo clear the sandbox, press the left Alt key. To clear the sandbox and have there be an ocean, hit the right Alt key.\nIf you want it to be lava, hit the Del key. Sugar water ocean? Right Ctrl.\nTo activate the game of life and all it's whimsy, press the CAPS LOCK key. To change the brush size, hit up to grow it, hit down to shrink it.")
+    print("To start the sandbox, press Ctrl. To go a single step in the sandbox, press Space.\nTo clear the sandbox, press the left Alt key. To clear the sandbox and have there be an ocean, hit the right Alt key.\nThere are several other kinds of oceans that can be created on the right hand side of the keyboard by pressing it's buttons.\nTo activate the game of life and all it's whimsy, press the CAPS LOCK key. To change the brush size, hit up to grow it, hit down to shrink it.")
     print("To save your sandbox, press either enter key. To load a sandbox, press the 0 key. To show this again, hit backspace")
 
 remindMe()
@@ -2269,7 +2281,7 @@ while breaking:
                 land = [[[0,0] for _ in range(landx)] for i in range(landy)]
                 for u in range(10):
                     land[u] = [[9,0] for _ in range(landx)]
-            elif event.key == pygame.K_SLASH:
+            elif event.key == pygame.K_HOME:
                 land = [[[0,0] for _ in range(landx)] for i in range(landy)]
                 for u in range(10):
                     land[u] = [[29,0] for _ in range(landx)]
@@ -2294,6 +2306,27 @@ while breaking:
                 else:
                     werealsodoinglife = True
                     print("Doing life")
+            elif event.key == pygame.K_SLASH:
+                if dither:
+                    dither = False
+                else:
+                    dither = True
+            elif event.key == pygame.K_COMMA:
+                if elementary:
+                    elementary = False
+                else:
+                    elementary = True
+                    elements = []
+                    print("Please choose the elements you want to do. To stop choosing, say something other than an int")
+                    try:
+                        while True:
+                            elements.append(int(input()))
+                    except ValueError:
+                        elements = tuple(elements)
+                        print("Brush now has elements", elements)
+                    if len(elements) == 0:
+                        print("HEY! YOU FORGOT TO DO ELEMENTS! (Defaulting to what you did last time)")
+                        elementary = False
             elif event.key == pygame.K_1:
                 element = 1
             elif event.key == pygame.K_2:
@@ -2520,18 +2553,21 @@ while breaking:
                         print("from the sandbox. (ID:", str(element)+")")
                         time.sleep(0.5)#To assure you don't accidentally screw something up (I had to import an entire library here just for this one command ;w;)
                     else:
-                        if element == 13 or element == 30 or element == 56:
-                            t = 5
-                        elif element == 19:
-                            t = random.randint(0,255)
-                        elif element == 54:
-                            t = random.randint(1,6)
-                        elif element == 61:
-                            t = 3
-                        if ice:
-                            land[y+l][x+m] = [0,t]
-                        else:
-                            land[y+l][x+m] = [element,t]
+                        if (not dither) or random.randint(1,5) == 1:
+                            if ice:
+                                land[y+l][x+m] = [0,0]
+                            else:
+                                if elementary:
+                                    element = random.choice(elements)
+                                if element == 13 or element == 30 or element == 56:
+                                    t = 5
+                                elif element == 19:
+                                    t = random.randint(0,255)
+                                elif element == 54:
+                                    t = random.randint(1,6)
+                                elif element == 61:
+                                    t = 3
+                                land[y+l][x+m] = [element,t]
                 except IndexError:
                     oob += 1
 
@@ -2768,15 +2804,15 @@ print("Process exit with code: \"Pee pee poo poo caca do do fart we wa woooooo\"
 print("You went out of bounds", oob, "times!")
 if oob == 0:
     print("Good job!")
-elif oob < 10:
-    print("Almost good")
-elif oob < 20:
-    print("Pls do better uwu")
-elif oob < 50:
-    print("Trace in the screen next time!!")
 elif oob < 100:
-    print("You can only draw in the screen, please don't make me remind you again!")
+    print("Almost good")
+elif oob < 200:
+    print("Pls do better uwu")
+elif oob < 500:
+    print("Trace in the screen next time!!")
 elif oob < 1000:
+    print("You can only draw in the screen, please don't make me remind you again!")
+elif oob < 10000:
     print("Please stop going out of bounds so much, it's annoying")
 elif oob < 1000000:
     print("Please remain inside these boundaries.")
