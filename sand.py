@@ -373,7 +373,7 @@ def checkEverywhere(grid: list[list[list[int]]], thing) -> bool:
     return False
 
 def randomelement(randTemp:bool = True) -> list[int]:
-    e = random.randint(0,65)
+    e = random.randint(0,66)
     t = 0
     if randTemp:
         if e in (30,49):
@@ -405,7 +405,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
     #I'll take my small victories in optimization where I can
     
     #The tuple that holds the elements that are required to have a mini plane map
-    requireminip = [1,2,3,4,6,7,8,9,10,14,15,16,17,18,19,22,23,24,25,27,28,29,30,31,32,33,34,36,38,39,40,41,42,44,45,46,47,48,49,54,55,58,59,62,65]
+    requireminip = [1,2,3,4,6,7,8,9,10,14,15,16,17,18,19,22,23,24,25,27,28,29,30,31,32,33,34,36,38,39,40,41,42,44,45,46,47,48,49,54,55,56,58,59,62,65]
     if lifeIG:
         requireminip.append(0)
         requireminip.append(26)
@@ -883,7 +883,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                             e = 3
                     elif neighborCount(miniplain,[56]) > 6:
                         e = 64
-                        t = 20
+                        t = 15
                     if random.randint(1,20) == 1:
                         if random.randint(1,4) != 1:
                             d = lrWanderCheck(minigrid,localPos, True)
@@ -2003,6 +2003,12 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                         t -= 1
                     if t <= 0:
                         e = 0
+                    else:
+                        o = neighborTempCheck(miniplain,[56], ">", 5)
+                        oo = neighborTempCheck(miniplain,[56], ">", 10)
+                        if (not (moon or oo[0])) and ((not sun and random.randint(1,70000) == 1) or (sun and random.randint(1,7000) == 1)) and neighborCount(miniplain,[56]) >= 8 and o[0]:
+                            e = 64
+                            t = 15
                     c = sandCheck(minigrid,localPos,False,True,True)
                     if c[0] == 0:
                         d = lrWanderCheck(minigrid,localPos,False,False,True)
@@ -2016,7 +2022,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                             else:
                                 grid[a][b-1] = [e,t]
                     else:
-                        grid[a][b] = [c[1],t]
+                        grid[a][b] = [c[1],0]
                         if c[0] == 2:
                             d = lrWanderCheck(minigrid,localPos,True,False,True)
                             if not d[0]:
