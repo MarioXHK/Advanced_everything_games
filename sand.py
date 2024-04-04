@@ -623,7 +623,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 elif e == 6:
                     if random.randint(1,900) == 1:
-                        if neighborCheck(miniplain,[8]) and sun:
+                        if sun and neighborCheck(miniplain,[8]) and neighborCount(miniplain,[8]) < 2:
                             e = 8
                     if random.randint(1,100) == 1:
                         if neighborCheck(miniplain,[3]):
@@ -642,7 +642,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 elif e == 7:
                     if random.randint(1,400) == 1:
-                        if sun and neighborCheck(miniplain,[8]):
+                        if sun and neighborCheck(miniplain,[8]) and neighborCount(miniplain,[8]) < 4:
                             e = 8
                     if neighborCheck(miniplain,(9,30,55)):
                         e = 6
