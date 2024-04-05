@@ -17,12 +17,12 @@ import time
 
 usesavefolder = True
 if usesavefolder:
-    print("Using the sandsaves as a save directory")
+    print("Using the sandsaves folder as a save directory")
     try:
         os.mkdir('sandsaves')
-        print("Save folder made automatically!")
+        print("sandsave folder made automatically!")
     except:
-        print("Save folder already in place (yippee!)")
+        print("sandsave folder already in place (yippee!)")
 
 pygame.init()
 screen = pygame.display.set_mode((10,10))
