@@ -108,7 +108,12 @@ elementNames = {
     62:"Sapling",
     63:"Broken Brick",
     64:"Acid Cloud",
-    65:"Acid"
+    65:"Acid",
+    66:"Acid Sludge",
+    67:"Explosion",
+    68:"TNT",
+    69:"C4",
+    70:"Nuke"
 }
 
 werealsodoinglife = False
@@ -357,10 +362,11 @@ def lrCheck(plain: list[list[int]],posx: int, idcIfUnsupportable: bool = False) 
     
     if len(plain) == 1 or len(plain) == 2:
         return False
-
-    unsupportable = (0,1,3,4,6,8,9,10,11,13,15,16,18,19,22,23,27,28,29,30,32,35,36,39,43,45,46,47,51,53,55,56,60,61,63)
     if idcIfUnsupportable:
         unsupportable = [0]
+    else:
+        unsupportable = (0,1,3,4,6,8,9,10,11,13,15,16,18,19,22,23,27,28,29,30,32,35,36,39,43,45,46,47,51,53,55,56,60,61,62,63,64,65,66,67)
+    
     if plain[posx-1][0] in unsupportable or plain[posx+1][0] in unsupportable:
         return False
     return True
@@ -373,7 +379,7 @@ def checkEverywhere(grid: list[list[list[int]]], thing) -> bool:
     return False
 
 def randomelement(randTemp:bool = True) -> list[int]:
-    e = random.randint(0,66)
+    e = random.randint(0,70)
     t = 0
     if randTemp:
         if e in (30,49):
@@ -405,19 +411,21 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
     #I'll take my small victories in optimization where I can
     
     #The tuple that holds the elements that are required to have a mini plane map
-    requireminip = [1,2,3,4,6,7,8,9,10,14,15,16,17,18,19,22,23,24,25,27,28,29,30,31,32,33,34,36,38,39,40,41,42,44,45,46,47,48,49,54,55,56,58,59,62,65]
+    requireminip = [1,2,3,4,6,7,8,9,10,14,15,16,17,18,19,22,23,24,25,27,28,29,30,31,32,33,34,36,38,39,40,41,42,44,45,46,47,48,49,54,55,56,58,59,62,65,68,69,70]
     if lifeIG:
         requireminip.append(0)
         requireminip.append(26)
     requireminip = tuple(requireminip)
     
     #The tuple that holds the elements that are required to have a mini grid map
-    requireminig = (1,2,3,4,6,7,8,9,10,11,12,13,14,15,16,17,18,19,22,23,24,25,27,28,29,30,32,34,36,39,40,41,42,43,44,45,46,47,48,49,51,52,53,54,55,56,57,58,60,62,63,64,65,66)
+    requireminig = (1,2,3,4,6,7,8,9,10,11,12,13,14,15,16,17,18,19,22,23,24,25,27,28,29,30,32,34,36,39,40,41,42,43,44,45,46,47,48,49,51,52,53,54,55,56,57,58,60,62,63,64,65,66,68,70)
     
-    conductors = (38,39,40,44,47,55,58,59)
+    conductors = (38,39,40,44,47,55,58,59,69)
 
     acidimmune = (0,2,5,9,12,17,20,21,30,35,38,43,50,51,53,55,56,61,64,65,66)
 
+    blastproof = (5,12,61,67)
+    
     #Self explanitory
     
     sun = checkEverywhere(plain,[20,0])
@@ -500,7 +508,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 #Sand
                 
                 elif e == 1:
-                    if neighborCheck(miniplain,(9,30,55)):
+                    if neighborCheck(miniplain,(9,30,55,67)):
                         e = 14
                         t = 2
                     else:
@@ -530,24 +538,23 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                     elif coinflip():
                         if neighborCheck(miniplain,(61,65,66)):
                             e = 11
+                    elif neighborCheck(miniplain,[67]):
+                        e = 11
                     c = stoneCheck(minigrid,localPos)
                     if not c[0]:
                         grid[a][b] = [c[1],0]
-                        grid[a+1][b] = [e,0]
+                        grid[a+1][b] = [e,t]
                     else:
-                        if e == 2:
-                            continue
-                        else:
-                            grid[a][b] = [e,0]
+                        grid[a][b] = [e,t]
                 
                 #Water
                 
                 elif e == 3:
                     if coinflip():
-                        if neighborCheck(miniplain,[30]):
+                        if neighborCheck(miniplain,(30,67)):
                             e = 13
                             t = 10
-                        elif neighborCount(miniplain,[22,23,27]) > 3:
+                        elif neighborCount(miniplain,(22,23,27)) > 3:
                             e = 27
                     if neighborCheck(miniplain,(9,55)):
                         e = 13
@@ -586,7 +593,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                     if neighborCheck(miniplain,(9,20,21)):
                         e = 24
                     elif random.randint(1,5) == 1:
-                        if neighborCheck(miniplain,[30]):
+                        if neighborCheck(miniplain,(30,67)):
                             e = 30
                             t = 5
                     
@@ -649,7 +656,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                     if random.randint(1,400) == 1:
                         if sun and neighborCheck(miniplain,[8]) and neighborCount(miniplain,[8]) < 4:
                             e = 8
-                    if neighborCheck(miniplain,(9,30,55)):
+                    if neighborCheck(miniplain,(9,30,55,67)):
                         e = 6
                     elif random.randint(1,100) == 1:
                         if neighborCheck(miniplain,(46,47,48)):
@@ -676,7 +683,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 elif e == 8:
                     if coinflip():
-                        if neighborCheck(miniplain,[30]):
+                        if neighborCheck(miniplain,(30,67)):
                             e = 31
                             t = 0
                     elif neighborCheck(miniplain,[53]):
@@ -732,7 +739,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 #Wet Sand
                 
                 elif e == 10:
-                    if neighborCheck(miniplain,(9,30,55)):
+                    if neighborCheck(miniplain,(9,30,55,67)):
                         e = 14
                         t = 1
                     elif random.randint(1,100) == 1:
@@ -817,7 +824,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 elif e == 14:
                     if coinflip() and t > 0:
                         t -= 1
-                    elif neighborCheck(miniplain,[61]):
+                    elif neighborCheck(miniplain,(61,67)):
                         e = 19
                         t = random.randint(1,6294)
                     o = lrCheck(miniplain[localPos[0]],localPos[1])
@@ -833,7 +840,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 #Sugar Water
                 
                 elif e == 15:
-                    if neighborCheck(miniplain,(9,55)) or (coinflip() and neighborCheck(miniplain,[30])):
+                    if neighborCheck(miniplain,(9,55)) or (coinflip() and neighborCheck(miniplain,(30,67))):
                         if coinflip():
                             e = 4
                         else:
@@ -931,7 +938,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 elif e == 18:
                     if random.randint(1,6) == 1:
-                        if neighborCheck(miniplain,(9,30,55)):
+                        if neighborCheck(miniplain,(9,30,55,67)):
                             if coinflip():
                                 e = 30
                                 t = 5
@@ -988,7 +995,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                     if random.randint(1,10) == 1:
                         if (not moon) and neighborCheck(miniplain,(3,15)):
                             e = 3
-                    if neighborCheck(miniplain,(9,13,20,30,55)):
+                    if neighborCheck(miniplain,(9,13,20,30,55,67)):
                         e = 3
                     if random.randint(1,5000) == 1:
                         e = 3
@@ -1029,7 +1036,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                     if coinflip():
                         if neighborCheck(miniplain,(13,20)):
                             e = 3
-                    if neighborCheck(miniplain,(9,30,55)):
+                    if neighborCheck(miniplain,(9,30,55,67)):
                         e = 3
                     if random.randint(1,1000) == 1:
                         if neighborCheck(miniplain,(3,15)):
@@ -1054,7 +1061,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                         if neighborCheck(miniplain,[3,15]):
                             e = 4
                     elif random.randint(1,50) == 1:
-                        if neighborCheck(miniplain,[30]):
+                        if neighborCheck(miniplain,(30,67)):
                             e = 30
                             t = 5
                     elif random.randint(1,8) > 3:
@@ -1133,7 +1140,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                     if random.randint(1,20) == 1:
                         if neighborCount(miniplain,[22,23,27]) > 4:
                             e = 23
-                    if neighborCheck(miniplain,(9,13,20,30,55)):
+                    if neighborCheck(miniplain,(9,13,20,30,55,67)):
                         e = 13
                     c = sandCheck(minigrid,localPos)
                     if c[0] == 0:
@@ -1155,7 +1162,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                         t = 1
                         continue
                     if random.randint(1,4) == 1:
-                        if neighborCheck(miniplain,(9,30,55)):
+                        if neighborCheck(miniplain,(9,30,55,67)):
                             if coinflip():
                                 e = 30
                                 t = 5
@@ -1195,7 +1202,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 elif e == 29:
                     if random.randint(1,15) == 1:
-                        if neighborCheck(miniplain,(9,30,55)):
+                        if neighborCheck(miniplain,(9,30,55,67)):
                             e = 30
                             t = 5
                     c = sandCheck(minigrid,localPos,True)
@@ -1294,10 +1301,10 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 elif e == 31:
                     if coinflip():
-                        if neighborCount(miniplain,(9,30,55)) > random.randint(1,5):
+                        if neighborCount(miniplain,(9,30,55,67)) > random.randint(1,5):
                             e = 32
                     elif random.randint(1,20) == 1:
-                        if neighborCheck(miniplain,[30]):
+                        if neighborCheck(miniplain,(30,67)):
                             e = 30
                             t = 5
                     elif random.randint(1,40) == 1:
@@ -1362,13 +1369,8 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 elif e == 34:
                     if neighborCheck(miniplain,(9,30,55)):
                         e = 17
-                    
-                    if random.randint(1,10) == 1:
-                        if moon:
-                            t -= 1
-                    if t <= -10:
-                        
-                        e = 12
+                    elif neighborCheck(miniplain,[67]):
+                        e = 63
                     
                     c = sandCheck(minigrid,localPos,True)
                     if c[0] == 0:
@@ -1428,7 +1430,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 elif e == 36:
                     if random.randint(1,15) == 1:
-                        if neighborCheck(miniplain,(9,30,55)):
+                        if neighborCheck(miniplain,(9,30,55,67)):
                             if coinflip():
                                 e = 30
                                 t = 5
@@ -1478,6 +1480,9 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                     if random.randint(1,1000) == 1:
                         if neighborCheck(miniplain,[3,15,47]):
                             e = 45
+                    elif neighborCheck(miniplain,(9,55)):
+                        e = 38
+                    
                     if t == 1 or jam:
                         t = 2
                     elif (neighborCheck(miniplain,[43]) or neighborTempCheck(miniplain,conductors,"==",1)[0]) and t == 0:
@@ -1666,7 +1671,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                     elif t == 2:
                         t = 0
                     
-                    if neighborCheck(miniplain,(9,55)) or (coinflip() and neighborCheck(miniplain,[30])):
+                    if neighborCheck(miniplain,(9,55)) or (coinflip() and neighborCheck(miniplain,(30,67))):
                         if coinflip():
                             e = 46
                         else:
@@ -1727,7 +1732,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 elif e == 49:
                     if random.randint(1,10-t) == 1:
-                        if neighborCheck(miniplain,(9,30,55)):
+                        if neighborCheck(miniplain,(9,30,55,67)):
                             if coinflip():
                                 e = 30
                                 t = 5
@@ -1815,7 +1820,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                     #Sandbit
                     
                     if idk == 1:
-                        if neighborCheck(miniplain,(9,30,55)):
+                        if neighborCheck(miniplain,(9,30,55,67)):
                             e = 14
                             t = 2
                         else:
@@ -2079,7 +2084,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                 
                 elif e == 59:
                     if coinflip():
-                        if neighborCheck(miniplain,(9,30,55)):
+                        if neighborCheck(miniplain,(9,30,55,67)):
                             e = 38
                     if t == 1 or jam:
                         t = 2
@@ -2147,7 +2152,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                         t = 1
                         continue
                     if random.randint(1,4) == 1:
-                        if neighborCheck(miniplain,(9,30,55)):
+                        if neighborCheck(miniplain,(9,30,55,67)):
                             if coinflip():
                                 e = 30
                                 t = 5
@@ -2325,8 +2330,72 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
                         else:
                             grid[a+1][b+(c[0]-2)] = [e,t]
 
+                #Explosion
+                
+                elif e == 67:
+                    t -= 1
+                    if t <= 0:
+                        e = 30
+                        t = 4
+                    else:
+                        if a + 1 != len(plain) and not grid[a+1][b][0] in blastproof:
+                            grid[a+1][b] = [e,t]
+                        if a - 1 != -1 and not grid[a-1][b][0] in blastproof:
+                            grid[a-1][b] = [e,t]
+                        if b + 1 != len(plain[0]) and not grid[a][b+1][0] in blastproof:
+                            grid[a][b+1] = [e,t]
+                        if b - 1 != -1 and not grid[a][b-1][0] in blastproof:
+                            grid[a][b-1] = [e,t]
+                    grid[a][b] = [e,t]
 
-
+                #TNT
+                
+                elif e == 68:
+                    if neighborCheck(miniplain,(9,30,67)):
+                            e = 67
+                            t = 8
+                    c = stoneCheck(minigrid,localPos)
+                    if not c[0]:
+                        grid[a][b] = [c[1],0]
+                        grid[a+1][b] = [e,0]
+                    else:
+                        grid[a][b] = [e,t]
+                
+                
+                #C4
+                
+                elif e == 69: #Not a word
+                    if neighborCheck(miniplain,(9,67)):
+                            e = 67
+                            t = 4
+                    
+                    if t == 1 or jam:
+                        t = 2
+                    elif (neighborCheck(miniplain,[43]) or neighborTempCheck(miniplain,conductors,"==",1)[0]) and t == 0:
+                        t = 1
+                    elif t == 2:
+                        t = 0
+                    if t == 2 and not jam:
+                        e = 67
+                        t = 10
+                    grid[a][b] = [e,t] 
+                
+                #Nuke (Mandatory when there are explosions in the game)
+                
+                elif e == 70:
+                    if jam:
+                        t = -1
+                    if t == 0 and neighborCheck(miniplain,(43,67)):
+                            e = 67
+                            t = random.randint(40,60)
+                
+                    c = stoneCheck(minigrid,localPos)
+                    if not c[0]:
+                        grid[a][b] = [c[1],0]
+                        grid[a+1][b] = [e,0]
+                    else:
+                        grid[a][b] = [e,t]
+                
                 
             except IndexError:
                 print("Error in doing element", grid[a][b], "index out of range (Did you remember to put the element ID in the corisponding mini-allowed tuple?)")
@@ -2342,7 +2411,7 @@ def remindMe() -> None:
     print("Welcome to the sandbox!")
     print("Press the keys for the element!  1: Sand  2: Stone  3: Water  4: Sugar  5: Wall  6: Dirt  7: Mud  8: Plant  9: Lava ")
     print("Q: Iron  W: Gravel  E: Obsidian  R: Steam  T: Glass  Y: Salt  U: Cloud  I: Brick O: Clay  P: Void  A: Algae")
-    print("G: Snow  H: Ice  J: Sugar Crystal  K: Sapling  L: Life particle (think the game of life, If turned off it will just be random)")
+    print("G: Snow  H: Ice  J: TNT  K: Sapling  L: Life particle (think the game of life, If turned off it will just be random)")
     print("Z: Electricity  X: Flower Seed  C: Oil  V: Fire  B: Wood  N: Jammer (Screws stuff up)  M: Cloner  S: Glass shards  D: Sun  F: Moon")
     print("Left click to place down the element, Right click to use the eraser. You will have to discover the rest of the elements on your own through trial and error :)\nTo do multiple elements with a brush, press the comma for it to be random of some elements. To dither the brush, press the slash key.")
     print("To get an element that's not on this list, press the Right Shift key then enter the element's ID (number) in the console.\nAlternatively, you can eyedrop (copy) an element from the sandbox by pressing period")
@@ -2686,6 +2755,8 @@ while breaking:
                                     t = 3
                                 elif element in (64, 65):
                                     t = 20
+                                elif element == 67:
+                                    t = 10
                                 land[y+l][x+m] = [element,t]
                 except IndexError:
                     oob += 1
@@ -2918,6 +2989,17 @@ while breaking:
                 pygame.draw.rect(screen,(0,255,0),(j*landyx,i*landyy,landyx,landyy))
             elif el == 66:
                 pygame.draw.rect(screen,(random.randint(0,20),200+random.randint(0,20),random.randint(0,20)),(j*landyx,i*landyy,landyx,landyy))
+            elif el == 67:
+                pygame.draw.rect(screen,(random.randint(150,255),random.randint(50,230),random.randint(0,40)),(j*landyx,i*landyy,landyx,landyy))
+            elif el == 68:
+                pygame.draw.rect(screen,(200,0,0),(j*landyx,i*landyy,landyx,landyy))
+            elif el == 69:
+                if et == 1:
+                    pygame.draw.rect(screen,(255,random.randint(0,255),random.randint(0,255)),(j*landyx,i*landyy,landyx,landyy))
+                else:
+                    pygame.draw.rect(screen,(200,180,150),(j*landyx,i*landyy,landyx,landyy))
+            elif el == 70:
+                pygame.draw.rect(screen,(80,100,60),(j*landyx,i*landyy,landyx,landyy))
             
             
             else:
