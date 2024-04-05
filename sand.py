@@ -1,11 +1,11 @@
 #Can someone please tell me how to give more resources to this app so I can throttle it and have a smooth 60 fps while my computer combusts into flames
 #Some optimization help would be nice too
 showfps = False
-usesavefolder = False
 #the setting that controls if you'd like to do life or not (Experimental sorta)
 
 oob = 0
 
+import os
 import pygame
 from pygame import Vector2
 #WHY DOES YOU NOT EVEN THE AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -13,12 +13,19 @@ from copy import deepcopy
 import random
 import time
 
-#How large the screen is
-screenx = 600
-screeny = 450
+#Save folder things
+
+usesavefolder = True
+if usesavefolder:
+    print("Using the sandsaves as a save directory")
+    try:
+        os.mkdir('sandsaves')
+        print("Save folder made automatically!")
+    except:
+        print("Save folder already in place (yippee!)")
 
 pygame.init()
-screen = pygame.display.set_mode((screenx,screeny))
+screen = pygame.display.set_mode((10,10))
 pygame.display.set_caption("Sandbox game!")
 breaking=True
 clock = pygame.time.Clock()
@@ -29,13 +36,6 @@ font = pygame.font.SysFont('Comic Sans MS', 30)
 mousePos = Vector2(0,0)
 fire = False
 tap = True
-
-#How many pixels are there in the sandbox (x*y of course)
-landx = 60
-landy = 45
-land = [[[0,0] for _ in range(landx)] for i in range(landy)]
-landyx = (screenx/landx)
-landyy = (screeny/landy)
 
 #Element Variables
 
@@ -133,7 +133,7 @@ illegals = ('\\','//',':','*','?','"','<','>','|')
 def coinflip() -> bool:
     return bool(random.getrandbits(1))
 
-def neighborCount(grid: list[list[list[int]]], checker: list[int] | tuple[int]) -> int:
+def neighborCount(grid: list[list[list[int]]], checker: list[int] | tuple[int, ...]) -> int:
     count = 0
     for l in range(len(grid)):
         for m in range(len(grid[0])):
@@ -143,7 +143,7 @@ def neighborCount(grid: list[list[list[int]]], checker: list[int] | tuple[int]) 
     return count
 
 #Checks if a neighbor is in the checker list
-def neighborCheck(grid: list[list[list[int]]], checker: list[int] | tuple[int]) -> bool:
+def neighborCheck(grid: list[list[list[int]]], checker: list[int] | tuple[int, ...]) -> bool:
     for l in range(len(grid)):
         for m in range(len(grid[0])):
             if grid[l][m][0] in checker:
@@ -151,7 +151,7 @@ def neighborCheck(grid: list[list[list[int]]], checker: list[int] | tuple[int]) 
     return False
 
 #gets the neighbor's ID
-def myNeighbor(grid: list[list[list[int]]], shouldnt: list[int] | tuple[int]) -> int:
+def myNeighbor(grid: list[list[list[int]]], shouldnt: list[int] | tuple[int, ...]) -> int:
     for l in range(len(grid)):
         for m in range(len(grid[0])):
             if grid[l][m][0] != 0 and grid[l][m][0] != "self" and not grid[l][m][0] in shouldnt:
@@ -159,7 +159,7 @@ def myNeighbor(grid: list[list[list[int]]], shouldnt: list[int] | tuple[int]) ->
     return 0
 
 #Checks the "Temprature" of it's neighbors
-def neighborTempCheck(grid: list[list[list[int]]], checker: list[int] | tuple[int], maths: str = ">", temp: int = 0) -> tuple[bool,int]:
+def neighborTempCheck(grid: list[list[list[int]]], checker: list[int] | tuple[int, ...], maths: str = ">", temp: int = 0) -> tuple[bool,int]:
     answer = 0
     answered = False
     for l in range(len(grid)):
@@ -186,7 +186,7 @@ def neighborTempCheck(grid: list[list[list[int]]], checker: list[int] | tuple[in
     return (False,0)
 
 # Sand Physics ---------------------------------------------------
-def sandCheck(grid: list[list[list[int]]],pos: list[int] | tuple[int], floats: bool = False, reverse: bool = False, gas: bool = False) -> tuple[int]:
+def sandCheck(grid: list[list[list[int]]],pos: list[int] | tuple[int,int], floats: bool = False, reverse: bool = False, gas: bool = False) -> tuple[int,int]:
     #Returns a list, the 1st element determines where the sand should fall. If 0, then nowhere, 1 is left, 2 is falling middle, 3 is right
     #The second element is the element should be subsituted for air (only if it sinks)
     b = (0,0)
@@ -238,7 +238,7 @@ def sandCheck(grid: list[list[list[int]]],pos: list[int] | tuple[int], floats: b
     return (0,0) #To assure something gets returned if everything else is wrong
 
 # Stone Physics ---------------------------------------------------
-def stoneCheck(grid: list[list[list[int]]],pos: list[int] | tuple[int], floats: bool = False, reverse: bool = False, gas: bool = False) -> tuple[bool,int]:
+def stoneCheck(grid: list[list[list[int]]],pos: list[int] | tuple[int,int], floats: bool = False, reverse: bool = False, gas: bool = False) -> tuple[bool,int]:
     #returns if something's under it (or above it if in reverse)
     l = 1
     if reverse:
@@ -255,12 +255,12 @@ def stoneCheck(grid: list[list[list[int]]],pos: list[int] | tuple[int], floats: 
     if len(grid) == 2 and ((pos[0] == 1 and not reverse) or (pos[0] == 0 and reverse)):
         return (True,0)
     elif grid[pos[0]+l][pos[1]][0] in b:
-        return [False,grid[pos[0]+l][pos[1]][0]]
+        return (False,grid[pos[0]+l][pos[1]][0])
     else:
-        return [True,0]
+        return (True,0)
 
 #Me when there's plenty of stuff below me but I wanna wander left or right
-def lrWanderCheck(grid: list[list[list[int]]],pos: list[int] | tuple[int], floaty: bool = False, waterlike: bool = False, reverse: bool = False) -> tuple[bool,bool,int]:
+def lrWanderCheck(grid: list[list[list[int]]],pos: list[int] | tuple[int,int], floaty: bool = False, waterlike: bool = False, reverse: bool = False) -> tuple[bool,bool,int]:
     b = (0,0)
     if waterlike:
         b = [0,3,15,27,29,34,47,56,65]
@@ -313,7 +313,7 @@ def lrWanderCheck(grid: list[list[list[int]]],pos: list[int] | tuple[int], float
     return (False,False,0)
 
 #Me when I'd like to go up or down spontaniously
-def udWanderCheck(grid: list[list[list[int]]],pos: list[int] | tuple[int], waterlike: bool = False) -> tuple[bool,bool,int]:
+def udWanderCheck(grid: list[list[list[int]]],pos: list[int] | tuple[int,int], waterlike: bool = False) -> tuple[bool,bool,int]:
     b = (0,0)
     if waterlike:
         b = [3,15,27,29,34,47,56,65]
@@ -405,7 +405,7 @@ def checkAbsolutelyEverywhere(grid: list[list[list[int]]], thing) -> bool:
 
 
 
-def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
+def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> list[list[list[int]]]:
     e = 0
     t = 0
     #I'll take my small victories in optimization where I can
@@ -2402,6 +2402,95 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False):
     return grid
 
 
+
+
+
+
+
+
+
+
+
+yeses = ("y","yes","yeah","do it","sure","alright","ok","ig","i guess","yay","pull the lever, cronk!","alrighty then","whatever","heck yes","hell yes","probably","ye","yea","yeah!","oh yes","i don't see why not","i dont see why not","the opposite of no","yep","yes sir","yessir")
+noes = ("n","no","nah","nay","nein","it's opposite day","don't you dare","poop","do not","do not the cat","perish","hell no","heck no","probably not","jumpscare","no!","no!!","no!!!","mmm...","how could you screw it up this badly?","the opposite of yes","nope","not even close")
+
+
+
+
+print("Setup your sandbox! (You can skip this and be default by putting in junk values)")
+
+setup = True
+
+screenx: int = 500
+screeny: int = 500
+
+landx: int = 50
+landy: int = 50
+
+
+while breaking and setup:
+    d = 0
+    for event in pygame.event.get(): #Event Queue (or whatever it's called)
+        if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+            breaking = False
+    
+    #Screen variables
+    
+    try:
+        screenx = int(input("What should the window's size be in pixels horizontally?\n"))
+        screeny = int(input("What should the window's size be in pixels vertically?\n"))
+    except:
+        print("That's not a number! Setting window size to default!")
+        screenx = 500
+        screeny = 500
+
+    try:
+        landx = int(input("How long should the sandbox be in units?\n"))
+        landy = int(input("How tall should the sandbox be in units?\n"))
+    except:
+        print("That's not a number! Setting sandbox size to default!")
+        landx = screenx//10
+        landy = screeny//10
+
+
+    landyx = (screenx/landx)
+    landyy = (screeny/landy)
+
+    screen.fill((0,0,0))
+
+    screen = pygame.display.set_mode((screenx,screeny))
+
+    for i in range(landy):
+        for j in range(landx):
+            pygame.draw.rect(screen,(255,255,255),(j*landyx,i*landyy,landyx,landyy),1)
+
+    pygame.display.flip()
+    print("You should now see a preview of the sandbox that you're about to unfold.\nIs this ok?")
+    unanswered = True
+    while unanswered:
+        unanswered = False
+        answer = input().lower()
+        if answer in noes:
+            print("Alright, let's try again.")
+        elif answer in yeses:
+            print("Alright, creating the sandbox now!")
+            setup = False
+        else:
+            print("Answer unrecognized, try again")
+            unanswered = True
+
+
+
+
+#Sandbox initialization!
+
+land = [[[0,0] for _ in range(landx)] for i in range(landy)]
+landyx = (screenx/landx)
+landyy = (screeny/landy)
+
+screen = pygame.display.set_mode((screenx,screeny))
+
+
 live = False
 alive = False
 ice = False
@@ -2665,12 +2754,13 @@ while breaking:
                         reading = thefile.read().split()
                         thefile.close()
                         print(filename, "read with", len(reading), "numbers!")
+                        readed = []
                         for inny in range(len(reading)):
-                            reading[inny] = int(reading[inny])
-                        landx = reading[0]
-                        landy = reading[1]
-                        screenx = reading[2]
-                        screeny = reading[3]
+                            readed[inny] = int(reading[inny])
+                        landx = readed[0]
+                        landy = readed[1]
+                        screenx = readed[2]
+                        screeny = readed[3]
                         print("Grid size:", landx, "by", landy, "pixels on a", screenx, "by", screeny, "gaming window.")
                         land = []
                         for ay in range(landy):
