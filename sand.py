@@ -778,7 +778,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                             e = 52
                         elif neighborCheck(miniplain,[71]):
                             e = 2
-                    elif random.randint(1,100000) == 1:
+                    elif random.randint(1,3333) == 1:
                         if neighborCheck(miniplain,(3,15,47)):
                             e = 1
                             #It gets converted into sand after awhile! (You need a lot of erosion to do this)
@@ -2509,8 +2509,8 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
 
 
 
-yeses = ("y","yes","yeah","do it","sure","alright","ok","ig","i guess","yay","pull the lever, cronk!","alrighty then","whatever","heck yes","hell yes","probably","ye","yea","yeah!","oh yes","i don't see why not","i dont see why not","the opposite of no","yep","yes sir","yessir","please do","do")
-noes = ("n","no","nah","nay","nein","it's opposite day","don't you dare","poop","do not","do not the cat","perish","hell no","heck no","probably not","jumpscare","no!","no!!","no!!!","mmm...","how could you screw it up this badly?","the opposite of yes","nope","not even close","please don't","don't","aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+yeses = ("y","yes","yeah","do it","sure","alright","ok","ig","i guess","yay","pull the lever, cronk!","alrighty then","whatever","heck yes","hell yes","probably","ye","yea","yeah!","oh yes","i don't see why not","i dont see why not","the opposite of no","yep","yes sir","yessir","please do","do","1","i'd love to","i'd love to try it out","let's see what you've got","let's-a go!","lets a go","let's a go","lets a go!","mushroom kingdom here we come","may","smash")
+noes = ("n","no","nah","nay","nein","it's opposite day","don't you dare","poop","do not","do not the cat","perish","hell no","heck no","probably not","jumpscare","no!","no!!","no!!!","mmm...","how could you screw it up this badly?","the opposite of yes","nope","not even close","please don't","don't","0","aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","unrun","kill","oh no","ho ho ho ho no","steamed hams","nada","nay","pass","t_t","i'm sick rn","not today","chewing bubblegum")
 
 screenx: int = 500
 screeny: int = 500
@@ -2614,6 +2614,7 @@ def remindMe() -> None:
     print("G: Snow  H: Ice  J: TNT  K: Sapling  L: Life particle (think the game of life, If turned off it will just be random)")
     print("Z: Electricity  X: Flower Seed  C: Oil  V: Fire N: Jammer (Screws stuff up)  M: Cloner  B: Smart Remover  S: Smart Converter  D: Sun  F: Moon")
     print("If you would like more information about how the smart remover/converter works, please visit https://www.youtube.com/watch?v=w_oNW7uHfcw")
+    #I'm sure dr. mo wouldn't mind......
     print("Left click to place down the element, Right click to use the eraser. You will have to discover the rest of the elements on your own through trial and error :)\nTo do multiple elements with a brush, press the comma for it to be random of some elements. To dither the brush, press the slash key.")
     print("To get an element that's not on this list, press the Right Shift key then enter the element's ID (number) in the console.\nAlternatively, you can eyedrop (copy) an element from the sandbox by pressing period")
     print("To start the sandbox, press Ctrl. To go a single step in the sandbox, press Space.\nTo clear the sandbox, press the left Alt key. To clear the sandbox and have there be an ocean, hit the right Alt key.\nThere are several other kinds of oceans that can be created on the right hand side of the keyboard by pressing it's buttons.\nTo activate the game of life and all it's whimsy, press the CAPS LOCK key. To change the brush size, hit up to grow it, hit down to shrink it.")
@@ -2634,7 +2635,8 @@ while breaking:
     d = 0
     for event in pygame.event.get(): #Event Queue (or whatever it's called)
         if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
-            breaking = False
+            if input("Are you sure you want to quit?\n").lower() in yeses:
+                breaking = False
         if event.type == pygame.MOUSEBUTTONDOWN and tap:
             fire = True
             tap = False
