@@ -776,6 +776,8 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                     if random.randint(1,42) == 1:
                         if neighborCheck(miniplain,[53]):
                             e = 52
+                        elif neighborCheck(miniplain,[71]):
+                            e = 2
                     c = sandCheck(minigrid,localPos)
                     if c[0] == 0:
                         continue
@@ -2445,6 +2447,21 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                     elif random.randint(1,9) == 1:
                         if neighborCheck(miniplain,[31]):
                             e = 49
+                    if coinflip():
+                        if  b + 1 != len(plain[0]) and grid[a][b+1][0] == 71:
+                            t = grid[a][b+1][1]
+                        if b - 1 != -1 and grid[a][b-1][0] == 71:
+                            t = grid[a][b-1][1]
+                    else:
+                        if t == 0 and random.randint(1,555) == 1:
+                            if coinflip():
+                                t = 1
+                            else:
+                                t = 2
+                        elif t != 0 and coinflip():
+                            t = 0
+                    
+                    
                     c = sandCheck(minigrid,localPos,True)
                     if c[0] == 0:
                         d = lrWanderCheck(minigrid,localPos,False,True)
@@ -3187,7 +3204,10 @@ while breaking:
             elif el == 70:
                 pygame.draw.rect(screen,(80,100,60),(j*landyx,i*landyy,landyx,landyy))
             elif el == 71:
-                pygame.draw.rect(screen,(200,200,255),(j*landyx,i*landyy,landyx,landyy))
+                if et != 0:
+                    pygame.draw.rect(screen,(200,255,230),(j*landyx,i*landyy,landyx,landyy))
+                else:
+                    pygame.draw.rect(screen,(200,200,255),(j*landyx,i*landyy,landyx,landyy))
             
             else:
                 if el != 0:
