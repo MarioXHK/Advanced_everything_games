@@ -2512,8 +2512,8 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
 
 
 
-yeses = ("y","yes","yeah","do it","sure","alright","ok","ig","i guess","yay","pull the lever, cronk!","alrighty then","whatever","heck yes","hell yes","probably","ye","yea","yeah!","oh yes","i don't see why not","i dont see why not","the opposite of no","yep","yes sir","yessir","please do","do","1","i'd love to","i'd love to try it out","let's see what you've got","let's-a go!","lets a go","let's a go","lets a go!","mushroom kingdom here we come","may","smash","yeah, sure","yesure","let's kick bubblegum","activate","throttle","upgrade","proceed","bb","shure","surry boi","surry")
-noes = ("n","no","nah","nay","nein","it's opposite day","don't you dare","poop","do not","do not the cat","perish","hell no","heck no","probably not","jumpscare","no!","no!!","no!!!","mmm...","how could you screw it up this badly?","the opposite of yes","nope","not even close","please don't","don't","0","aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","unrun","kill","oh no","ho ho ho ho no","steamed hams","nada","nay","pass","t_t","i'm sick rn","not today","chewing bubblegum","deactivate","turn back","i said turn back","snowgrave","die","di","noooooooooo","b","lmao nah","nada","zilch","q")
+yeses = ("y","yes","yeah","do it","sure","alright","ok","ig","i guess","yay","pull the lever, cronk!","alrighty then","whatever","heck yes","hell yes","probably","ye","yea","yeah!","oh yes","i don't see why not","i dont see why not","the opposite of no","yep","yes sir","yessir","please do","do","1","i'd love to","i'd love to try it out","let's see what you've got","let's-a go!","lets a go","let's a go","lets a go!","mushroom kingdom here we come","may","smash","yeah, sure","yesure","let's kick bubblegum","activate","throttle","upgrade","proceed","bb","shure","surry boi","surry","yes please","yes maam","yes hoobaab")
+noes = ("n","no","nah","nay","nein","it's opposite day","don't you dare","poop","do not","do not the cat","perish","hell no","heck no","probably not","jumpscare","no!","no!!","no!!!","mmm...","how could you screw it up this badly?","the opposite of yes","nope","not even close","please don't","don't","0","aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","unrun","kill","oh no","ho ho ho ho no","steamed hams","nada","nay","pass","t_t","i'm sick rn","not today","chewing bubblegum","deactivate","turn back","i said turn back","snowgrave","die","di","noooooooooo","b","lmao nah","nada","zilch","q","no please","no thank you","no thanks")
 
 screenx: int = 500
 screeny: int = 500
@@ -2619,15 +2619,18 @@ def remindMe() -> None:
     print("If you would like more information about how the smart remover/converter works, please visit https://www.youtube.com/watch?v=w_oNW7uHfcw")
     #I'm sure dr. mo wouldn't mind......
     print("Left click to place down the element, Right click to use the eraser. You will have to discover the rest of the elements on your own through trial and error :)\nTo do multiple elements with a brush, press the comma for it to be random of some elements. To dither the brush, press the slash key.")
-    print("To get an element that's not on this list, press the Right Shift key then enter the element's ID (number) in the console.\nAlternatively, you can eyedrop (copy) an element from the sandbox by pressing period")
-    print("To start/pause the sandbox, press Left Ctrl. To go a single step in the sandbox, press Space.\nTo clear the sandbox, press the left Alt key. To clear the sandbox and have there be an ocean, hit the right Alt key.\nThere are several other kinds of oceans that can be created on the right hand side of the keyboard by pressing it's buttons.\nTo activate the game of life and all it's whimsy, press the CAPS LOCK key. To change the brush size, hit up to grow it, hit down to shrink it.")
-    print("To save your sandbox, press either enter key. To load a sandbox, press the 0 key. To show this again, hit backspace")
+    print("To get an element that's not on this list, press the Right Shift key then enter the element's ID (number) in the console.\nAlternatively, you can eyedrop (copy) an element from the sandbox by pressing period and then clicking the element")
+    print("To enter/exit mirror mode, hit the backslash key. To undo an action, press the left square bracket, to redo said action, press the right square bracket ([ and ] respectively)")
+    print("To start/pause the sandbox, press Left Ctrl. To go a single step in the sandbox, press Space.\nTo clear the sandbox, press the left Alt key. To clear the sandbox and have there be an ocean, hit the right Alt key.\nThere are several other kinds of oceans that can be created on the right hand side of the keyboard by pressing it's buttons.\nTo activate/deactivate the game of life and all it's whimsy, press the CAPS LOCK key. To change the brush size, hit up to grow it, hit down to shrink it.")
+    print("To save your sandbox, press either enter key. To load a sandbox, press the 0 key. To show this again, hit the backspace key")
 
 
 # ===============================================================================================
 # ====================================== THE GAME LOOP ==========================================
 # ===============================================================================================
 
+sandstack = []
+restack = []
 
 remindMe()
 
@@ -2641,6 +2644,7 @@ while breaking:
             if input("Are you sure you want to quit?\n").lower() in yeses:
                 breaking = False
         if event.type == pygame.MOUSEBUTTONDOWN and tap:
+            sandstack.append(deepcopy(land))
             fire = True
             tap = False
             if event.button == 3:
@@ -2651,7 +2655,13 @@ while breaking:
         if event.type == pygame.MOUSEMOTION:
             mousePos = Vector2(event.pos)
         if event.type == pygame.KEYDOWN:
+            
+            #Command Keys
+            
             if event.key == pygame.K_SPACE:
+                if not alive:
+                    sandstack.append(deepcopy(land))
+                    restack = []
                 live = True
                 #Go a single step forward
             if event.key == pygame.K_LCTRL:
@@ -2662,24 +2672,35 @@ while breaking:
                     alive = True
                 #Go a step forward every tick until pressed again
             if event.key == pygame.K_LALT:
+                sandstack.append(deepcopy(land))
+                restack = []
                 land = [[[0,0] for _ in range(landx)] for i in range(landy)]
             elif event.key == pygame.K_RALT:
+                sandstack.append(deepcopy(land))
+                restack = []
                 land = [[[0,0] for _ in range(landx)] for i in range(landy)]
                 for u in range(10):
                     land[u] = [[3,0] for _ in range(landx)]
             elif event.key == pygame.K_RCTRL:
+                sandstack.append(deepcopy(land))
                 land = [[[0,0] for _ in range(landx)] for i in range(landy)]
                 for u in range(10):
                     land[u] = [[15,0] for _ in range(landx)]
             elif event.key == pygame.K_END:
+                sandstack.append(deepcopy(land))
+                restack = []
                 land = [[[0,0] for _ in range(landx)] for i in range(landy)]
                 for u in range(10):
                     land[u] = [[9,0] for _ in range(landx)]
             elif event.key == pygame.K_DELETE:
+                sandstack.append(deepcopy(land))
+                restack = []
                 land = [[[0,0] for _ in range(landx)] for i in range(landy)]
                 for u in range(10):
                     land[u] = [[65,20] for _ in range(landx)]
             elif event.key == pygame.K_HOME:
+                sandstack.append(deepcopy(land))
+                restack = []
                 land = [[[0,0] for _ in range(landx)] for i in range(landy)]
                 for u in range(10):
                     land[u] = [[29,0] for _ in range(landx)]
@@ -2725,6 +2746,18 @@ while breaking:
                     if len(elements) == 0:
                         print("HEY! YOU FORGOT TO DO ELEMENTS! (Defaulting to what you did last time)")
                         elementary = False
+            elif event.key == pygame.K_RIGHTBRACKET:
+                if len(restack) != 0:
+                    sandstack.append(deepcopy(land))
+                    restack = []
+                    land = restack.pop()
+            elif event.key == pygame.K_LEFTBRACKET:
+                if len(sandstack) != 0:
+                    restack.append(deepcopy(land))
+                    land = sandstack.pop()
+            
+            #Element Keys
+            
             elif event.key == pygame.K_1:
                 element = 1
             elif event.key == pygame.K_2:
@@ -2861,6 +2894,7 @@ while breaking:
                         legal = False
                         break
                 if legal:
+                    sandstack.append(deepcopy(land))
                     backupx = landx
                     backupy = landy
                     bacnupsx = screenx
@@ -2913,6 +2947,7 @@ while breaking:
                         print(f'An error occured, but we don\'t know how!')
                         print("Please contact the creator of this sandbox to see what the issue could be")
                     if fail:
+                        sandstack.pop()
                         landx = backupx
                         landy = backupy
                         screenx = bacnupsx
