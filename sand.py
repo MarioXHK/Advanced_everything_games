@@ -385,7 +385,7 @@ def checkEverywhere(grid: list[list[list[int]]], thing) -> bool:
             return True
     return False
 
-def randomelement(randTemp:bool = True) -> list[int]:
+def randomElement(randTemp:bool = True) -> list[int]:
     e = random.randint(0,76)
     t = 0
     if randTemp:
@@ -418,7 +418,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
     #I'll take my small victories in optimization where I can
     
     #The tuple that holds the elements that are required to have a mini plane map
-    requireminip = [1,2,3,4,6,7,8,9,10,11,14,15,16,17,18,19,20,22,23,24,25,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,44,45,46,47,48,49,50,54,55,56,58,59,62,65,66,68,69,70,71,72,73,74,75]
+    requireminip = [1,2,3,4,6,7,8,9,10,11,14,15,16,17,18,19,20,22,23,24,25,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,44,45,46,47,48,49,50,54,55,56,58,59,60,62,65,66,68,69,70,71,72,73,74,75]
     if lifeIG:
         requireminip.append(0)
         requireminip.append(26)
@@ -1014,7 +1014,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                 #Sun
                 
                 elif e == 20:
-                    if random.randint(1,100) == 1 and neighborCount(miniplain,[59]):
+                    if supersun or (random.randint(1,100) == 1 and neighborCount(miniplain,[56]) >= 7): #Me when the runaway greenhouse effect
                         grid[a][bb] = [76,0]
                     else:
                         continue
@@ -1160,7 +1160,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                                 grid[a][bb] = [26,0]
                         continue
                     else:
-                        grid[a][bb] = randomelement()
+                        grid[a][bb] = randomElement()
                         continue
                 
                 #Sludge
@@ -1515,7 +1515,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                                 grid[a][bb] = [37,0]
                         continue
                     else:
-                        grid[a][bb] = randomelement()
+                        grid[a][bb] = randomElement()
                 
                 #Iron
                 
@@ -1796,7 +1796,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                 #leaf
                 
                 elif e == 49:
-                    if random.randint(1,10-t) == 1:
+                    if t > 9 or random.randint(1,10-t) == 1:
                         if (random.randint(1,10) == 1 and neighborCheck(miniplain,(23,46,47,48,61))) or (supersun and random.randint(1,10000) == 1) or neighborCheck(miniplain,(30,55,67)):
                             e = 72
                             t = 0
@@ -2169,18 +2169,18 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                         t = 0
                     grid[a][bb] = [e,t]
                 
-                #Strange Matter
+                #Strange Matter (Fun fact: You can't obtain this without disabling life and getting it by random chance since there's no natural process that creates it!)
                 
                 elif e == 60:
                     n = neighborCheck(miniplain,[71])
                     if not (moon or n):
-                        if a + 1 != len(plain) and grid[a+1][bb][0] != 0:
+                        if a + 1 != len(plain) and not grid[a+1][bb][0] in (0,71):
                             grid[a+1][bb] = [e,t]
-                        if a - 1 != -1 and grid[a-1][bb][0] != 0:
+                        if a - 1 != -1 and not grid[a-1][bb][0] in (0,71):
                             grid[a-1][bb] = [e,t]
-                        if bb + 1 != len(plain[0]) and grid[a][bb+1][0] != 0:
+                        if bb + 1 != len(plain[0]) and not grid[a][bb+1][0] in (0,71):
                             grid[a][bb+1] = [e,t]
-                        if bb - 1 != -1 and grid[a][bb-1][0] != 0:
+                        if bb - 1 != -1 and not grid[a][bb-1][0] in (0,71):
                             grid[a][bb-1] = [e,t]
                     elif n:
                         e = 0
@@ -2905,6 +2905,12 @@ while breaking:
                 land = [[[0,0] for _ in range(landx)] for i in range(landy)]
                 for u in range(10):
                     land[u] = [[75,0] for _ in range(landx)]
+            elif event.key == pygame.K_NUMLOCK:
+                sandstack.append(deepcopy(land))
+                restack = []
+                land = [[[0,0] for _ in range(landx)] for i in range(landy)]
+                for u in range(10):
+                    land[u] = [[60,0] for _ in range(landx)]
             elif event.key == pygame.K_UP:
                 brushsize += 1
                 print("brush size is now", (brushsize*2+1))
@@ -3293,7 +3299,13 @@ while breaking:
             elif el == 29:
                 pygame.draw.rect(screen,(24,24,24),(j*landyx,i*landyy,landyx,landyy))
             elif el == 30:
-                pygame.draw.rect(screen,(random.randint(150,200+et*10),random.randint(50,100+et*random.randint(20,30)),0),(j*landyx,i*landyy,landyx,landyy))
+                cool = 200+et*10
+                if cool > 255:
+                    cool = 255
+                cooler = random.randint(50,100+et*random.randint(20,30))
+                if cooler > 255:
+                    cooler = 255
+                pygame.draw.rect(screen,(cool,cooler,0),(j*landyx,i*landyy,landyx,landyy))
             elif el == 31:
                 pygame.draw.rect(screen,(140,70,30),(j*landyx,i*landyy,landyx,landyy))
             elif el == 32:
@@ -3384,6 +3396,10 @@ while breaking:
             elif el == 48:
                 pygame.draw.rect(screen,(200,230,255),(j*landyx,i*landyy,landyx,landyy))
             elif el == 49:
+                if et < 0:
+                    et = 0
+                elif et > 10:
+                    et = 10
                 pygame.draw.rect(screen,(et*20,150-et*10,0),(j*landyx,i*landyy,landyx,landyy))
             elif el == 50:
                 if fliposwitch:
