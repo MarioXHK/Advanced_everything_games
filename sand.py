@@ -778,6 +778,10 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                             e = 52
                         elif neighborCheck(miniplain,[71]):
                             e = 2
+                    elif random.randint(1,100000) == 1:
+                        if neighborCheck(miniplain,(3,15,47)):
+                            e = 1
+                            #It gets converted into sand after awhile! (You need a lot of erosion to do this)
                     c = sandCheck(minigrid,localPos)
                     if c[0] == 0:
                         continue
@@ -1544,7 +1548,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                         if random.randint(1,4) == 1:
                             e = 0
                     elif t == 0:
-                        if a + 1 != len(plain) and grid[a+1][b][0] != 0 and plain[a+1][b][1] != 41:
+                        if a + 1 != len(plain) and grid[a+1][b][0] != 0 and plain[a+1][b][1] != 41 and (neighborCheck(miniplain,[43]) or neighborTempCheck(miniplain,conductors,"==",1)[0]):
                             t = grid[a+1][b][0]
                     elif t != 41:
                         if a + 1 != len(plain) and grid[a+1][b][0] == t:
@@ -1573,7 +1577,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                         if random.randint(1,4) == 1:
                             e = 0
                     elif t == 0:
-                        if a + 1 != len(plain) and grid[a+1][b][0] != 0 and grid[a+1][b][1] != 42 and a - 1 != -1 and grid[a-1][b][0] != 0 and grid[a-1][b][1] != 42:
+                        if a + 1 != len(plain) and grid[a+1][b][0] != 0 and grid[a+1][b][1] != 42 and a - 1 != -1 and grid[a-1][b][0] != 0 and grid[a-1][b][1] != 42 and (neighborCheck(miniplain,[43]) or neighborTempCheck(miniplain,conductors,"==",1)[0]):
                             #This is complex, lemme explain
                             
                             t = grid[a-1][b][0]*1000
@@ -2609,6 +2613,7 @@ def remindMe() -> None:
     print("Q: Iron  W: Gravel  E: Obsidian  R: Steam  T: Glass  Y: Salt  U: Cloud  I: Brick O: Clay  P: Void  A: Algae")
     print("G: Snow  H: Ice  J: TNT  K: Sapling  L: Life particle (think the game of life, If turned off it will just be random)")
     print("Z: Electricity  X: Flower Seed  C: Oil  V: Fire N: Jammer (Screws stuff up)  M: Cloner  B: Smart Remover  S: Smart Converter  D: Sun  F: Moon")
+    print("If you would like more information about how the smart remover/converter works, please visit https://www.youtube.com/watch?v=w_oNW7uHfcw")
     print("Left click to place down the element, Right click to use the eraser. You will have to discover the rest of the elements on your own through trial and error :)\nTo do multiple elements with a brush, press the comma for it to be random of some elements. To dither the brush, press the slash key.")
     print("To get an element that's not on this list, press the Right Shift key then enter the element's ID (number) in the console.\nAlternatively, you can eyedrop (copy) an element from the sandbox by pressing period")
     print("To start the sandbox, press Ctrl. To go a single step in the sandbox, press Space.\nTo clear the sandbox, press the left Alt key. To clear the sandbox and have there be an ocean, hit the right Alt key.\nThere are several other kinds of oceans that can be created on the right hand side of the keyboard by pressing it's buttons.\nTo activate the game of life and all it's whimsy, press the CAPS LOCK key. To change the brush size, hit up to grow it, hit down to shrink it.")
