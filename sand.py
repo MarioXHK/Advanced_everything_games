@@ -386,7 +386,7 @@ def checkEverywhere(grid: list[list[list[int]]], thing) -> bool:
     return False
 
 def randomelement(randTemp:bool = True) -> list[int]:
-    e = random.randint(0,71)
+    e = random.randint(0,76)
     t = 0
     if randTemp:
         if e in (30,49):
@@ -1127,7 +1127,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                 
                 elif e == 25:
                     if random.randint(1,5) == 1:
-                        if neighborCheck(miniplain,(9,48,55,71)):
+                        if neighborCheck(miniplain,(9,48,55,71)) or supersun:
                             e = 23
                     o = lrCheck(miniplain[localPos[0]],localPos[1])
                     if o:
@@ -1148,7 +1148,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                     if lifeIG:
                         #Now life has a few more rules that tell it that it's neighbors don't have to be it's own kind of life, but can be of different kinds of life or things that allow for life! (This should have very interesting effects)
                         l = neighborCount(miniplain,(4,8,15,21,24,26,28,31,37,71))
-                        if jam:
+                        if jam or supersun:
                             if l < random.randint(0,10) or l > random.randint(0,10):
                                 grid[a][bb] = [0,0]
                             else:
