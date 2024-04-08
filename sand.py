@@ -2959,12 +2959,12 @@ while breaking:
                         print("HEY! YOU FORGOT TO DO ELEMENTS! (Defaulting to what you did last time)")
                         elementary = False
             elif event.key == pygame.K_RIGHTBRACKET:
-                if len(restack) != 0:
+                
+                if len(restack) > 0:
                     sandstack.append(deepcopy(land))
-                    restack = []
                     land = restack.pop()
             elif event.key == pygame.K_LEFTBRACKET:
-                if len(sandstack) != 0:
+                if len(sandstack) > 0:
                     restack.append(deepcopy(land))
                     land = sandstack.pop()
             
