@@ -2805,7 +2805,7 @@ def remindMe() -> None:
     print("ELEMENTS: Q: Iron  W: Gravel  E: Obsidian  R: Steam  T: Glass  Y: Salt  U: Cloud  I: Brick O: Clay  P: Void  A: Algae")
     print("ELEMENTS: G: Snow  H: Ice  J: TNT  K: Sapling  L: Life particle (think the game of life, If turned off it will just be random)")
     print("ELEMENTS: Z: Electricity  X: Flower Seed  C: Oil  V: Fire N: Jammer (Screws stuff up)  M: Cloner  B: Smart Remover  S: Smart Converter  D: Sun  F: Moon")
-    print("ELEMENTS: If you would like more information about how the smart remover/converter works, please visit https://www.youtube.com/watch?v=w_oNW7uHfcw")
+    print("If you would like more information about how the smart remover/converter works, please visit https://www.youtube.com/watch?v=w_oNW7uHfcw")
     #I'm sure dr. mo wouldn't mind......
     print("ELEMENT CONTROLS: Left click to place down the element, Right click to use the eraser. You will have to discover the rest of the elements on your own through trial and error :)\nTo do multiple elements with a brush, press the comma for it to be random of some elements. To dither the brush, press the slash key.")
     print("ELEMENT CONTROLS: To get an element that's not on this list, press the Right Shift key then enter the element's ID (number) in the console.\nAlternatively, you can eyedrop (copy) an element from the sandbox by pressing period and then clicking the element")
