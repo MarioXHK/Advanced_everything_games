@@ -2,7 +2,7 @@ import pygame
 from pygame import Vector2
 import random
 import math
-import tools
+import arse
 
 
 
@@ -23,14 +23,16 @@ coins: int = 0
 
 #keyboard variables--------------------------------
 contType = "arrow"
-keys = [0,0,0,0]
+keys = [False,False,False,False]
 upK = 0
 downK = 1
 leftK = 2
 rightK = 3
-
+rotation = 0
 #pickaxe variables-----------------------------------
-picks = [tools.pickaxe(mousePos,0,45*r) for r in range(8)]
+youcent = Vector2(500,500)
+picks: list[arse.orbiter] = [arse.orbiter(youcent,45*r) for r in range(8)]
+silverbullet = arse.bullet(youcent.copy(),Vector2(0,2))
 
 
 while crafting:
@@ -56,10 +58,10 @@ while crafting:
                     keys[upK]=True
                 elif event.key == pygame.K_RIGHT:
                     keys[rightK]=True
+                    
             elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT:
                     keys[leftK]=False
-
                 elif event.key == pygame.K_UP:
                     keys[upK]=False
                 elif event.key == pygame.K_RIGHT:
@@ -69,29 +71,36 @@ while crafting:
     
     
     
+    rotation += 1
+    silverbullet.turn(rotation)
 
     #Sword movement------------------------------------
+    
     if keys[rightK]:
-        pickaxe.cent.x += 4
+        youcent.x += 4
     if keys[leftK]:
-        pickaxe.cent.x -= 4
+        youcent.x -= 4
     if keys[upK]:
-        pickaxe.cent.y -= 4
+        youcent.y -= 4
     if keys[downK]:
-        pickaxe.cent.y += 4
+        youcent.y += 4
     
-    for pickaxe in picks:
-        
+    for shield in picks:
+        shield.cent = youcent
 
 
-        pickaxe.move()
+        shield.move()
     
+    silverbullet.move()
+
+
     #Physics-------------------------------------------
     
     fire = False
     #Render--------------------------------------------
     screen.fill((255,255,255))
-    pygame.draw.circle(screen,(127,0,255),pickaxe.cent,20)
+    pygame.draw.circle(screen,(127,0,255),youcent,20)
+    silverbullet.draw(screen)
     for p in picks:
         p.draw(screen)
 
