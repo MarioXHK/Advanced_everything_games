@@ -21,10 +21,12 @@ delay = 0
 delayed = 5
 angel = -90
 rotation = 0
-bulletMode = "splitshot"
+bulletMode = "squiggle"
 umbratime = 0
 dbspeed = 5
 bspeed = dbspeed
+zigtime = 0
+
 #mouse variables--------------------------------
 mousePos = Vector2(0,0)
 fire = False
@@ -167,14 +169,16 @@ while firing:
     split = []
     myvel = []
     splitters = 0
-    
+    zigtime += 0.1
     if umbratime < 360:
+        umbratime -= 360
+    if zigtime < 360:
         umbratime -= 360
     for bull in gunfire:
         #bull's short for bullets. I'm doing horrid shorteninghs
         if bull.id != 0:
             bull.move()
-            if thevariablethattellsmethatitshit and bull.id > 1:
+            if thevariablethattellsmethatitshit and bull.id > 1 and bull.id < 10:
                 splitters += 1
                 splitme = True
                 for _ in range(2):
@@ -183,6 +187,8 @@ while firing:
                     mypos.append(bull.pos)
                     myvel.append(bull.vel*0.9)
                 bull.id = 0
+            elif bull.id == 10:
+                bull.xyvel.x += math.cos(zigtime)/2
         elif splitme:
             splited += 1
             bull.vel = myvel.pop()
@@ -223,6 +229,10 @@ while firing:
                 elif bulletMode == "splitshot":
                     bull.id = 2
                     bull.turn(angel)
+                    shot = True
+                elif bulletMode == "squiggle":
+                    bull.xyvel = Vector2(0,(0-dbspeed))
+                    bull.id = 10
                     shot = True
                 else:
                     bull.turn(angel)

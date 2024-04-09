@@ -41,13 +41,16 @@ class pickaxe(orbiter):
 
 
 class bullet:
-    def __init__(self,centerPos: Vector2, angle: int | float = -90,velocity: int | float = 10):
+    def __init__(self,centerPos: Vector2, angle: int | float = -90,velocity: int | float = 10,vecvelocity: Vector2 | None = None):
         self.id = 0
         self.pos = centerPos
         self.vel = velocity
-        self.xyvel = Vector2(0,0)
         self.angle = angle
-        self.turn(angle)
+        if vecvelocity == None:
+            self.xyvel = Vector2(0,0)
+            self.turn(angle)
+        else:
+            self.xyvel = vecvelocity
     def turn(self,angle: int | float):
         self.angle = angle
         radians = angle*(3.14/180)
