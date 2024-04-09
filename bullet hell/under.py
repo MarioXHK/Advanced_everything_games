@@ -23,16 +23,17 @@ coins: int = 0
 
 #keyboard variables--------------------------------
 contType = "arrow"
-keys = [False,False,False,False]
+keys = [False,False,False,False,False]
 upK = 0
 downK = 1
 leftK = 2
 rightK = 3
+spaceK = 4
 rotation = 0
 #pickaxe variables-----------------------------------
 youcent = Vector2(500,500)
 picks: list[arse.orbiter] = [arse.orbiter(youcent,45*r) for r in range(8)]
-silverbullet = arse.bullet(youcent.copy(),Vector2(0,2))
+gunfire = [arse.bullet(Vector2(-500,-500)) for i in range(100)]
 
 
 while crafting:
@@ -58,6 +59,8 @@ while crafting:
                     keys[upK]=True
                 elif event.key == pygame.K_RIGHT:
                     keys[rightK]=True
+                elif event.key == pygame.K_SPACE:
+                    keys[spaceK]=True
                     
             elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT:
@@ -68,11 +71,12 @@ while crafting:
                     keys[rightK]=False
                 elif event.key == pygame.K_DOWN:
                     keys[downK]=False
+                elif event.key == pygame.K_SPACE:
+                    keys[spaceK]=False
     
     
     
-    rotation += 1
-    silverbullet.turn(rotation)
+    
 
     #Sword movement------------------------------------
     
@@ -91,7 +95,14 @@ while crafting:
 
         shield.move()
     
-    silverbullet.move()
+    for bull in gunfire:
+        #bull's short for bullets. I'm doing horrid shorteninghs
+        if keys[spaceK] and bull.id == 0:
+            bull.id = 1
+            bull.pos = youcent.copy()
+            break
+        else:
+            bull.move()
 
 
     #Physics-------------------------------------------
@@ -100,7 +111,10 @@ while crafting:
     #Render--------------------------------------------
     screen.fill((255,255,255))
     pygame.draw.circle(screen,(127,0,255),youcent,20)
-    silverbullet.draw(screen)
+    for b in gunfire:
+        if b.id == 0:
+            continue
+        b.draw(screen)
     for p in picks:
         p.draw(screen)
 

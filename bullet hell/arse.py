@@ -44,17 +44,20 @@ class pickaxe(orbiter):
 
 
 class bullet:
-    def __init__(self,centerPos: Vector2, velocity: Vector2 = Vector2(0,5)):
+    def __init__(self,centerPos: Vector2, angle: int | float = -90,velocity: int | float = 10):
+        self.id = 0
         self.pos = centerPos
-        self.defvel = velocity
         self.vel = velocity
-        self.velavg = velocity.x + velocity.y
+        self.xyvel = Vector2(0,0)
+        self.turn(angle)
     def turn(self,angle: int | float):
-        print(self.velavg)
         radians = angle*(3.14/180)
-        self.vel.x = self.velavg*math.cos(radians)
-        self.vel.y = self.velavg*math.sin(radians)
-    def move(self):
-        self.pos += self.vel
+        self.xyvel.x = self.vel*math.cos(radians)
+        self.xyvel.y = self.vel*math.sin(radians)
+    def move(self,goawayoffscreen: bool = True):
+        self.pos += self.xyvel
+        if goawayoffscreen:
+            if self.pos.x < -100 or self.pos.x > 1124 or self.pos.y < -100 or self.pos.y > 868:
+                self.id = 0
     def draw(self,screen):
         pygame.draw.circle(screen,(0,0,0),self.pos,5)
