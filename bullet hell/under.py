@@ -4,7 +4,7 @@ import random
 import math
 import arse
 
-
+firing = True
 
 #Required pygame things------------------------
 pygame.init()
@@ -15,10 +15,16 @@ clock = pygame.time.Clock()
 pygame.font.init()
 font = pygame.font.SysFont('Comic Sans MS', 30)
 
+#Bullet Variables-----------------
+
 delay = 0
 delayed = 5
 angel = -90
-
+rotation = 0
+bulletMode = "splitshot"
+umbratime = 0
+dbspeed = 5
+bspeed = dbspeed
 #mouse variables--------------------------------
 mousePos = Vector2(0,0)
 fire = False
@@ -38,19 +44,21 @@ aK = 6
 sK = 7
 dK = 8
 
-rotation = 0
+thevariablethattellsmethatitshit = False
+
 #pickaxe variables-----------------------------------
 youcent = Vector2(500,500)
 picks: list[arse.orbiter] = [arse.orbiter(youcent,45*r) for r in range(8)]
-gunfire = [arse.bullet(Vector2(-500,-500)) for i in range(100)]
+gunfire = [arse.bullet(Vector2(-500,-500)) for i in range(1000)]
 
 
-while crafting:
+while firing:
     clock.tick(60)
+    thevariablethattellsmethatitshit = False
     #Input--------------------------------------------
     for event in pygame.event.get(): #Event Queue (or whatever it's called)
         if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
-            crafting = False
+            firing = False
         if event.type == pygame.MOUSEBUTTONDOWN and tap:
             fire = True
             tap = False
@@ -62,41 +70,43 @@ while crafting:
             if event.type == pygame.KEYDOWN: #keyboard input
                 if event.key == pygame.K_LEFT:
                     keys[leftK]=True
-                elif event.key == pygame.K_DOWN:
+                if event.key == pygame.K_DOWN:
                     keys[downK]=True
-                elif event.key == pygame.K_UP:
+                if event.key == pygame.K_UP:
                     keys[upK]=True
-                elif event.key == pygame.K_RIGHT:
+                if event.key == pygame.K_RIGHT:
                     keys[rightK]=True
-                elif event.key == pygame.K_SPACE:
+                if event.key == pygame.K_SPACE:
                     keys[spaceK]=True
-                elif event.key == pygame.K_w:
+                if event.key == pygame.K_w:
                     keys[wK]=True
-                elif event.key == pygame.K_a:
+                if event.key == pygame.K_a:
                     keys[aK]=True
-                elif event.key == pygame.K_s:
+                if event.key == pygame.K_s:
                     keys[sK]=True
-                elif event.key == pygame.K_d:
+                if event.key == pygame.K_d:
                     keys[dK]=True
+                if event.key == pygame.K_LCTRL:
+                    thevariablethattellsmethatitshit=True
                     
             elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT:
                     keys[leftK]=False
-                elif event.key == pygame.K_UP:
+                if event.key == pygame.K_UP:
                     keys[upK]=False
-                elif event.key == pygame.K_RIGHT:
+                if event.key == pygame.K_RIGHT:
                     keys[rightK]=False
-                elif event.key == pygame.K_DOWN:
+                if event.key == pygame.K_DOWN:
                     keys[downK]=False
-                elif event.key == pygame.K_SPACE:
+                if event.key == pygame.K_SPACE:
                     keys[spaceK]=False
-                elif event.key == pygame.K_w:
+                if event.key == pygame.K_w:
                     keys[wK]=False
-                elif event.key == pygame.K_a:
+                if event.key == pygame.K_a:
                     keys[aK]=False
-                elif event.key == pygame.K_s:
+                if event.key == pygame.K_s:
                     keys[sK]=False
-                elif event.key == pygame.K_d:
+                if event.key == pygame.K_d:
                     keys[dK]=False
     
     
@@ -105,13 +115,13 @@ while crafting:
 
     #Sword movement------------------------------------
     
-    if keys[rightK]:
+    if keys[rightK] and youcent.x < 974:
         youcent.x += 4
-    if keys[leftK]:
+    if keys[leftK] and youcent.x > 50:
         youcent.x -= 4
-    if keys[upK]:
+    if keys[upK] and youcent.y > 50:
         youcent.y -= 4
-    if keys[downK]:
+    if keys[downK] and youcent.y < 718:
         youcent.y += 4
     
     for shield in picks:
@@ -149,22 +159,74 @@ while crafting:
         delay -= 1
     delaying:bool = (delay > 0)
     shotted = 0
+    umbratime += 1
+    splitme = False
+    myangle = []
+    mypos = []
+    splited = 0
+    split = []
+    myvel = []
+    splitters = 0
+    
+    if umbratime < 360:
+        umbratime -= 360
     for bull in gunfire:
         #bull's short for bullets. I'm doing horrid shorteninghs
         if bull.id != 0:
             bull.move()
+            if thevariablethattellsmethatitshit and bull.id > 1:
+                splitters += 1
+                splitme = True
+                for _ in range(2):
+                    split.append(bull.id-1)
+                    myangle.append(bull.angle)
+                    mypos.append(bull.pos)
+                    myvel.append(bull.vel*0.9)
+                bull.id = 0
+        elif splitme:
+            splited += 1
+            bull.vel = myvel.pop()
+            if splited % 2 == 1:
+                bull.turn(myangle.pop()-5)
+            else:
+                bull.turn(myangle.pop()+5)
+            bull.id = split.pop()
+            bull.pos = mypos.pop().copy()
+            
+            if splited >= splitters*2:
+                splitme = False
         else:
             if keys[spaceK] and not (shot or delaying):
+                
+                
+                bull.vel = dbspeed
                 shotted += 1
                 delay = delayed
-                if shotted == 1:
-                    bull.turn(angel)
-                if shotted == 2:
-                    bull.turn(angel+10)
-                if shotted == 3:
-                    bull.turn(angel-10)
-                    shot = True
                 bull.id = 1
+                if bulletMode == "multishot":
+                    if shotted == 1:
+                        bull.turn(angel)
+                    if shotted == 2:
+                        bull.turn(angel+10)
+                    if shotted >= 3:
+                        bull.turn(angel-10)
+                        shot = True
+                elif bulletMode == "umbrella":
+                    bull.turn(shotted*22.5+umbratime)
+                    if shotted >= 16:
+                        shot = True
+                elif bulletMode == "shotgun":
+                    bull.vel = dbspeed + random.random()*2
+                    bull.turn(angel+random.randint(-15,15))
+                    if shotted >= random.randint(5,8):
+                        shot = True
+                elif bulletMode == "splitshot":
+                    bull.id = 2
+                    bull.turn(angel)
+                    shot = True
+                else:
+                    bull.turn(angel)
+                    shot = True
                 bull.pos = youcent.copy()
         
 

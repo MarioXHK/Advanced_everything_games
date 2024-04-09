@@ -46,8 +46,10 @@ class bullet:
         self.pos = centerPos
         self.vel = velocity
         self.xyvel = Vector2(0,0)
+        self.angle = angle
         self.turn(angle)
     def turn(self,angle: int | float):
+        self.angle = angle
         radians = angle*(3.14/180)
         self.xyvel.x = self.vel*math.cos(radians)
         self.xyvel.y = self.vel*math.sin(radians)
