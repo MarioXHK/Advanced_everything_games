@@ -9,7 +9,7 @@ class orbiter:
         self.cent = centerPos
         self.rotPos = centerPos
         self.angle = angle
-        self.am = 1 #Angular momentum
+        self.am = 2 #Angular momentum
         
         self.rx = 0
         self.ry = 0
@@ -17,9 +17,6 @@ class orbiter:
         self.rey = 0
     def move(self) -> None:
         self.angle += self.am
-        
-        self.rx += 0.05
-        self.rey -= 0.5
         
         radians = self.angle*(3.14/180)
         

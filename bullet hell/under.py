@@ -9,11 +9,15 @@ import arse
 #Required pygame things------------------------
 pygame.init()
 screen = pygame.display.set_mode((1024,768))
-pygame.display.set_caption("Minecraft but not really, it's just some flash game I found that's fun in principle")
+pygame.display.set_caption("Bullets and junk")
 crafting=True
 clock = pygame.time.Clock()
 pygame.font.init()
 font = pygame.font.SysFont('Comic Sans MS', 30)
+
+delay = 0
+delayed = 5
+angel = -90
 
 #mouse variables--------------------------------
 mousePos = Vector2(0,0)
@@ -23,12 +27,17 @@ coins: int = 0
 
 #keyboard variables--------------------------------
 contType = "arrow"
-keys = [False,False,False,False,False]
+keys = [False,False,False,False,False,False,False,False,False]
 upK = 0
 downK = 1
 leftK = 2
 rightK = 3
 spaceK = 4
+wK = 5
+aK = 6
+sK = 7
+dK = 8
+
 rotation = 0
 #pickaxe variables-----------------------------------
 youcent = Vector2(500,500)
@@ -61,6 +70,14 @@ while crafting:
                     keys[rightK]=True
                 elif event.key == pygame.K_SPACE:
                     keys[spaceK]=True
+                elif event.key == pygame.K_w:
+                    keys[wK]=True
+                elif event.key == pygame.K_a:
+                    keys[aK]=True
+                elif event.key == pygame.K_s:
+                    keys[sK]=True
+                elif event.key == pygame.K_d:
+                    keys[dK]=True
                     
             elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT:
@@ -73,6 +90,14 @@ while crafting:
                     keys[downK]=False
                 elif event.key == pygame.K_SPACE:
                     keys[spaceK]=False
+                elif event.key == pygame.K_w:
+                    keys[wK]=False
+                elif event.key == pygame.K_a:
+                    keys[aK]=False
+                elif event.key == pygame.K_s:
+                    keys[sK]=False
+                elif event.key == pygame.K_d:
+                    keys[dK]=False
     
     
     
@@ -94,15 +119,54 @@ while crafting:
 
 
         shield.move()
+    shot = False
     
+
+    #Bullets in this bullet hell---------------------------------
+
+    if keys[wK]:
+        if keys[aK]:
+            angel = 225
+        elif keys[dK]:
+            angel = 315
+        else:
+            angel = 270
+    elif keys[aK]:
+        if keys[sK]:
+            angel = 135
+        else:
+            angel = 180
+    elif keys[sK]:
+        if keys[dK]:
+            angel = 45
+        else:
+            angel = 90
+    elif keys[dK]:
+        angel = 0
+
+
+    if delay > 0:
+        delay -= 1
+    delaying:bool = (delay > 0)
+    shotted = 0
     for bull in gunfire:
         #bull's short for bullets. I'm doing horrid shorteninghs
-        if keys[spaceK] and bull.id == 0:
-            bull.id = 1
-            bull.pos = youcent.copy()
-            break
-        else:
+        if bull.id != 0:
             bull.move()
+        else:
+            if keys[spaceK] and not (shot or delaying):
+                shotted += 1
+                delay = delayed
+                if shotted == 1:
+                    bull.turn(angel)
+                if shotted == 2:
+                    bull.turn(angel+10)
+                if shotted == 3:
+                    bull.turn(angel-10)
+                    shot = True
+                bull.id = 1
+                bull.pos = youcent.copy()
+        
 
 
     #Physics-------------------------------------------
