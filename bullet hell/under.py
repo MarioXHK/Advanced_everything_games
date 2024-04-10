@@ -3,6 +3,7 @@ from pygame import Vector2
 import random
 import math
 import arse
+import npc
 
 firing = True
 
@@ -56,11 +57,18 @@ trytodash = False
 
 thevariablethattellsmethatitshit = False
 
-#pickaxe variables-----------------------------------
+#your ship variables-----------------------------------
 youcent = Vector2(500,500)
 picks: list[arse.orbiter] = [arse.orbiter(youcent,45*r) for r in range(8)]
 gunfire = [arse.bullet(Vector2(-500,-500)) for i in range(1000)]
 dashblobs = [[Vector2(0,0),0] for j in range(15)]
+
+#enemy ship variables
+theircent = npc.ship(Vector2(500,200))
+
+
+ 
+
 
 while firing:
     clock.tick(60)
@@ -212,17 +220,19 @@ while firing:
         #bull's short for bullets. I'm doing horrid shorteninghs
         if bull.id != 0:
             bull.move()
-            if thevariablethattellsmethatitshit and bull.id > 1 and bull.id < 10:
-                splitters += 1
-                splitme = True
-                for _ in range(2):
-                    split.append(bull.id-1)
-                    myangle.append(bull.angle)
-                    mypos.append(bull.pos)
-                    myvel.append(bull.vel*0.9)
+            if bull.pos.distance_to(theircent.pos) < bull.size + 20 and theircent.alive:
+                theircent.alive = False
+                if bull.id > 1 and bull.id < 10:
+                    splitters += 1
+                    splitme = True
+                    for _ in range(2):
+                        split.append(bull.id-1)
+                        myangle.append(bull.angle)
+                        mypos.append(bull.pos)
+                        myvel.append(bull.vel*0.9)
+                elif bull.id == 10:
+                    bull.xyvel.x += math.cos(zigtime)/2
                 bull.id = 0
-            elif bull.id == 10:
-                bull.xyvel.x += math.cos(zigtime)/2
         elif splitme:
             splited += 1
             bull.vel = myvel.pop()
@@ -275,9 +285,9 @@ while firing:
         
 
 
-    #Physics-------------------------------------------
+    #The Enemy Physics-------------------------------------------
     
-    fire = False
+    theircent.dieplease()
     #Render--------------------------------------------
     screen.fill((0,0,0))
     for b in dashblobs:
@@ -292,6 +302,8 @@ while firing:
             pygame.draw.circle(screen,(0,0,255),youcent,20)
     else:
         pygame.draw.circle(screen,(127,0,255),youcent,20)
+    if not theircent.dead:
+        theircent.draw(screen)
     for b in gunfire:
         if b.id == 0:
             continue
