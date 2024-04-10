@@ -22,7 +22,7 @@ delay = 0
 delayed = 5
 angel = -90
 rotation = 0
-bulletMode = "squiggle"
+bulletMode = "anything"
 umbratime = 0
 dbspeed = 5
 bspeed = dbspeed
@@ -58,14 +58,14 @@ trytodash = False
 thevariablethattellsmethatitshit = False
 
 #your ship variables-----------------------------------
-youcent = Vector2(500,500)
-picks: list[arse.orbiter] = [arse.orbiter(youcent,45*r) for r in range(8)]
+youcent = npc.ship(Vector2(500,500),20)
+picks: list[arse.shield] = [arse.shield(youcent.pos.copy(),45*r,50,(255,0,0)) for r in range(8)]
 gunfire = [arse.bullet(Vector2(-500,-500)) for i in range(1000)]
 dashblobs = [[Vector2(0,0),0] for j in range(15)]
 
 #enemy ship variables
 theircent = [npc.ship(Vector2(50*g,200)) for g in range(1,20)]
-
+bullets = [arse.bullet(theircent[0].pos.copy()) for i in range(1000)]
 
  
 
@@ -144,7 +144,7 @@ while firing:
         dashing = True
 
     if dashtimer % 5 == 0:
-        dashblobs[dashtimer // 5][0] = youcent.copy()
+        dashblobs[dashtimer // 5][0] = youcent.pos.copy()
         dashblobs[dashtimer // 5][1] = 20
 
     if dashing:
@@ -158,18 +158,18 @@ while firing:
         if dashdelay <= 0:
             dash = False
 
-
-    if keys[rightK] and youcent.x < 974:
-        youcent.x += 4 + dashtimer / 2
-    if keys[leftK] and youcent.x > 50:
-        youcent.x -= 4 + dashtimer / 2
-    if keys[upK] and youcent.y > 50:
-        youcent.y -= 4 + dashtimer / 2
-    if keys[downK] and youcent.y < 718:
-        youcent.y += 4 + dashtimer / 2
+    if youcent.alive:
+        if keys[rightK] and youcent.pos.x < 974:
+            youcent.pos.x += 4 + dashtimer / 2
+        if keys[leftK] and youcent.pos.x > 50:
+            youcent.pos.x -= 4 + dashtimer / 2
+        if keys[upK] and youcent.pos.y > 50:
+            youcent.pos.y -= 4 + dashtimer / 2
+        if keys[downK] and youcent.pos.y < 718:
+            youcent.pos.y += 4 + dashtimer / 2
     
     for shield in picks:
-        shield.cent = youcent
+        shield.cent = youcent.pos
 
 
         shield.move()
@@ -220,13 +220,15 @@ while firing:
         #bull's short for bullets. I'm doing horrid shorteninghs
         if bull.id != 0:
             deadbullet = False
+            if bull.id == 10:
+                    bull.xyvel.x += math.cos(zigtime)/2
             bull.move()
             for h in theircent:
                 if not h.alive:
                     continue
                 if bull.pos.distance_to(h.pos) < bull.size + 20:
                     deadbullet = True
-                    h.alive = False
+                    h.hp -= 1
                     break
             if deadbullet:
                 if bull.id > 1 and bull.id < 10:
@@ -237,8 +239,6 @@ while firing:
                         myangle.append(bull.angle)
                         mypos.append(bull.pos)
                         myvel.append(bull.vel*0.9)
-                elif bull.id == 10:
-                    bull.xyvel.x += math.cos(zigtime)/2
                 bull.id = 0
         elif splitme:
             splited += 1
@@ -288,10 +288,62 @@ while firing:
                 else:
                     bull.turn(angel)
                     shot = True
-                bull.pos = youcent.copy()
-        
+                bull.pos = youcent.pos.copy()
+    
+    shotter = False
 
+    for bull in bullets:
+        if bull.id != 0:
+            deadbullet = False
+            bull.move()
+            if not youcent.alive:
+                continue
+            if bull.pos.distance_to(youcent.pos) < bull.size + 20:
+                deadbullet = True
+                youcent.hp -= 1
+            else:
+                for h in picks:
+                    if h.hp <= 0:
+                        continue
+                    if bull.pos.distance_to(h.rotPos) < bull.size + 10:
+                        deadbullet = True
+                        h.hp -= 1
+            if deadbullet:
+                if bull.id > 1 and bull.id < 10:
+                    splitters += 1
+                    splitme = True
+                    for _ in range(2):
+                        split.append(bull.id-1)
+                        myangle.append(bull.angle)
+                        mypos.append(bull.pos)
+                        myvel.append(bull.vel*0.9)
+                bull.id = 0
+        elif splitme:
+            splited += 1
+            bull.vel = myvel.pop()
+            if splited % 2 == 1:
+                bull.turn(myangle.pop()-5)
+            else:
+                bull.turn(myangle.pop()+5)
+            bull.id = split.pop()
+            bull.pos = mypos.pop().copy()
+            
+            if splited >= splitters*2:
+                splitme = False
+        else:
+            if keys[spaceK] and not (shotter or dashing or delaying):
+                
+                
+                bull.vel = dbspeed
+                shotted += 1
+                delay = delayed
+                bull.id = 1
+                
+                bull.turn(0-angel)
+                shotter = True
+                bull.pos = theircent[0].pos.copy()
 
+    youcent.dieplease()
     #The Enemy Physics-------------------------------------------
     for g in theircent:
         g.move()
@@ -305,15 +357,23 @@ while firing:
         pygame.draw.circle(screen,(0,b[1]*10,b[1]*10),b[0],20)
     if dash:
         if dashing:
-            pygame.draw.circle(screen,(0,255,255),youcent,20)
+            youcent.color = (0,255,255)
         else:
-            pygame.draw.circle(screen,(0,0,255),youcent,20)
+            youcent.color = (0,0,255)
     else:
-        pygame.draw.circle(screen,(127,0,255),youcent,20)
+        youcent.color = (127,0,255)
+    
+    youcent.draw(screen)
+    
     for g in theircent:
         if not g.dead:
             g.draw(screen)
+    
     for b in gunfire:
+        if b.id == 0:
+            continue
+        b.draw(screen)
+    for b in bullets:
         if b.id == 0:
             continue
         b.draw(screen)

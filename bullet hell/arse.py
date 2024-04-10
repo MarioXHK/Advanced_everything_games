@@ -4,13 +4,13 @@ from pygame import Vector2
 import math
 
 class orbiter:
-    def __init__(self,centerPos: Vector2, angle: int | float = 0, reach: int | float = 50) -> None:
+    def __init__(self,centerPos: Vector2, angle: int | float = 0, reach: int | float = 50, color: tuple[int,int,int] = (255,255,255)):
         self.reach = reach
         self.cent = centerPos
         self.rotPos = centerPos
         self.angle = angle
         self.am = 2 #Angular momentum
-        
+        self.color = color
         self.rx = 0
         self.ry = 0
         self.rex = 0
@@ -21,9 +21,38 @@ class orbiter:
         radians = self.angle*(3.14/180)
         
         self.rotPos = ((self.reach+self.rex)*math.cos(radians+self.rx)+self.cent.x, (self.reach+self.rey)*math.sin(radians+self.ry)+self.cent.y)
-    
+    def movetocent(self):
+        self.rotPos = self.cent
     def draw(self,screen):
-        pygame.draw.circle(screen,(255,0,0),self.rotPos,10)
+        pygame.draw.circle(screen,self.color,self.rotPos,10)
+
+class shield(orbiter):
+    def __init__(self,centerPos: Vector2, angle: int | float = 0, reach: int | float = 50, color: tuple[int,int,int] = (255,255,255), health: int = 3):
+        super().__init__(centerPos, angle, reach,color)
+        self.hp = health
+        self.dhp = health
+        self.healtime = 300
+        self.fullhealtime = 900
+        self.httimer = 0
+        self.fhtimer = 0
+    def healfromdamages(self):
+        if self.hp <= 0:
+            self.fhtimer += 1
+            if self.fhtimer >= self.fullhealtime:
+                self.fhtimer = 0
+                self.hp = self.dhp//2
+        elif self.hp < self.dhp:
+            self.httimer += 1
+            if self.httimer >= self.healtime:
+                self.hp += 1
+                self.httimer = 0
+    def draw(self,screen):
+        if self.hp <= 0:
+            pygame.draw.circle(screen,(self.color[0]//4,self.color[1]//4,self.color[2]//4),self.rotPos,10)
+        else:
+            pygame.draw.circle(screen,self.color,self.rotPos,10)
+
+
 
 
 class pickaxe(orbiter):
