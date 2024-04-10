@@ -64,7 +64,7 @@ gunfire = [arse.bullet(Vector2(-500,-500)) for i in range(1000)]
 dashblobs = [[Vector2(0,0),0] for j in range(15)]
 
 #enemy ship variables
-theircent = npc.ship(Vector2(500,200))
+theircent = [npc.ship(Vector2(50*g,200)) for g in range(1,20)]
 
 
  
@@ -219,9 +219,16 @@ while firing:
     for bull in gunfire:
         #bull's short for bullets. I'm doing horrid shorteninghs
         if bull.id != 0:
+            deadbullet = False
             bull.move()
-            if bull.pos.distance_to(theircent.pos) < bull.size + 20 and theircent.alive:
-                theircent.alive = False
+            for h in theircent:
+                if not h.alive:
+                    continue
+                if bull.pos.distance_to(h.pos) < bull.size + 20:
+                    deadbullet = True
+                    h.alive = False
+                    break
+            if deadbullet:
                 if bull.id > 1 and bull.id < 10:
                     splitters += 1
                     splitme = True
@@ -286,8 +293,9 @@ while firing:
 
 
     #The Enemy Physics-------------------------------------------
-    
-    theircent.dieplease()
+    for g in theircent:
+        g.move()
+        g.dieplease()
     #Render--------------------------------------------
     screen.fill((0,0,0))
     for b in dashblobs:
@@ -302,8 +310,9 @@ while firing:
             pygame.draw.circle(screen,(0,0,255),youcent,20)
     else:
         pygame.draw.circle(screen,(127,0,255),youcent,20)
-    if not theircent.dead:
-        theircent.draw(screen)
+    for g in theircent:
+        if not g.dead:
+            g.draw(screen)
     for b in gunfire:
         if b.id == 0:
             continue

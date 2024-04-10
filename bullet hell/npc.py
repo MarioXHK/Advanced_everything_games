@@ -5,7 +5,6 @@ import random
 
 class ship:
     def __init__(self,centerPos: Vector2, size: int | float = 20, velocity = Vector2(0,0), myColor: tuple = (255,255,255)):
-        self.id = random.random()
         self.pos = centerPos
         self.size = size
         self.color = myColor
