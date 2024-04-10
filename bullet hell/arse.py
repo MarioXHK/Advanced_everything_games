@@ -41,7 +41,8 @@ class pickaxe(orbiter):
 
 
 class bullet:
-    def __init__(self,centerPos: Vector2, angle: int | float = -90,velocity: int | float = 10,vecvelocity: Vector2 | None = None):
+    def __init__(self,centerPos: Vector2, angle: int | float = -90,velocity: int | float = 10,vecvelocity: Vector2 | None = None, myColor: tuple = (255,255,255)):
+        self.color = myColor
         self.id = 0
         self.pos = centerPos
         self.vel = velocity
@@ -62,4 +63,4 @@ class bullet:
             if self.pos.x < -100 or self.pos.x > 1124 or self.pos.y < -100 or self.pos.y > 868:
                 self.id = 0
     def draw(self,screen):
-        pygame.draw.circle(screen,(0,0,0),self.pos,5)
+        pygame.draw.circle(screen,self.color,self.pos,5)

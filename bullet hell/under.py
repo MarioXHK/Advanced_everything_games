@@ -46,17 +46,26 @@ aK = 6
 sK = 7
 dK = 8
 
+
+#Dashing
+dash = False
+dashing = False
+dashtimer = 0
+dashdelay = 0
+trytodash = False
+
 thevariablethattellsmethatitshit = False
 
 #pickaxe variables-----------------------------------
 youcent = Vector2(500,500)
 picks: list[arse.orbiter] = [arse.orbiter(youcent,45*r) for r in range(8)]
 gunfire = [arse.bullet(Vector2(-500,-500)) for i in range(1000)]
-
+dashblobs = [[Vector2(0,0),0] for j in range(15)]
 
 while firing:
     clock.tick(60)
     thevariablethattellsmethatitshit = False
+    trytodash = False
     #Input--------------------------------------------
     for event in pygame.event.get(): #Event Queue (or whatever it's called)
         if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
@@ -72,59 +81,84 @@ while firing:
             if event.type == pygame.KEYDOWN: #keyboard input
                 if event.key == pygame.K_LEFT:
                     keys[leftK]=True
-                if event.key == pygame.K_DOWN:
+                elif event.key == pygame.K_DOWN:
                     keys[downK]=True
-                if event.key == pygame.K_UP:
+                elif event.key == pygame.K_UP:
                     keys[upK]=True
-                if event.key == pygame.K_RIGHT:
+                elif event.key == pygame.K_RIGHT:
                     keys[rightK]=True
-                if event.key == pygame.K_SPACE:
+                elif event.key == pygame.K_SPACE:
                     keys[spaceK]=True
-                if event.key == pygame.K_w:
+                elif event.key == pygame.K_w:
                     keys[wK]=True
-                if event.key == pygame.K_a:
+                elif event.key == pygame.K_a:
                     keys[aK]=True
-                if event.key == pygame.K_s:
+                elif event.key == pygame.K_s:
                     keys[sK]=True
-                if event.key == pygame.K_d:
+                elif event.key == pygame.K_d:
                     keys[dK]=True
-                if event.key == pygame.K_LCTRL:
+                elif event.key == pygame.K_d:
+                    keys[dK]=True
+                elif not dash and event.key == pygame.K_LSHIFT:
+                    trytodash = True
+                elif event.key == pygame.K_LCTRL:
                     thevariablethattellsmethatitshit=True
                     
             elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT:
                     keys[leftK]=False
-                if event.key == pygame.K_UP:
+                elif event.key == pygame.K_UP:
                     keys[upK]=False
-                if event.key == pygame.K_RIGHT:
+                elif event.key == pygame.K_RIGHT:
                     keys[rightK]=False
-                if event.key == pygame.K_DOWN:
+                elif event.key == pygame.K_DOWN:
                     keys[downK]=False
-                if event.key == pygame.K_SPACE:
+                elif event.key == pygame.K_SPACE:
                     keys[spaceK]=False
-                if event.key == pygame.K_w:
+                elif event.key == pygame.K_w:
                     keys[wK]=False
-                if event.key == pygame.K_a:
+                elif event.key == pygame.K_a:
                     keys[aK]=False
-                if event.key == pygame.K_s:
+                elif event.key == pygame.K_s:
                     keys[sK]=False
-                if event.key == pygame.K_d:
+                elif event.key == pygame.K_d:
                     keys[dK]=False
     
     
     
     
 
-    #Sword movement------------------------------------
+    #Your movement------------------------------------
     
+    if trytodash and (True in keys[0:4]):
+        dashtimer = 20
+        dash = True
+        dashing = True
+
+    if dashtimer % 5 == 0:
+        dashblobs[dashtimer // 5][0] = youcent.copy()
+        dashblobs[dashtimer // 5][1] = 20
+
+    if dashing:
+        dashtimer -= 1
+        if dashtimer <= 0 or not (True in keys[0:4]):
+            dashing = False
+            dashdelay = 40+dashtimer
+            dashtimer = 0
+    if dash and dashtimer <= 0:
+        dashdelay -= 1
+        if dashdelay <= 0:
+            dash = False
+
+
     if keys[rightK] and youcent.x < 974:
-        youcent.x += 4
+        youcent.x += 4 + dashtimer / 2
     if keys[leftK] and youcent.x > 50:
-        youcent.x -= 4
+        youcent.x -= 4 + dashtimer / 2
     if keys[upK] and youcent.y > 50:
-        youcent.y -= 4
+        youcent.y -= 4 + dashtimer / 2
     if keys[downK] and youcent.y < 718:
-        youcent.y += 4
+        youcent.y += 4 + dashtimer / 2
     
     for shield in picks:
         shield.cent = youcent
@@ -202,7 +236,7 @@ while firing:
             if splited >= splitters*2:
                 splitme = False
         else:
-            if keys[spaceK] and not (shot or delaying):
+            if keys[spaceK] and not (shot or dashing or delaying):
                 
                 
                 bull.vel = dbspeed
@@ -245,8 +279,19 @@ while firing:
     
     fire = False
     #Render--------------------------------------------
-    screen.fill((255,255,255))
-    pygame.draw.circle(screen,(127,0,255),youcent,20)
+    screen.fill((0,0,0))
+    for b in dashblobs:
+        if b[1] <= 0:
+            continue
+        b[1] -= 1
+        pygame.draw.circle(screen,(0,b[1]*10,b[1]*10),b[0],20)
+    if dash:
+        if dashing:
+            pygame.draw.circle(screen,(0,255,255),youcent,20)
+        else:
+            pygame.draw.circle(screen,(0,0,255),youcent,20)
+    else:
+        pygame.draw.circle(screen,(127,0,255),youcent,20)
     for b in gunfire:
         if b.id == 0:
             continue
