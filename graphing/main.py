@@ -3,6 +3,7 @@ from buttons import graphNode
 from pygame.math import Vector2
 from pygame.rect import Rect
 from pygame.color import Color
+from desmos import graph
 import pygame
 import random
 pygame.init()
@@ -21,7 +22,7 @@ connecting = False
 connectTo = 0
 didConnect = False
 
-dragme:list[graphNode] = []
+dragme = graph()
 
 while graphingCalculator:
     #The little input you have
@@ -49,40 +50,16 @@ while graphingCalculator:
             mousePos = Vector2(event.pos)
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
-                dragme.append(graphNode(Color(random.randint(0,255),random.randint(0,255),random.randint(0,255)),Vector2(random.randint(0,800),random.randint(0,800)),25,Color(255,255,255),str(len(dragme))))
+                dragme.nodes.append(graphNode(Color(random.randint(0,255),random.randint(0,255),random.randint(0,255)),Vector2(random.randint(0,800),random.randint(0,800)),25,Color(255,255,255),str(len(dragme.nodes))))
             elif event.key == pygame.K_LCTRL:
                 for i in range(10):
-                    dragme.append(graphNode(Color(random.randint(0,255),random.randint(0,255),random.randint(0,255)),Vector2(random.randint(0,800),random.randint(0,800)),25,Color(255,255,255),str(len(dragme))))
+                    dragme.nodes.append(graphNode(Color(random.randint(0,255),random.randint(0,255),random.randint(0,255)),Vector2(random.randint(0,800),random.randint(0,800)),25,Color(255,255,255),str(len(dragme.nodes))))
     
     clock.tick(60)
-    for n in dragme:
-        if taken == None and n.tick(fire,mousePos):
-            #Dragging nodes around via left click
-            taken = n.color
-        elif n.basicTick(connect,mousePos):
-            #Connecting nodes to eachother via right click
-            if not connecting:
-                print("Connecting started!")
-                connecting = True
-                connectTo = dragme.index(n)
-            else:
-                connecting = False
-                dragme[connectTo].connections.append(dragme.index(n))
-                print("Connected", connectTo, "to", dragme.index(n))
-        if n.color == taken:
-            n.drag(mousePos)
+    dragme.nodesAct(taken,fire,connect,mousePos)
 
     screen.fill((0,0,0))
-    for n in dragme:
-        if len(n.connections) > 0:
-            for c in n.connections:
-                if c == dragme.index(n):
-                    pygame.draw.circle(screen,n.color,n.pos,n.rad*1.5,8)
-                elif dragme.index(n) in dragme[c].connections:
-                    pygame.draw.line(screen,(255,255,255),n.pos,dragme[c].pos,5)
-                else:
-                    pygame.draw.line(screen,n.color,n.pos,dragme[c].pos,5)
-        n.render(screen)
+    dragme.draw(screen)
 
     pygame.display.flip()
     tap = False
