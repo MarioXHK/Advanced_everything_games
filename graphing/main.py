@@ -1,4 +1,5 @@
 from buttons import button
+from buttons import graphNode
 from pygame.math import Vector2
 from pygame.rect import Rect
 from pygame.color import Color
@@ -6,7 +7,7 @@ import pygame
 import random
 pygame.init()
 clock = pygame.time.Clock()
-screen = pygame.display.set_mode((1000, 800)) #create game screen
+screen = pygame.display.set_mode((800, 800)) #create game screen
 pygame.display.set_caption("Baby gaem") #window title
 fishy = True
 
@@ -14,8 +15,13 @@ fire = False
 tap = False
 mousePos = Vector2(0,0)
 tapped = False
+taken = None
+connect = False
+connecting = False
+connectTo = 0
+didConnect = False
 
-dragme = button(Color(255,0,0),Rect(300,300,400,300))
+dragme:list[graphNode] = []
 
 while fishy:
     #The little input you have
@@ -23,27 +29,53 @@ while fishy:
         if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
             fishy = False
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if not tapped:
-                tap = True
-                tapped = True
-            fire = True
+            if event.button == 1:
+                if not tapped:
+                    tap = True
+                    tapped = True
+                fire = True
+            elif event.button == 3:
+                if not didConnect:
+                    didConnect = True
+                    connect = True
         if event.type == pygame.MOUSEBUTTONUP:
-            fire = False
-            tapped = False
+            if event.button == 1:
+                fire = False
+                tapped = False
+                taken = None
+            elif event.button == 3:
+                didConnect = False
         if event.type == pygame.MOUSEMOTION:
             mousePos = Vector2(event.pos)
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                dragme.append(graphNode(Color(random.randint(0,255),random.randint(0,255),random.randint(0,255)),Vector2(random.randint(0,800),random.randint(0,800)),25,Color(255,255,255),str(len(dragme))))
+            elif event.key == pygame.K_LCTRL:
+                for i in range(10):
+                    dragme.append(graphNode(Color(random.randint(0,255),random.randint(0,255),random.randint(0,255)),Vector2(random.randint(0,800),random.randint(0,800)),25,Color(255,255,255),str(len(dragme))))
     
     clock.tick(60)
 
-    dragme.tick(fire,mousePos)
+    for n in dragme:
+        if taken == None and n.tick(fire,mousePos):
+            taken = n.color
+        elif n.tick(connect,mousePos):
+            if not connecting:
+                print("Connecting started!")
+                connecting = True
+                connectTo = dragme.index(n)
+            else:
+                connecting = False
+                dragme[connectTo].connections.append(dragme.index(n))
+                print("Connected", connectTo, "to", dragme.index(n))
+        if n.color == taken:
+            n.drag(mousePos)
 
-    dragme.drag(mousePos)
-
-    
     screen.fill((0,0,0))
-    dragme.render(screen)
+    for n in dragme:
+        n.render(screen)
 
     pygame.display.flip()
     tap = False
-
+    connect = False
 pygame.quit()
