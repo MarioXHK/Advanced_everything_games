@@ -59,7 +59,7 @@ thevariablethattellsmethatitshit = False
 
 #your ship variables-----------------------------------
 youcent = npc.ship(Vector2(500,500),20)
-picks: list[arse.shield] = [arse.shield(youcent.pos.copy(),45*r,50,(255,0,0)) for r in range(8)]
+picks: list[arse.shield] = [arse.shield(youcent.pos.copy(),10,45*r,50,(255,0,0)) for r in range(8)]
 gunfire = [arse.bullet(Vector2(-500,-500)) for i in range(1000)]
 dashblobs = [[Vector2(0,0),0] for j in range(15)]
 
@@ -169,7 +169,18 @@ while firing:
             youcent.pos.y += 4 + dashtimer / 2
     
     for shield in picks:
-        shield.cent = youcent.pos
+        if not shield.hp <= 0:
+            for h in theircent:
+                if not h.alive:
+                    continue
+                if Vector2(shield.rotPos).distance_to(h.pos) < shield.size + h.size:
+                    shield.hp -= 1
+                    h.hp -= 1
+                    break
+        if youcent.alive:
+            shield.cent = youcent.pos
+        else:
+            shield.reach += 2
 
 
         shield.move()
@@ -226,7 +237,7 @@ while firing:
             for h in theircent:
                 if not h.alive:
                     continue
-                if bull.pos.distance_to(h.pos) < bull.size + 20:
+                if bull.pos.distance_to(h.pos) < bull.size + h.size:
                     deadbullet = True
                     h.hp -= 1
                     break
@@ -298,14 +309,14 @@ while firing:
             bull.move()
             if not youcent.alive:
                 continue
-            if bull.pos.distance_to(youcent.pos) < bull.size + 20:
+            if bull.pos.distance_to(youcent.pos) < bull.size + youcent.size:
                 deadbullet = True
                 youcent.hp -= 1
             else:
                 for h in picks:
                     if h.hp <= 0:
                         continue
-                    if bull.pos.distance_to(h.rotPos) < bull.size + 10:
+                    if bull.pos.distance_to(h.rotPos) < bull.size + h.size:
                         deadbullet = True
                         h.hp -= 1
             if deadbullet:
@@ -350,11 +361,12 @@ while firing:
         g.dieplease()
     #Render--------------------------------------------
     screen.fill((0,0,0))
-    for b in dashblobs:
-        if b[1] <= 0:
-            continue
-        b[1] -= 1
-        pygame.draw.circle(screen,(0,b[1]*10,b[1]*10),b[0],20)
+    if not youcent.dead:
+        for b in dashblobs:
+            if b[1] <= 0:
+                continue
+            b[1] -= 1
+            pygame.draw.circle(screen,(0,b[1]*10,b[1]*10),b[0],20)
     if dash:
         if dashing:
             youcent.color = (0,255,255)
@@ -363,7 +375,8 @@ while firing:
     else:
         youcent.color = (127,0,255)
     
-    youcent.draw(screen)
+    if not youcent.dead:
+        youcent.draw(screen)
     
     for g in theircent:
         if not g.dead:

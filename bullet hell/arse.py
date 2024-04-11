@@ -4,7 +4,8 @@ from pygame import Vector2
 import math
 
 class orbiter:
-    def __init__(self,centerPos: Vector2, angle: int | float = 0, reach: int | float = 50, color: tuple[int,int,int] = (255,255,255)):
+    def __init__(self,centerPos: Vector2, size: int | float = 10, angle: int | float = 0, reach: int | float = 50, color: tuple[int,int,int] = (255,255,255)):
+        self.size = size
         self.reach = reach
         self.cent = centerPos
         self.rotPos = centerPos
@@ -24,11 +25,11 @@ class orbiter:
     def movetocent(self):
         self.rotPos = self.cent
     def draw(self,screen):
-        pygame.draw.circle(screen,self.color,self.rotPos,10)
+        pygame.draw.circle(screen,self.color,self.rotPos,self.size)
 
 class shield(orbiter):
-    def __init__(self,centerPos: Vector2, angle: int | float = 0, reach: int | float = 50, color: tuple[int,int,int] = (255,255,255), health: int = 3):
-        super().__init__(centerPos, angle, reach,color)
+    def __init__(self,centerPos: Vector2, size: int | float = 10, angle: int | float = 0, reach: int | float = 50, color: tuple[int,int,int] = (255,255,255), health: int = 3):
+        super().__init__(centerPos,size, angle, reach,color)
         self.hp = health
         self.dhp = health
         self.healtime = 300
@@ -48,9 +49,9 @@ class shield(orbiter):
                 self.httimer = 0
     def draw(self,screen):
         if self.hp <= 0:
-            pygame.draw.circle(screen,(self.color[0]//4,self.color[1]//4,self.color[2]//4),self.rotPos,10)
+            pygame.draw.circle(screen,(self.color[0]//4,self.color[1]//4,self.color[2]//4),self.rotPos,self.size*0.6)
         else:
-            pygame.draw.circle(screen,self.color,self.rotPos,10)
+            pygame.draw.circle(screen,self.color,self.rotPos,self.size)
 
 
 
