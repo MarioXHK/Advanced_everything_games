@@ -1,5 +1,4 @@
 from buttons import button
-from fash import fish
 from pygame.math import Vector2
 from pygame.rect import Rect
 from pygame.color import Color
@@ -18,11 +17,6 @@ tapped = False
 
 dragme = button(Color(255,0,0),Rect(300,300,400,300))
 
-pond = button(Color(0,255,255),Rect(0,350,250,250))
-
-
-fishes = [fish(Color(0,0,255),Rect(200,200,200,200))]
-
 while fishy:
     #The little input you have
     for event in pygame.event.get(): #2b- i mean event queue
@@ -39,24 +33,15 @@ while fishy:
         if event.type == pygame.MOUSEMOTION:
             mousePos = Vector2(event.pos)
     
-    #clock.tick(120)#This is too slow u_u
+    clock.tick(60)
 
     dragme.tick(fire,mousePos)
 
     dragme.drag(mousePos)
 
-    if pond.tick(tap,mousePos):
-        sizes = [random.randint(100,300),random.randint(100,200)]
-        fishes.append(fish(Color(random.randint(0,255),random.randint(0,255),random.randint(0,255)),Rect(mousePos[0]-sizes[0]/2,mousePos[1]-sizes[1]/2,sizes[0],sizes[1])))
-
+    
     screen.fill((0,0,0))
     dragme.render(screen)
-    pond.render(screen)
-    for f in fishes:
-        f.tick(fire,mousePos)
-        f.swim()
-        f.drag(mousePos)
-        f.render(screen)
 
     pygame.display.flip()
     tap = False

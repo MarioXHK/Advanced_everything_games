@@ -51,7 +51,7 @@ class circleButton:
         self.rad = radius
         self.pos = position
         self.text = font.render(str(text), 1, textcolor)
-        if 256 in bordercolor:
+        if bordercolor == None:
             self.bc = color
         else:
             self.bc = bordercolor
