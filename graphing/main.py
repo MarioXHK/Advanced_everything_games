@@ -9,7 +9,7 @@ pygame.init()
 clock = pygame.time.Clock()
 screen = pygame.display.set_mode((800, 800)) #create game screen
 pygame.display.set_caption("Baby gaem") #window title
-fishy = True
+graphingCalculator = True
 
 fire = False
 tap = False
@@ -23,11 +23,11 @@ didConnect = False
 
 dragme:list[graphNode] = []
 
-while fishy:
+while graphingCalculator:
     #The little input you have
     for event in pygame.event.get(): #2b- i mean event queue
         if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
-            fishy = False
+            graphingCalculator = False
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
                 if not tapped:
@@ -55,11 +55,12 @@ while fishy:
                     dragme.append(graphNode(Color(random.randint(0,255),random.randint(0,255),random.randint(0,255)),Vector2(random.randint(0,800),random.randint(0,800)),25,Color(255,255,255),str(len(dragme))))
     
     clock.tick(60)
-
     for n in dragme:
         if taken == None and n.tick(fire,mousePos):
+            #Dragging nodes around via left click
             taken = n.color
-        elif n.tick(connect,mousePos):
+        elif n.basicTick(connect,mousePos):
+            #Connecting nodes to eachother via right click
             if not connecting:
                 print("Connecting started!")
                 connecting = True
@@ -73,6 +74,14 @@ while fishy:
 
     screen.fill((0,0,0))
     for n in dragme:
+        if len(n.connections) > 0:
+            for c in n.connections:
+                if c == dragme.index(n):
+                    pygame.draw.circle(screen,n.color,n.pos,n.rad*1.5,8)
+                elif dragme.index(n) in dragme[c].connections:
+                    pygame.draw.line(screen,(255,255,255),n.pos,dragme[c].pos,5)
+                else:
+                    pygame.draw.line(screen,n.color,n.pos,dragme[c].pos,5)
         n.render(screen)
 
     pygame.display.flip()

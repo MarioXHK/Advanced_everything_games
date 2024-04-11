@@ -65,6 +65,12 @@ class circleButton:
             self.hover = False
         self.clicked = False
         return False
+    def basicTick(self,mdown: bool,mousePos: Vector2) -> bool:
+        #Tick without all the variable changing guff
+        if self.rad > self.pos.distance_to(mousePos) or self.clicked:
+            if mdown:
+                return True
+        return False
     def drag(self,mousePos: Vector2):
         if self.clicked:
             self.pos = mousePos - self.moff
