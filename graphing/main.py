@@ -58,7 +58,7 @@ while graphingCalculator:
     clock.tick(60)
     taken = dragme.nodesAct(taken,fire,connect,mousePos)
 
-    screen.fill((0,0,0))
+    screen.fill((100,100,100))
     dragme.draw(screen)
 
     pygame.display.flip()
