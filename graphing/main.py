@@ -9,7 +9,7 @@ import random
 pygame.init()
 clock = pygame.time.Clock()
 screen = pygame.display.set_mode((800, 800)) #create game screen
-pygame.display.set_caption("Baby gaem") #window title
+pygame.display.set_caption("Adulting game about boring graphs that adults use") #window title
 graphingCalculator = True
 
 fire = False
@@ -56,7 +56,7 @@ while graphingCalculator:
                     dragme.nodes.append(graphNode(Color(random.randint(0,255),random.randint(0,255),random.randint(0,255)),Vector2(random.randint(0,800),random.randint(0,800)),25,Color(255,255,255),str(len(dragme.nodes))))
     
     clock.tick(60)
-    dragme.nodesAct(taken,fire,connect,mousePos)
+    taken = dragme.nodesAct(taken,fire,connect,mousePos)
 
     screen.fill((0,0,0))
     dragme.draw(screen)

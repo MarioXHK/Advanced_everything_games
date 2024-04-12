@@ -24,6 +24,9 @@ class graph:
                     print("Connected", self.connectTo, "to", self.nodes.index(n))
             if n.color == taken:
                 n.drag(mousePos)
+        
+        return taken
+
     def draw(self,screen: pygame.Surface):
         for n in self.nodes:
             if len(n.connections) > 0:
