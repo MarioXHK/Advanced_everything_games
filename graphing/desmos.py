@@ -20,8 +20,11 @@ class graph:
                     self.connectTo = self.nodes.index(n)
                 else:
                     self.connecting = False
-                    self.nodes[self.connectTo].connections.append(self.nodes.index(n))
-                    print("Connected", self.connectTo, "to", self.nodes.index(n))
+                    if self.nodes.index(n) in self.nodes[self.connectTo].connections:
+                        print(self.connectTo, "is already connected to", self.nodes.index(n))
+                    else:
+                        self.nodes[self.connectTo].connections.append(self.nodes.index(n))
+                        print("Connected", self.connectTo, "to", self.nodes.index(n))
             if n.color == taken:
                 n.drag(mousePos)
         
