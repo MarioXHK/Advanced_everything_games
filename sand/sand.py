@@ -19,6 +19,7 @@ from physics import coinflip
 from physics import checkEverywhere
 from doing import doStuff
 
+rememberme = False
 
 #Save folder things
 
@@ -162,6 +163,7 @@ ice = False
 fps = 60
 
 print("Welcome to the sandbox!")
+print(random.choice(foreverglobals.splashes))
 def remindMe() -> None:
     print("ELEMENTS: Press the keys for the element!  1: Sand  2: Stone  3: Water  4: Sugar  5: Wall  6: Dirt  7: Mud  8: Plant  9: Lava ")
     print("ELEMENTS: Q: Iron  W: Gravel  E: Obsidian  R: Steam  T: Glass  Y: Salt  U: Cloud  I: Brick O: Clay  P: Void  A: Algae")
@@ -530,6 +532,7 @@ try:
                             screen = backupscreen
                 elif event.key == pygame.K_F12:
                     print("Oh, I heard you like dividing by 0! (Crashing intentionally~)")
+                    rememberme = True
                     sht = 1/0
         
         clock.tick(60)
@@ -880,9 +883,14 @@ try:
         print("Please remain inside these boundaries.")
     else:
         print("Are you trying to enter the backrooms or something???")
-except:
+except Exception as x:
     print("A fatal error occured durring the sandbox!")
     print(random.choice(foreverglobals.crashSplash))
+    if rememberme:
+        print("You caused it by hitting the F12 key, you silly billy")
+    else:
+        print("Here's what happened, share this for a bug fix maybe.")
+        print(x)
     print("Saving your last instance to a backup file")
     t = time.localtime()
     h = []

@@ -48,7 +48,7 @@ class graph:
         for n in self.nodes:
             for j in n.connections:
                 print("Fine")
-
+                #FINISH ME!!!!!!
 
 
     def draw(self,screen: pygame.Surface):
