@@ -80,3 +80,24 @@ elementNames = {
     75:"Polluted Water",
     76:"Greenhouse Sun"
 }
+
+
+
+crashSplash = (
+        "OH F### THIS WASN'T SUPPOSED TO HAPPEN!\nGOODBYE CRUEL WORLD!!!",
+        "That's not very healthy!",
+        "Well, you tried!",
+        "Try using a graph next time.",
+        "The sandbox didn't say it's sandboxing time.",
+        "Your rot has brained.",
+        "DEATH AND DESTRUCTION!!!!",
+        "Oh good heavens!",
+        "Oh e-gods! My sandbox is ruined!",
+        "Why??????????????????????????????????????",
+        "HOW?! I DID EVERYTHING RIGHT!",
+        "Oh well.",
+        "Poo"
+    )
+
+yeses = ("y","yes","yeah","do it","sure","alright","ok","ig","i guess","yay","pull the lever, cronk!","alrighty then","whatever","heck yes","hell yes","probably","ye","yea","yeah!","oh yes","i don't see why not","i dont see why not","the opposite of no","yep","yes sir","yessir","please do","do","1","i'd love to","i'd love to try it out","let's see what you've got","let's-a go!","lets a go","let's a go","lets a go!","mushroom kingdom here we come","may","smash","yeah, sure","yesure","let's kick bubblegum","activate","throttle","upgrade","proceed","bb","shure","surry boi","surry","yes please","yes maam","yes hoobaab")
+noes = ("n","no","nah","nay","nein","it's opposite day","don't you dare","poop","do not","do not the cat","perish","hell no","heck no","probably not","jumpscare","no!","no!!","no!!!","mmm...","how could you screw it up this badly?","the opposite of yes","nope","not even close","please don't","don't","0","aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","unrun","kill","oh no","ho ho ho ho no","steamed hams","nada","nay","pass","t_t","i'm sick rn","not today","chewing bubblegum","deactivate","turn back","i said turn back","snowgrave","die","di","noooooooooo","b","lmao nah","nada","zilch","q","no please","no thank you","no thanks")

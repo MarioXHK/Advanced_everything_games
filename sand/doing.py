@@ -1712,13 +1712,13 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                     n = physics.neighborCheck(miniplain,[71])
                     if not (jam or n):
                         if a + 1 != len(plain) and not grid[a+1][bb][0] in (0,71):
-                            grid[a+1][bb] = [e,grid[a+1][bb]]
+                            grid[a+1][bb] = [e,grid[a+1][bb][0]]
                         if a - 1 != -1 and not grid[a-1][bb][0] in (0,71):
-                            grid[a-1][bb] = [e,grid[a-1][bb]]
+                            grid[a-1][bb] = [e,grid[a-1][bb][0]]
                         if bb + 1 != len(plain[0]) and not grid[a][bb+1][0] in (0,71):
-                            grid[a][bb+1] = [e,grid[a][bb+1]]
+                            grid[a][bb+1] = [e,grid[a][bb+1][0]]
                         if bb - 1 != -1 and not grid[a][bb-1][0] in (0,71):
-                            grid[a][bb-1] = [e,grid[a][bb-1]]
+                            grid[a][bb-1] = [e,grid[a][bb-1][0]]
                     if n:
                         e = t
                         t = 0
