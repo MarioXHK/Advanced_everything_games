@@ -84,5 +84,6 @@ class graphNode(circleButton):
     def __init__(self,color: Color,position: Vector2, radius: float, bordercolor: Color | None = None, text: str = "", textcolor: Color = Color((0, 0, 0))):
         super().__init__(color,position,radius,bordercolor,text,textcolor)
         self.connections = []
+        self.weights = []
     def countNeighbors(self):
         return len(self.connections)
