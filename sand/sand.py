@@ -8,16 +8,28 @@ oob = 0
 import os
 import pygame
 from pygame import Vector2
+from pygame.rect import Rect
+from pygame.color import Color
 #WHY DOES YOU NOT EVEN THE AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 from copy import deepcopy
 import random
 import time
 import foreverglobals
+import buttons
 
 #I caved
 from physics import coinflip
 from physics import checkEverywhere
 from doing import doStuff
+
+pygame.font.init()
+font = (
+    pygame.font.Font("PressStart2P.ttf", 30),
+    pygame.font.SysFont('Comic Sans MS', 30)
+    )
+
+
+
 
 rememberme = False
 
@@ -48,7 +60,7 @@ tap = True
 element = 1
 brushsize = 0
 
-
+testbutton = buttons.button(Color(255,255,0),Rect(200,200,100,100),None,"Test!")
 
 werealsodoinglife = False
 eyedropper = False
@@ -76,74 +88,136 @@ landy: int = 50
 setup = True
 
 
-unanswered = True
-print("Would you like to setup your own sandbox space?")
-while unanswered:
-    unanswered = False
-    answer = input().lower()
-    if answer in foreverglobals.noes:
-        print("Alright, default sandbox it is.")
-        setup = False
-    elif answer in foreverglobals.yeses:
-        print("Alright, let's get to setting your sandbox up!")
-        setup = True
-    else:
-        print("Answer unrecognized, try again")
-        unanswered = True
+print("Setup your sandbox!")
 
-if setup:
-    print("Setup your sandbox! (You can skip this and be default by putting in junk values)")
+arrowkeys = [False,False,False,False]
+delayme = [6,10]
+changeScreen = True
+shiftKey = False
+dontgointothenegatives = [False,False]
+wasdkeys = [False,False,False,False]
 
 while breaking and setup:
     d = 0
     for event in pygame.event.get(): #Event Queue (or whatever it's called)
         if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
             breaking = False
-    
-    #Screen variables
-    
-    try:
-        screenx = int(input("What should the window's size be in pixels horizontally?\n"))
-        screeny = int(input("What should the window's size be in pixels vertically?\n"))
-    except:
-        print("That's not a number! Setting window size to default!")
-        screenx = 500
-        screeny = 500
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_LSHIFT:
+                shiftKey = True
+            elif event.key == pygame.K_UP:
+                arrowkeys[0] = True
+            elif event.key == pygame.K_DOWN:
+                arrowkeys[1] = True
+            elif event.key == pygame.K_LEFT:
+                arrowkeys[2] = True
+            elif event.key == pygame.K_RIGHT:
+                arrowkeys[3] = True
+            elif event.key == pygame.K_w:
+                wasdkeys[0] = True
+            elif event.key == pygame.K_a:
+                wasdkeys[1] = True
+            elif event.key == pygame.K_s:
+                wasdkeys[2] = True
+            elif event.key == pygame.K_d:
+                wasdkeys[3] = True
+            elif event.key == pygame.K_RETURN:
+                setup = False
+        if event.type == pygame.KEYUP:
+            if event.key == pygame.K_LSHIFT:
+                shiftKey = False
+            elif event.key == pygame.K_UP:
+                arrowkeys[0] = False
+                delayme[0] = 0
+            elif event.key == pygame.K_DOWN:
+                arrowkeys[1] = False
+                delayme[0] = 0
+            elif event.key == pygame.K_LEFT:
+                arrowkeys[2] = False
+                delayme[0] = 0
+            elif event.key == pygame.K_RIGHT:
+                arrowkeys[3] = False
+                delayme[0] = 0
+            elif event.key == pygame.K_w:
+                wasdkeys[0] = False
+                delayme[1] = 0
+            elif event.key == pygame.K_a:
+                wasdkeys[1] = False
+                delayme[1] = 0
+            elif event.key == pygame.K_s:
+                wasdkeys[2] = False
+                delayme[1] = 0
+            elif event.key == pygame.K_d:
+                wasdkeys[3] = False
+                delayme[1] = 0
+    clock.tick(60)
+    print(delayme)
+    amount = 1
+    if shiftKey:
+        amount = 10
 
-    try:
-        landx = int(input("How long should the sandbox be in units?\n"))
-        landy = int(input("How tall should the sandbox be in units?\n"))
-    except:
-        print("That's not a number! Setting sandbox size to default!")
-        landx = screenx//10
-        landy = screeny//10
+    if delayme[0] > 0:
+        delayme[0] -= 1  
+    else:
+        dontgointothenegatives[0] = False
+        if True in arrowkeys:
+            changeScreen = True
+            delayme[0] = 6
+            if arrowkeys[0]:
+                if landy - amount > 0:
+                    landy -= amount
+                else:
+                    dontgointothenegatives[0] = True
+            if arrowkeys[1]:
+                landy += amount
+            if arrowkeys[2]:
+                if landx - amount > 0:
+                    landx -= amount
+                else:
+                    dontgointothenegatives[0] = True
+            if arrowkeys[3]:
+                landx += amount
+
+    if delayme[1] > 0:
+        delayme[1] -= 1  
+    else:
+        dontgointothenegatives[1] = False
+        if True in wasdkeys:
+            changeScreen = True
+            delayme[1] = 6
+            if wasdkeys[0]:
+                if screeny - amount > 0:
+                    screeny -= amount
+                else:
+                    dontgointothenegatives[1] = True
+            if wasdkeys[2]:
+                screeny += amount
+            if wasdkeys[1]:
+                if screenx - amount > 0:
+                    screenx -= amount
+                else:
+                    dontgointothenegatives[1] = True
+            if wasdkeys[3]:
+                screenx += amount
 
 
-    landyx = (screenx/landx)
-    landyy = (screeny/landy)
 
-    screen.fill((0,0,0))
+    if changeScreen:
+        screen.fill((0,0,0))
 
-    screen = pygame.display.set_mode((screenx,screeny))
-
-    for i in range(landy):
-        for j in range(landx):
-            pygame.draw.rect(screen,(255,255,255),(j*landyx,i*landyy,landyx,landyy),1)
-
-    pygame.display.flip()
-    print("You should now see a preview of the sandbox that you're about to unfold.\nIs this ok?")
+        screen = pygame.display.set_mode((screenx,screeny))
+        landyx = (screenx/landx)
+        landyy = (screeny/landy)
+        for i in range(landy):
+            for j in range(landx):
+                if True in dontgointothenegatives:
+                    pygame.draw.rect(screen,(255,0,0),(j*landyx,i*landyy,landyx,landyy),1)
+                else:
+                    pygame.draw.rect(screen,(255,255,255),(j*landyx,i*landyy,landyx,landyy),1)
+        
+        pygame.display.flip()
     unanswered = True
-    while unanswered:
-        unanswered = False
-        answer = input().lower()
-        if answer in foreverglobals.noes:
-            print("Alright, let's try again.")
-        elif answer in foreverglobals.yeses:
-            print("Alright, creating the sandbox now!")
-            setup = False
-        else:
-            print("Answer unrecognized, try again")
-            unanswered = True
+    changeScreen = False
 
 
 
@@ -860,7 +934,10 @@ try:
                 else:
                     if el != 0:
                         pygame.draw.rect(screen,(255,0,255),(j*landyx,i*landyy,landyx,landyy))
-                
+        
+
+
+
         if not alive:
             live = False
         pygame.display.flip()

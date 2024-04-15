@@ -3,13 +3,16 @@ from pygame.math import Vector2
 from pygame.rect import Rect
 from pygame.color import Color
 pygame.font.init()
-font = pygame.font.SysFont('Comic Sans MS', 30)
+font = (
+    pygame.font.Font("PressStart2P.ttf", 30),
+    pygame.font.SysFont('Comic Sans MS', 30)
+    )
 
 class button:
-    def __init__(self,color: Color,rectangle: Rect, boardercolor: Color | None = None, text: str = "",textcolor: Color = Color(0,0,0)):
+    def __init__(self,color: Color,rectangle: Rect, boardercolor: Color | None = None, text: str = "",textcolor: Color = Color(0,0,0),whichfont: int = 1):
         self.color = color
         self.box = rectangle
-        self.text = font.render(str(text), 1, textcolor)
+        self.text = font[whichfont].render(str(text), 1, textcolor)
         if boardercolor == None:
             self.bc = color
         else:
@@ -38,7 +41,7 @@ class button:
         pygame.draw.rect(screen,self.color,self.box)
         if self.hover:
             pygame.draw.rect(screen,self.bc,self.box,5)
-        screen.blit(self.text,self.pos - Vector2(0,0))
+        screen.blit(self.text,Vector2(self.box.x, self.box.y) - Vector2(0,0))
 
 class circleButton:
     def __init__(self,color: Color,position: Vector2, radius: float, bordercolor: Color | None = None, text: str = "", textcolor: Color = Color((0, 0, 0))):
