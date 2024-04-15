@@ -70,22 +70,27 @@ fps = 60
 
 print("Starting game")
 while cursoring:
-    #The input you have
+    #The user input you have
     wheeled = False
     tap = False
     for event in pygame.event.get():
+        #Pressing the red X or pressing the escape key quits the program
         if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
             cursoring = False
+        #Clicking
         if event.type == pygame.MOUSEBUTTONDOWN:
             if not tapped:
                 tap = True
                 tapped = True
             held = True
+        #Unclick
         if event.type == pygame.MOUSEBUTTONUP:
             held = False
             tapped = False
+        #The position of your mouse
         if event.type == pygame.MOUSEMOTION:
             mousePos = Vector2(event.pos)
+        #Using the scroll key to scroll through the buttons on the side
         if event.type == pygame.MOUSEWHEEL:
             wheeled = True
             wheel = event.y
@@ -97,11 +102,12 @@ while cursoring:
     clock.tick(fps)
 
     for b in range(len(buildButtons)):
+        #If you've clicked on one of these buttons, it will activate it
         if buildButtons[b].tick(tap,mousePos):
             if buildings[b].getPrice() <= cookies:
    
                 cookies -= buildings[b].buy()
-
+                #You will loose cookies after buying a building, but the output is your CPS increasing
                 buildButtons[b].text = str(buildings[b].count) + " " + buildings[b].name + "(s)    Cost: " + str(buildings[b].getPrice())
             
     cps = 0
@@ -119,7 +125,7 @@ while cursoring:
     #print(cps)
 
     
-
+    #Clicking on the cookie increases your cookies by 1!
     if big_cookie.tick(tap,mousePos):
         cookies += 1
         print("Clicked!")

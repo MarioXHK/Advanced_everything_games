@@ -74,14 +74,17 @@ sand = True
 undate = False
 
 while sand: #game loop###########################################################
-    for event in pygame.event.get(): #2b- i mean event queue
+    for event in pygame.event.get(): #Your input!
         if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
             sand = False
         if event.type == pygame.KEYDOWN:
+            #Pressing the space will allow you to shake up the gravel
             if event.key == pygame.K_SPACE:
                 shaking = True
+            #Pressing left ctrl will allow you to see what happens if the gravel doesn't change colors
             if event.key == pygame.K_LCTRL:
                 undate = True
+            #Pressing a number from 1-9 changes the gravel's speed depending on what number you press
             if event.key == pygame.K_1:
                 ree = 1
             if event.key == pygame.K_2:
@@ -113,12 +116,13 @@ while sand: #game loop##########################################################
         if shaking:
             i.shake(ree)
         if not undate:
+            #The Gravel will update if you've pressed space and it will change by a small bit, always checking if it's in the lil zones if ctrl isn't pressed
             i.killColors()
             i.checks([[200,200,100,100],[300,300,100,100],[0,200,200,200],[0,0,200,200],[0,400,400,400]],"b")
             i.checks([[200,200,100,100],[300,300,100,100],[0,200,200,200],[200,0,200,200],[400,0,400,400]],"g")
             i.checks([[200,200,100,100],[300,300,100,100],[200,0,200,200],[0,0,200,200],[400,400,400,400]],"r")
             i.updateColor()
-
+            #The gravel will change to different colors depending on where it is, and thus, the output is what you see visually
 
 
     #render section------------------------------
