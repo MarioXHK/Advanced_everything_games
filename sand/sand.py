@@ -12,6 +12,7 @@ from pygame.rect import Rect
 from pygame.color import Color
 #WHY DOES YOU NOT EVEN THE AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 from copy import deepcopy
+from copy import copy
 import random
 import time
 import foreverglobals
@@ -164,7 +165,6 @@ while breaking and setup:
                 wasdkeys[3] = False
                 delayme[1] = 0
     clock.tick(60)
-    print(delayme)
     amount = 1
     if shiftKey:
         amount = 10
@@ -265,7 +265,6 @@ def remindMe() -> None:
     print("BRUSH CONTROLS: To enter/exit mirror mode, hit the backslash key. To undo an action, press the left square bracket, to redo said action, press the right square bracket ([ and ] respectively)")
     print("IMPORTANT: To start/pause the sandbox, press Left Ctrl. To go a single step in the sandbox, press Space.\nTo clear the sandbox, press the left Alt key. To clear the sandbox and have there be an ocean, hit the right Alt key.\nThere are several other kinds of oceans that can be created on the right hand side of the keyboard by pressing it's buttons.\nTo activate/deactivate the game of life and all it's whimsy, press the CAPS LOCK key. To change the brush size, hit up to grow it, hit down to shrink it.")
     print("SAVE/LOAD CONROLS: To save your sandbox, press either enter key. To load a sandbox, press the 0 key. To show this again, hit the backspace key")
-
 
 # ===============================================================================================
 # ====================================== THE GAME LOOP ==========================================
@@ -861,13 +860,12 @@ try:
             
             appendkey = ""
             if screen != pygame.display.set_mode((600,450)):
-                backupscreen = screen
                 screen = pygame.display.set_mode((600,450))
             for event in pygame.event.get(): #Event Queue 2: Boogaloo
                 if event.type == pygame.KEYDOWN:
                     doaflip = True
                     if event.key == pygame.K_LSHIFT:
-                        shiftKey = False
+                        shiftKey = True
                     elif event.key == pygame.K_KP_ENTER or event.key == pygame.K_RETURN:
                         doingafilething = True
                     elif event.key == pygame.K_SPACE:
@@ -1032,7 +1030,6 @@ try:
             if doingafilething:
                 if "loading" in gamestate:
                     sandstack.append(deepcopy(land))
-                    backupscreen = screen
                     backupx = landx
                     backupy = landy
                     bacnupsx = screenx
@@ -1090,7 +1087,7 @@ try:
                         screenx = bacnupsx
                         screeny = backupsy
                         land = deepcopy(backupland)
-                        screen = backupscreen
+                        screen = pygame.display.set_mode((screenx,screeny))
                 else:
                     print("Saving", filename+ ".txt to your saves folder... (You better not close your program!)")
                     try:
