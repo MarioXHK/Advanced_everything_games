@@ -874,6 +874,8 @@ try:
                         appendkey = " "
                     elif event.key == pygame.K_1:
                         appendkey = "1"
+                    elif event.key == pygame.K_2:
+                        appendkey = "2"
                     elif event.key == pygame.K_3:
                         appendkey = "3"
                     elif event.key == pygame.K_4:
@@ -882,6 +884,8 @@ try:
                         appendkey = "5"
                     elif event.key == pygame.K_6:
                         appendkey = "6"
+                    elif event.key == pygame.K_7:
+                        appendkey = "7"
                     elif event.key == pygame.K_8:
                         appendkey = "8"
                     elif event.key == pygame.K_9:
@@ -1018,7 +1022,7 @@ try:
                 ]
             elif "loading" in gamestate:
                 texts = [
-                    font[1].render("What would you like to save your sandbox as?",1,Color(0,0,0)),
+                    font[1].render("What is the filename of the save you want to load?",1,Color(0,0,0)),
                     font[1].render(str(filename),1,Color(0,0,0))
                 ]
             else:
@@ -1028,6 +1032,7 @@ try:
             if doingafilething:
                 if "loading" in gamestate:
                     sandstack.append(deepcopy(land))
+                    backupscreen = screen
                     backupx = landx
                     backupy = landy
                     bacnupsx = screenx
@@ -1113,6 +1118,7 @@ try:
                         print(f'An error occured, but we don\'t know how!')
                         print("Please contact the creator of this sandbox to see what the issue could be")
                 gamestate = "sandbox"
+                filename = ""
                 continue
 
             
