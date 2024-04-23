@@ -24,14 +24,15 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
     
     waters = (3,15,47,71,75)
         
-    goodfossilizers = (2,9,12,18,29,32,38,40,51,53,55,58,72,73)
+    goodFossilizers = (2,9,12,18,29,32,38,40,51,53,55,58,72,73)
     
     conductors = (38,39,40,44,47,55,58,59,69)
 
-    acidimmune = (0,2,3,5,9,12,16,17,20,21,30,35,38,43,47,50,51,53,55,56,61,64,65,66,71)
+    acidImmune = (0,2,3,5,9,12,16,17,20,21,30,35,38,43,47,50,51,53,55,56,61,64,65,66,71)
 
-    blastproof = (5,12,61,67)
+    blastProof = (5,12,61,67)
     
+    virusProof = (0,57,71)
     
     #Self explanitory
     supersun: bool = physics.checkEverywhere(plain,[76,0])
@@ -964,7 +965,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                 
                 elif e == 32:
                     if random.randint(1,1000) == 1:
-                        if physics.neighborCount(miniplain,goodfossilizers) > 3:
+                        if physics.neighborCount(miniplain,goodFossilizers) > 3:
                             t += random.randint(1,2)
                     elif random.randint(1,100) == 1:
                         if physics.neighborCheck(miniplain,[3,15]):
@@ -1711,16 +1712,19 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                 elif e == 57:
                     n = physics.neighborCheck(miniplain,[71])
                     if not (jam or n):
-                        if a + 1 != len(plain) and not grid[a+1][bb][0] in (0,71):
+                        if a + 1 != len(plain) and not grid[a+1][bb][0] in virusProof:
                             grid[a+1][bb] = [e,grid[a+1][bb][0]]
-                        if a - 1 != -1 and not grid[a-1][bb][0] in (0,71):
+                        if a - 1 != -1 and not grid[a-1][bb][0] in virusProof:
                             grid[a-1][bb] = [e,grid[a-1][bb][0]]
-                        if bb + 1 != len(plain[0]) and not grid[a][bb+1][0] in (0,71):
+                        if bb + 1 != len(plain[0]) and not grid[a][bb+1][0] in virusProof:
                             grid[a][bb+1] = [e,grid[a][bb+1][0]]
-                        if bb - 1 != -1 and not grid[a][bb-1][0] in (0,71):
+                        if bb - 1 != -1 and not grid[a][bb-1][0] in virusProof:
                             grid[a][bb-1] = [e,grid[a][bb-1][0]]
                     if n:
-                        e = t
+                        if t == 57:
+                            e = 0
+                        else:
+                            e = t
                         t = 0
                     c = physics.stoneCheck(minigrid,localPos,True)
                     if not c[0]:
@@ -1910,16 +1914,16 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                         e = 16
                     
                     if not jam:
-                        if a + 1 != len(plain) and not grid[a+1][bb][0] in acidimmune:
+                        if a + 1 != len(plain) and not grid[a+1][bb][0] in acidImmune:
                             t -= 1
                             grid[a+1][bb] = [66,0]
-                        if a - 1 != -1 and not grid[a-1][bb][0] in acidimmune:
+                        if a - 1 != -1 and not grid[a-1][bb][0] in acidImmune:
                             t -= 1
                             grid[a-1][bb] = [66,0]
-                        if bb + 1 != len(plain[0]) and not grid[a][bb+1][0] in acidimmune:
+                        if bb + 1 != len(plain[0]) and not grid[a][bb+1][0] in acidImmune:
                             t -= 1
                             grid[a][bb+1] = [66,0]
-                        if bb - 1 != -1 and not grid[a][bb-1][0] in acidimmune:
+                        if bb - 1 != -1 and not grid[a][bb-1][0] in acidImmune:
                             t -= 1
                             grid[a][bb-1] = [66,0]
                     
@@ -1961,16 +1965,16 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                         e = 66
                     
                     if not jam:
-                        if a + 1 != len(plain) and not grid[a+1][bb][0] in acidimmune:
+                        if a + 1 != len(plain) and not grid[a+1][bb][0] in acidImmune:
                             t -= 1
                             grid[a+1][bb] = [66,0]
-                        if a - 1 != -1 and not grid[a-1][bb][0] in acidimmune:
+                        if a - 1 != -1 and not grid[a-1][bb][0] in acidImmune:
                             t -= 1
                             grid[a-1][bb] = [66,0]
-                        if bb + 1 != len(plain[0]) and not grid[a][bb+1][0] in acidimmune:
+                        if bb + 1 != len(plain[0]) and not grid[a][bb+1][0] in acidImmune:
                             t -= 1
                             grid[a][bb+1] = [66,0]
-                        if bb - 1 != -1 and not grid[a][bb-1][0] in acidimmune:
+                        if bb - 1 != -1 and not grid[a][bb-1][0] in acidImmune:
                             t -= 1
                             grid[a][bb-1] = [66,0]
                     
@@ -2017,13 +2021,13 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                         e = 30
                         t = 4
                     else:
-                        if a + 1 != len(plain) and not grid[a+1][bb][0] in blastproof:
+                        if a + 1 != len(plain) and not grid[a+1][bb][0] in blastProof:
                             grid[a+1][bb] = [e,t]
-                        if a - 1 != -1 and not grid[a-1][bb][0] in blastproof:
+                        if a - 1 != -1 and not grid[a-1][bb][0] in blastProof:
                             grid[a-1][bb] = [e,t]
-                        if bb + 1 != len(plain[0]) and not grid[a][bb+1][0] in blastproof:
+                        if bb + 1 != len(plain[0]) and not grid[a][bb+1][0] in blastProof:
                             grid[a][bb+1] = [e,t]
-                        if bb - 1 != -1 and not grid[a][bb-1][0] in blastproof:
+                        if bb - 1 != -1 and not grid[a][bb-1][0] in blastProof:
                             grid[a][bb-1] = [e,t]
                     grid[a][bb] = [e,t]
 
@@ -2148,7 +2152,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                             else:
                                 e = 32
                     elif random.randint(1,500) == 1:
-                        if physics.neighborCount(miniplain,goodfossilizers) > 3:
+                        if physics.neighborCount(miniplain,goodFossilizers) > 3:
                             t += random.randint(1,2)
                     elif physics.neighborCheck(miniplain,[71]):
                         e = 8

@@ -22,6 +22,7 @@ import buttons
 from physics import coinflip
 from physics import checkEverywhere
 from doing import doStuff
+from inputkeys import keyboard
 
 pygame.font.init()
 font = (
@@ -282,6 +283,7 @@ fliposwitch = True
 try:
     while breaking:
         if gamestate == "sandbox":
+            changeScreen = True
             doingafilething = False
             d = 0
             for event in pygame.event.get(): #Event Queue (or whatever it's called)
@@ -858,153 +860,21 @@ try:
             pygame.display.flip()
         elif "file" in gamestate:
             
-            appendkey = ""
-            if screen != pygame.display.set_mode((600,450)):
-                screen = pygame.display.set_mode((600,450))
-            for event in pygame.event.get(): #Event Queue 2: Boogaloo
-                if event.type == pygame.KEYDOWN:
-                    doaflip = True
-                    if event.key == pygame.K_LSHIFT:
-                        shiftKey = True
-                    elif event.key == pygame.K_KP_ENTER or event.key == pygame.K_RETURN:
-                        doingafilething = True
-                    elif event.key == pygame.K_SPACE:
-                        appendkey = " "
-                    elif event.key == pygame.K_1:
-                        appendkey = "1"
-                    elif event.key == pygame.K_2:
-                        appendkey = "2"
-                    elif event.key == pygame.K_3:
-                        appendkey = "3"
-                    elif event.key == pygame.K_4:
-                        appendkey = "4"
-                    elif event.key == pygame.K_5:
-                        appendkey = "5"
-                    elif event.key == pygame.K_6:
-                        appendkey = "6"
-                    elif event.key == pygame.K_7:
-                        appendkey = "7"
-                    elif event.key == pygame.K_8:
-                        appendkey = "8"
-                    elif event.key == pygame.K_9:
-                        appendkey = "9"
-                    elif event.key == pygame.K_0:
-                        appendkey = "0"
-                    elif event.key == pygame.K_MINUS:
-                        appendkey = "-"
-                    elif event.key == pygame.K_EQUALS:
-                        appendkey = "2"
-                    elif event.key == pygame.K_EXCLAIM:
-                        appendkey = "!"
-                    elif event.key == pygame.K_AT:
-                        appendkey = "@"
-                    elif event.key == pygame.K_DOLLAR:
-                        appendkey = "$"
-                    elif event.key == pygame.K_PERCENT:
-                        appendkey = "%"
-                    elif event.key == pygame.K_CARET:
-                        appendkey = "^"
-                    elif event.key == pygame.K_AMPERSAND:
-                        appendkey = "&"
-                    elif event.key == pygame.K_LEFTPAREN:
-                        appendkey = "("
-                    elif event.key == pygame.K_RIGHTPAREN:
-                        appendkey = ")"
-                    elif event.key == pygame.K_UNDERSCORE:
-                        appendkey = "_"
-                    elif event.key == pygame.K_PLUS:
-                        appendkey = "+"
-                    elif event.key == pygame.K_q:
-                        appendkey = "q"
-                    elif event.key == pygame.K_w:
-                        appendkey = "w"
-                    elif event.key == pygame.K_e:
-                        appendkey = "e"
-                    elif event.key == pygame.K_r:
-                        appendkey = "r"
-                    elif event.key == pygame.K_t:
-                        appendkey = "t"
-                    elif event.key == pygame.K_y:
-                        appendkey = "y"
-                    elif event.key == pygame.K_u:
-                        appendkey = "u"
-                    elif event.key == pygame.K_i:
-                        appendkey = "i"
-                    elif event.key == pygame.K_o:
-                        appendkey = "o"
-                    elif event.key == pygame.K_p:
-                        appendkey = "p"
-                    elif event.key == pygame.K_LEFTBRACKET:
-                        appendkey = "["
-                    elif event.key == pygame.K_RIGHTBRACKET:
-                        appendkey = "]"
-                    elif event.key == pygame.K_a:
-                        appendkey = "a"
-                    elif event.key == pygame.K_s:
-                        appendkey = "s"
-                    elif event.key == pygame.K_d:
-                        appendkey = "d"
-                    elif event.key == pygame.K_f:
-                        appendkey = "f"
-                    elif event.key == pygame.K_g:
-                        appendkey = "g"
-                    elif event.key == pygame.K_h:
-                        appendkey = "h"
-                    elif event.key == pygame.K_j:
-                        appendkey = "j"
-                    elif event.key == pygame.K_k:
-                        appendkey = "k"
-                    elif event.key == pygame.K_l:
-                        appendkey = "l"
-                    elif event.key == pygame.K_SEMICOLON:
-                        appendkey = ";"
-                    elif event.key == pygame.K_QUOTE:
-                        appendkey = "quotationmarks"
-                    elif event.key == pygame.K_z:
-                        appendkey = "z"
-                    elif event.key == pygame.K_x:
-                        appendkey = "x"
-                    elif event.key == pygame.K_c:
-                        appendkey = "c"
-                    elif event.key == pygame.K_v:
-                        appendkey = "v"
-                    elif event.key == pygame.K_b:
-                        appendkey = "b"
-                    elif event.key == pygame.K_n:
-                        appendkey = "n"
-                    elif event.key == pygame.K_m:
-                        appendkey = "m"
-                    elif event.key == pygame.K_COMMA:
-                        appendkey = ","
-                    elif event.key == pygame.K_PERIOD:
-                        appendkey = "."
-                    elif event.key == pygame.K_SLASH:
-                        appendkey = "/"
-                    elif event.key == pygame.K_BACKSPACE:
-                        appendkey = "back"
-
-                if event.type == pygame.KEYUP:
-                    if event.key == pygame.K_LSHIFT:
-                        shiftKey = False
+            appendkey = keyboard()
+            if appendkey != "":
+                changeScreen = True
             
-            if appendkey == "back":
+            if appendkey == "end":
+                appendkey = ""
+                doingafilething = True
+            elif appendkey == "back":
                     appendkey = ""
                     if len(filename) > 0:
                         filename = filename[:-1]
-
-            if shiftKey:
-                if appendkey == "quotationmarks":
-                    appendkey = "'"
-                elif appendkey == "back":
+            elif appendkey == "fullback":
                     appendkey = ""
                     filename = ""
-                elif appendkey == "[":
-                    appendkey = "{"
-                elif appendkey == "]":
-                    appendkey = "}"
-                else:
-                    appendkey = appendkey.upper()
-            if appendkey == "quotationmarks":
+            elif appendkey == "quotationmarks":
                 appendkey = ""
             
             if appendkey == "/" and ((len(filename) > 0 and filename[-1] == "/") or len(filename) <= 0):
@@ -1077,8 +947,8 @@ try:
                     except IndexError as e:
                         print(f'An error occured: {e}')
                         print("It's possible your grid isn't matching up with the data in a way!")
-                    except:
-                        print(f'An error occured, but we don\'t know how!')
+                    except Exception as x:
+                        print(f'An error occured, but it\'s complicated: {x}')
                         print("Please contact the creator of this sandbox to see what the issue could be")
                     if fail:
                         sandstack.pop()
@@ -1118,14 +988,17 @@ try:
                 filename = ""
                 continue
 
-            
-            screen.fill((255,255,255))
-            for l in range(len(texts)):
-                screen.blit(texts[l],Vector2(10, 10+30*l))
-            pygame.display.flip()
-
+            if changeScreen:
+                screen = pygame.display.set_mode((600,450))
+                
+                screen.fill((255,255,255))
+                
+                for l in range(len(texts)):
+                    screen.blit(texts[l],Vector2(10, 10+30*l))
+                pygame.display.flip()
+            changeScreen = False
     pygame.quit()
-    print("Process exit with code: \"Pee pee poo poo caca do do fart we wa woooooo\"")
+    print("Process exit with code: \":)\"")
     print("You went out of bounds", oob, "times!")
     if oob == 0:
         print("Good job!")
