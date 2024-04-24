@@ -33,6 +33,12 @@ class button:
             self.hover = False
         self.clicked = False
         return False
+    def basicTick(self,mdown: bool,mousePos: Vector2) -> bool:
+        #Tick without all the variable changing guff
+        if mousePos.x >= self.box[0] and mousePos.x <= self.box[0]+self.box[2] and mousePos.y >= self.box[1] and mousePos.y <= self.box[1]+self.box[3]:
+            if mdown:
+                return True
+        return False
     def drag(self,mousePos: Vector2):
         if self.clicked:
             self.box.x = mousePos.x - self.moff.x

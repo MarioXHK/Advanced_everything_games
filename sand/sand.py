@@ -28,7 +28,8 @@ pygame.font.init()
 font = (
     pygame.font.Font("PressStart2P.ttf", 30),
     pygame.font.SysFont('Comic Sans MS', 30),
-    pygame.font.SysFont('Comic Sans MS', 15)
+    pygame.font.SysFont('Comic Sans MS', 15),
+    pygame.font.SysFont('Comic Sans MS', 20)
     )
 
 texts = []
@@ -271,261 +272,356 @@ def remindMe() -> None:
 # ====================================== THE GAME LOOP ==========================================
 # ===============================================================================================
 
-sandstack = []
-restack = []
+undoList = []
+redoList = []
 
 remindMe()
 
-gamestate = "sandbox"
-
+tutorial = 1
+tutorialprogress = 0
+gameState = "sandbox"
+loadState = gameState
+responded = False
 fliposwitch = True
+
+yesbutton = buttons.button(Color(0,255,0),Rect(0,0,100,70),None,"Yes")
+nobutton = buttons.button(Color(255,0,0),Rect(0,0,100,70),None,"No")
+
 #this makes sure that the sand keeps going in a straight line while placing it when it's active, and also some other stuff
 try:
     while breaking:
-        if gamestate == "sandbox":
+        yesbutton.box = Rect(screenx/2-110,screeny*0.6,100,70)
+        nobutton.box = Rect(screenx/2+10,screeny*0.6,100,70)
+        if gameState == "sandbox":
             changeScreen = True
             doingafilething = False
             d = 0
-            for event in pygame.event.get(): #Event Queue (or whatever it's called)
-                if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
-                    if input("Are you sure you want to quit?\n").lower() in foreverglobals.yeses:
-                        breaking = False
-                if event.type == pygame.MOUSEBUTTONDOWN and tap:
-                    sandstack.append(deepcopy(land))
-                    fire = True
-                    tap = False
-                    if event.button == 3:
-                        ice = True
-                if event.type == pygame.MOUSEBUTTONUP:
-                    tap = True
-                    ice = False
-                if event.type == pygame.MOUSEMOTION:
-                    mousePos = Vector2(event.pos)
-                if event.type == pygame.KEYDOWN:
+            if tutorial != 0:
+                if tutorial == 1 or tutorial == 2:
+                    for event in pygame.event.get(): #Event Queue but it's heavily restricted and you can only do mouse stuff for now
+                        if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                            if input("Are you sure you want to quit?\n").lower() in foreverglobals.yeses:
+                                breaking = False
+                        if event.type == pygame.MOUSEBUTTONDOWN and tap:
+                            undoList.append(deepcopy(land))
+                            fire = True
+                            tap = False
+                            if event.button == 3:
+                                ice = True
+                        if event.type == pygame.MOUSEBUTTONUP:
+                            tap = True
+                            ice = False
+                        if event.type == pygame.MOUSEMOTION:
+                            mousePos = Vector2(event.pos)
+                
+                if tutorial == 1:
+                    for event in pygame.event.get(): #Event Queue but you can only escape
+                        if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                            if input("Are you sure you want to quit?\n").lower() in foreverglobals.yeses:
+                                breaking = False
+                    texts = [
+                        font[1].render("Welcome to the sandbox!",1,Color(255,255,255)),
+                        font[1].render("Would you like a tutorial?",1,Color(255,255,255))
+                    ]
+                elif tutorial == 2:
                     
-                    #Command Keys
-                    
-                    if event.key == pygame.K_SPACE:
-                        if not alive:
-                            sandstack.append(deepcopy(land))
-                            restack = []
-                        live = True
-                        #Go a single step forward
-                    if event.key == pygame.K_LCTRL:
-                        live = True
-                        if alive:
-                            alive = False
-                        else:
-                            alive = True
-                        #Go a step forward every tick until pressed again
-                    if event.key == pygame.K_LALT:
-                        sandstack.append(deepcopy(land))
-                        restack = []
-                        land = [[[0,0] for _ in range(landx)] for i in range(landy)]
-                    elif event.key == pygame.K_RALT:
-                        sandstack.append(deepcopy(land))
-                        restack = []
-                        land = [[[0,0] for _ in range(landx)] for i in range(landy)]
-                        for u in range(10):
-                            land[u] = [[3,0] for _ in range(landx)]
-                    elif event.key == pygame.K_RCTRL:
-                        sandstack.append(deepcopy(land))
-                        land = [[[0,0] for _ in range(landx)] for i in range(landy)]
-                        for u in range(10):
-                            land[u] = [[15,0] for _ in range(landx)]
-                    elif event.key == pygame.K_END:
-                        sandstack.append(deepcopy(land))
-                        restack = []
-                        land = [[[0,0] for _ in range(landx)] for i in range(landy)]
-                        for u in range(10):
-                            land[u] = [[9,0] for _ in range(landx)]
-                    elif event.key == pygame.K_DELETE:
-                        sandstack.append(deepcopy(land))
-                        restack = []
-                        land = [[[0,0] for _ in range(landx)] for i in range(landy)]
-                        for u in range(10):
-                            land[u] = [[65,20] for _ in range(landx)]
-                    elif event.key == pygame.K_HOME:
-                        sandstack.append(deepcopy(land))
-                        restack = []
-                        land = [[[0,0] for _ in range(landx)] for i in range(landy)]
-                        for u in range(10):
-                            land[u] = [[29,0] for _ in range(landx)]
-                    elif event.key == pygame.K_PAGEUP:
-                        sandstack.append(deepcopy(land))
-                        restack = []
-                        land = [[[0,0] for _ in range(landx)] for i in range(landy)]
-                        for u in range(10):
-                            land[u] = [[71,0] for _ in range(landx)]
-                    elif event.key == pygame.K_PAGEDOWN:
-                        sandstack.append(deepcopy(land))
-                        restack = []
-                        land = [[[0,0] for _ in range(landx)] for i in range(landy)]
-                        for u in range(10):
-                            land[u] = [[75,0] for _ in range(landx)]
-                    elif event.key == pygame.K_NUMLOCK:
-                        sandstack.append(deepcopy(land))
-                        restack = []
-                        land = [[[0,0] for _ in range(landx)] for i in range(landy)]
-                        for u in range(10):
-                            land[u] = [[60,0] for _ in range(landx)]
-                    elif event.key == pygame.K_UP:
-                        brushsize += 1
-                        print("brush size is now", (brushsize*2+1))
-                    elif event.key == pygame.K_DOWN:
-                        if 0 < brushsize:
-                            brushsize -= 1
-                            print("brush size is now", (brushsize*2+1))
-                    elif event.key == pygame.K_BACKSPACE:
-                        remindMe()
-                    elif event.key == pygame.K_TAB:
-                        if showfps:
-                            showfps = False
-                        else:
-                            showfps = True
-                    elif event.key == pygame.K_CAPSLOCK:
-                        if werealsodoinglife:
-                            werealsodoinglife = False
-                            print("Destroying life")
-                        else:
-                            werealsodoinglife = True
-                            print("Doing life")
-                    elif event.key == pygame.K_SLASH:
-                        if dither:
-                            dither = False
-                        else:
-                            dither = True
-                    elif event.key == pygame.K_BACKSLASH:
-                        if mirror:
-                            mirror = False
-                        else:
-                            mirror = True
-                    elif event.key == pygame.K_COMMA:
-                        if elementary:
-                            elementary = False
-                        else:
-                            elementary = True
-                            elements = []
-                            print("Please choose the elements you want to do. To stop choosing, say something other than an int")
-                            try:
-                                while True:
-                                    elements.append(int(input()))
-                            except ValueError:
-                                elements = tuple(elements)
-                                print("Brush now has elements", elements)
-                            if len(elements) == 0:
-                                print("HEY! YOU FORGOT TO DO ELEMENTS! (Defaulting to what you did last time)")
-                                elementary = False
-                    elif event.key == pygame.K_RIGHTBRACKET:
+                    texts = [
+                        font[3].render("Time for the basics of the basics.",1,Color(255,255,255)),
+                        font[3].render("Using your mouse, you can click",1,Color(255,255,255)),
+                        font[3].render("down and draw on the screen of an",1,Color(255,255,255)),
+                        font[3].render("element (You're currently on sand)",1,Color(255,255,255)),
+                        font[3].render("Progress: " + str(tutorialprogress//3) + "%",1,Color(255,255,255))
                         
-                        if len(restack) > 0:
-                            sandstack.append(deepcopy(land))
-                            land = restack.pop()
-                    elif event.key == pygame.K_LEFTBRACKET:
-                        if len(sandstack) > 0:
-                            restack.append(deepcopy(land))
-                            land = sandstack.pop()
-                    
-                    #Element Keys
-                    
-                    elif event.key == pygame.K_1:
-                        element = 1
-                    elif event.key == pygame.K_2:
-                        element = 2
-                    elif event.key == pygame.K_3:
-                        element = 3
-                    elif event.key == pygame.K_4:
-                        element = 4
-                    elif event.key == pygame.K_5:
-                        element = 5
-                    elif event.key == pygame.K_6:
-                        element = 6
-                    elif event.key == pygame.K_7:
-                        element = 7
-                    elif event.key == pygame.K_8:
-                        element = 8
-                    elif event.key == pygame.K_9:
-                        element = 9
-                    elif event.key == pygame.K_q:
-                        element = 38
-                    elif event.key == pygame.K_w:
-                        element = 11
-                    elif event.key == pygame.K_e:
-                        element = 12
-                    elif event.key == pygame.K_r:
-                        element = 13
-                    elif event.key == pygame.K_t:
-                        element = 14
-                    elif event.key == pygame.K_y:
-                        element = 46
-                    elif event.key == pygame.K_u:
-                        element = 16
-                    elif event.key == pygame.K_i:
-                        element = 17
-                    elif event.key == pygame.K_a:
-                        element = 18
-                    elif event.key == pygame.K_s:
-                        element = 42
-                    elif event.key == pygame.K_d:
-                        element = 20
-                    elif event.key == pygame.K_f:
-                        element = 21
-                    elif event.key == pygame.K_g:
-                        element = 22
-                    elif event.key == pygame.K_h:
-                        element = 23
-                    elif event.key == pygame.K_j:
-                        element = 68
-                    elif event.key == pygame.K_k:
-                        element = 62
-                    elif event.key == pygame.K_l:
-                        element = 26
-                    elif event.key == pygame.K_z:
-                        element = 43
-                    elif event.key == pygame.K_x:
-                        element = 28
-                    elif event.key == pygame.K_c:
-                        element = 29
-                    elif event.key == pygame.K_v:
-                        element = 30
-                    elif event.key == pygame.K_b:
-                        element = 41
-                    elif event.key == pygame.K_n:
-                        element = 50
-                    #Oops I just realized that I forgot to include o and p
-                    elif event.key == pygame.K_m:
-                        element = 33
-                    elif event.key == pygame.K_o:
-                        element = 34
-                    elif event.key == pygame.K_p:
-                        element = 35
-                    #For elements that aren't here
-                    elif event.key == pygame.K_RSHIFT:
-                        try:
-                            element = int(input("Enter the element ID\n"))
-                            try:
-                                print("Set element to", foreverglobals.elementNames[element])
-                            except:
-                                print("Set to an unknown element:", element)
-                        except:
-                            print("THAT'S NOT A VALID NUMBER FOR AN ELEMENT!!!")
-                    elif event.key == pygame.K_PERIOD:
-                        eyedropper = True
-                        print("Pick an element from the sandbox to copy")
-                        alive = False
-                    
-                    
-                    #The ultimate thing: SAVING!
-                    elif event.key == pygame.K_LSHIFT:
-                        gamestate = "file saving"
-                    #What's the use of saving if you can't LOAD?
-                    elif event.key == pygame.K_0:
-                        gamestate = "file loading"
+                    ]
+                    if tutorialprogress >= 300:
+                        tutorialprogress = 0
+                        tutorial = 3
+                        continue
+                elif tutorial == 3:
+                    for event in pygame.event.get(): #Event Queue to do very basic sandbox stuff
+                        if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                            if input("Are you sure you want to quit?\n").lower() in foreverglobals.yeses:
+                                breaking = False
+                        if event.type == pygame.MOUSEBUTTONDOWN and tap:
+                            undoList.append(deepcopy(land))
+                            fire = True
+                            tap = False
+                            if event.button == 3:
+                                ice = True
+                        if event.type == pygame.MOUSEBUTTONUP:
+                            tap = True
+                            ice = False
+                        if event.type == pygame.MOUSEMOTION:
+                            mousePos = Vector2(event.pos)
+                        if event.type == pygame.KEYDOWN:
                             
-                    elif event.key == pygame.K_F12:
-                        print("Oh, I heard you like dividing by 0! (Crashing intentionally~)")
-                        rememberme = True
-                        sht = 1/0
+                            #Command Keys
+                            
+                            if event.key == pygame.K_SPACE:
+                                if not alive:
+                                    undoList.append(deepcopy(land))
+                                    redoList = []
+                                live = True
+                                #Go a single step forward
+                            if event.key == pygame.K_LCTRL:
+                                live = True
+                                if alive:
+                                    alive = False
+                                else:
+                                    alive = True
+                                #Go a step forward every tick until pressed again
+                    texts = [
+                        font[3].render("Great, if you want to see the sand",1,Color(255,255,255)),
+                        font[3].render("move, press the Left Ctrl Button!",1,Color(255,255,255)),
+                        font[3].render("(Alternatively you can go single",1,Color(255,255,255)),
+                        font[3].render("Steps forward by pressing Space.)",1,Color(255,255,255)),
+                        font[3].render("Progress: " + str(tutorialprogress//6) + "%",1,Color(255,255,255))
+                    ]
+                    if tutorialprogress >= 600:
+                        tutorialprogress = 0
+                        tutorial = 3
+                        continue
+            else:
+                for event in pygame.event.get(): #Event Queue (or whatever it's called)
+                    if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                        if input("Are you sure you want to quit?\n").lower() in foreverglobals.yeses:
+                            breaking = False
+                    if event.type == pygame.MOUSEBUTTONDOWN and tap:
+                        undoList.append(deepcopy(land))
+                        fire = True
+                        tap = False
+                        if event.button == 3:
+                            ice = True
+                    if event.type == pygame.MOUSEBUTTONUP:
+                        tap = True
+                        ice = False
+                    if event.type == pygame.MOUSEMOTION:
+                        mousePos = Vector2(event.pos)
+                    if event.type == pygame.KEYDOWN:
+                        
+                        #Command Keys
+                        
+                        if event.key == pygame.K_SPACE:
+                            if not alive:
+                                undoList.append(deepcopy(land))
+                                redoList = []
+                            live = True
+                            #Go a single step forward
+                        if event.key == pygame.K_LCTRL:
+                            live = True
+                            if alive:
+                                alive = False
+                            else:
+                                alive = True
+                            #Go a step forward every tick until pressed again
+                        if event.key == pygame.K_LALT:
+                            undoList.append(deepcopy(land))
+                            redoList = []
+                            land = [[[0,0] for _ in range(landx)] for i in range(landy)]
+                        elif event.key == pygame.K_RALT:
+                            undoList.append(deepcopy(land))
+                            redoList = []
+                            land = [[[0,0] for _ in range(landx)] for i in range(landy)]
+                            for u in range(10):
+                                land[u] = [[3,0] for _ in range(landx)]
+                        elif event.key == pygame.K_RCTRL:
+                            undoList.append(deepcopy(land))
+                            land = [[[0,0] for _ in range(landx)] for i in range(landy)]
+                            for u in range(10):
+                                land[u] = [[15,0] for _ in range(landx)]
+                        elif event.key == pygame.K_END:
+                            undoList.append(deepcopy(land))
+                            redoList = []
+                            land = [[[0,0] for _ in range(landx)] for i in range(landy)]
+                            for u in range(10):
+                                land[u] = [[9,0] for _ in range(landx)]
+                        elif event.key == pygame.K_DELETE:
+                            undoList.append(deepcopy(land))
+                            redoList = []
+                            land = [[[0,0] for _ in range(landx)] for i in range(landy)]
+                            for u in range(10):
+                                land[u] = [[65,20] for _ in range(landx)]
+                        elif event.key == pygame.K_HOME:
+                            undoList.append(deepcopy(land))
+                            redoList = []
+                            land = [[[0,0] for _ in range(landx)] for i in range(landy)]
+                            for u in range(10):
+                                land[u] = [[29,0] for _ in range(landx)]
+                        elif event.key == pygame.K_PAGEUP:
+                            undoList.append(deepcopy(land))
+                            redoList = []
+                            land = [[[0,0] for _ in range(landx)] for i in range(landy)]
+                            for u in range(10):
+                                land[u] = [[71,0] for _ in range(landx)]
+                        elif event.key == pygame.K_PAGEDOWN:
+                            undoList.append(deepcopy(land))
+                            redoList = []
+                            land = [[[0,0] for _ in range(landx)] for i in range(landy)]
+                            for u in range(10):
+                                land[u] = [[75,0] for _ in range(landx)]
+                        elif event.key == pygame.K_NUMLOCK:
+                            undoList.append(deepcopy(land))
+                            redoList = []
+                            land = [[[0,0] for _ in range(landx)] for i in range(landy)]
+                            for u in range(10):
+                                land[u] = [[60,0] for _ in range(landx)]
+                        elif event.key == pygame.K_UP:
+                            brushsize += 1
+                            print("brush size is now", (brushsize*2+1))
+                        elif event.key == pygame.K_DOWN:
+                            if 0 < brushsize:
+                                brushsize -= 1
+                                print("brush size is now", (brushsize*2+1))
+                        elif event.key == pygame.K_BACKSPACE:
+                            remindMe()
+                        elif event.key == pygame.K_TAB:
+                            if showfps:
+                                showfps = False
+                            else:
+                                showfps = True
+                        elif event.key == pygame.K_CAPSLOCK:
+                            if werealsodoinglife:
+                                werealsodoinglife = False
+                                print("Destroying life")
+                            else:
+                                werealsodoinglife = True
+                                print("Doing life")
+                        elif event.key == pygame.K_SLASH:
+                            if dither:
+                                dither = False
+                            else:
+                                dither = True
+                        elif event.key == pygame.K_BACKSLASH:
+                            if mirror:
+                                mirror = False
+                            else:
+                                mirror = True
+                        elif event.key == pygame.K_COMMA:
+                            if elementary:
+                                elementary = False
+                            else:
+                                elementary = True
+                                elements = []
+                                print("Please choose the elements you want to do. To stop choosing, say something other than an int")
+                                try:
+                                    while True:
+                                        elements.append(int(input()))
+                                except ValueError:
+                                    elements = tuple(elements)
+                                    print("Brush now has elements", elements)
+                                if len(elements) == 0:
+                                    print("HEY! YOU FORGOT TO DO ELEMENTS! (Defaulting to what you did last time)")
+                                    elementary = False
+                        elif event.key == pygame.K_RIGHTBRACKET:
+                            
+                            if len(redoList) > 0:
+                                undoList.append(deepcopy(land))
+                                land = redoList.pop()
+                        elif event.key == pygame.K_LEFTBRACKET:
+                            if len(undoList) > 0:
+                                redoList.append(deepcopy(land))
+                                land = undoList.pop()
+                        
+                        #Element Keys
+                        
+                        elif event.key == pygame.K_1:
+                            element = 1
+                        elif event.key == pygame.K_2:
+                            element = 2
+                        elif event.key == pygame.K_3:
+                            element = 3
+                        elif event.key == pygame.K_4:
+                            element = 4
+                        elif event.key == pygame.K_5:
+                            element = 5
+                        elif event.key == pygame.K_6:
+                            element = 6
+                        elif event.key == pygame.K_7:
+                            element = 7
+                        elif event.key == pygame.K_8:
+                            element = 8
+                        elif event.key == pygame.K_9:
+                            element = 9
+                        elif event.key == pygame.K_q:
+                            element = 38
+                        elif event.key == pygame.K_w:
+                            element = 11
+                        elif event.key == pygame.K_e:
+                            element = 12
+                        elif event.key == pygame.K_r:
+                            element = 13
+                        elif event.key == pygame.K_t:
+                            element = 14
+                        elif event.key == pygame.K_y:
+                            element = 46
+                        elif event.key == pygame.K_u:
+                            element = 16
+                        elif event.key == pygame.K_i:
+                            element = 17
+                        elif event.key == pygame.K_a:
+                            element = 18
+                        elif event.key == pygame.K_s:
+                            element = 42
+                        elif event.key == pygame.K_d:
+                            element = 20
+                        elif event.key == pygame.K_f:
+                            element = 21
+                        elif event.key == pygame.K_g:
+                            element = 22
+                        elif event.key == pygame.K_h:
+                            element = 23
+                        elif event.key == pygame.K_j:
+                            element = 68
+                        elif event.key == pygame.K_k:
+                            element = 62
+                        elif event.key == pygame.K_l:
+                            element = 26
+                        elif event.key == pygame.K_z:
+                            element = 43
+                        elif event.key == pygame.K_x:
+                            element = 28
+                        elif event.key == pygame.K_c:
+                            element = 29
+                        elif event.key == pygame.K_v:
+                            element = 30
+                        elif event.key == pygame.K_b:
+                            element = 41
+                        elif event.key == pygame.K_n:
+                            element = 50
+                        #Oops I just realized that I forgot to include o and p
+                        elif event.key == pygame.K_m:
+                            element = 33
+                        elif event.key == pygame.K_o:
+                            element = 34
+                        elif event.key == pygame.K_p:
+                            element = 35
+                        #For elements that aren't here
+                        elif event.key == pygame.K_RSHIFT:
+                            try:
+                                element = int(input("Enter the element ID\n"))
+                                try:
+                                    print("Set element to", foreverglobals.elementNames[element])
+                                except:
+                                    print("Set to an unknown element:", element)
+                            except:
+                                print("THAT'S NOT A VALID NUMBER FOR AN ELEMENT!!!")
+                        elif event.key == pygame.K_PERIOD:
+                            eyedropper = True
+                            print("Pick an element from the sandbox to copy")
+                            alive = False
+                        
+                        
+                        #The ultimate thing: SAVING!
+                        elif event.key == pygame.K_LSHIFT:
+                            gameState = "file saving"
+                        #What's the use of saving if you can't LOAD?
+                        elif event.key == pygame.K_0:
+                            gameState = "file loading"
+                                
+                        elif event.key == pygame.K_F12:
+                            print("Oh, I heard you like dividing by 0! (Crashing intentionally~)")
+                            rememberme = True
+                            sht = 1/0
             
             clock.tick(60)
             if showfps and fps != int(clock.get_fps()):
@@ -533,6 +629,8 @@ try:
                 print("fps:", fps)
             
             if live:
+                if tutorial == 3:
+                    tutorialprogress += 1
                 land = doStuff(land,fliposwitch,werealsodoinglife)
 
 
@@ -541,7 +639,16 @@ try:
             else:
                 fliposwitch = True
 
-            if (not tap) and fliposwitch:
+            if tutorial == 1:
+                if yesbutton.tick(fire,mousePos):
+                    tutorial = 2
+                elif nobutton.tick(fire,mousePos):
+                    tutorial = 0
+
+
+            if (not (tap or tutorial == 1)) and fliposwitch:
+                if tutorial == 2:
+                    tutorialprogress += 1
                 x = int(mousePos.x/landyx)
                 mx = int((screenx-mousePos.x)/landyx)
                 y = int(mousePos.y/landyy)
@@ -848,17 +955,31 @@ try:
                         pygame.draw.rect(screen,(0,random.randint(100,200),random.randint(30,100)),(j*landyx,i*landyy,landyx,landyy))
                     elif el == 76:
                         pygame.draw.rect(screen,(255,150,120),(j*landyx,i*landyy,landyx,landyy))
-                    
+                    elif el == 77:
+                        pygame.draw.rect(screen,(200,150,60),(j*landyx,i*landyy,landyx,landyy))
+
+
                     else:
                         if el != 0:
                             pygame.draw.rect(screen,(255,0,255),(j*landyx,i*landyy,landyx,landyy))
             
+            
+            pygame.draw.rect(screen,(255,255,255),(mousePos.x-(landyx/2)*brushsize*2,mousePos.y-(landyy/2)*brushsize*2,landyx*(brushsize*2+1),landyy*(brushsize*2+1)),2)
+
+            if tutorial != 0:
+                for l in range(len(texts)):
+                    screen.blit(texts[l],Vector2(20, 10+40*l))
+            
+            #Render the yes and no buttons
+            if tutorial == 1:
+                yesbutton.render(screen)
+                nobutton.render(screen)
 
 
             if not alive:
                 live = False
             pygame.display.flip()
-        elif "file" in gamestate:
+        elif "file" in gameState:
             
             appendkey = keyboard()
             if appendkey != "":
@@ -874,7 +995,7 @@ try:
             elif appendkey == "fullback":
                     appendkey = ""
                     filename = ""
-            elif appendkey == "quotationmarks":
+            elif appendkey == "\"":
                 appendkey = ""
             
             if appendkey == "/" and ((len(filename) > 0 and filename[-1] == "/") or len(filename) <= 0):
@@ -883,23 +1004,23 @@ try:
             filename += appendkey
 
 
-            if "saving" in gamestate:
+            if "saving" in gameState:
                 texts = [
                     font[1].render("What would you like to save your sandbox as?",1,Color(0,0,0)),
                     font[1].render(str(filename),1,Color(0,0,0))
                 ]
-            elif "loading" in gamestate:
+            elif "loading" in gameState:
                 texts = [
                     font[1].render("What is the filename of the save you want to load?",1,Color(0,0,0)),
                     font[1].render(str(filename),1,Color(0,0,0))
                 ]
             else:
-                gamestate = "sandbox"
+                gameState = "sandbox"
                 continue
             
             if doingafilething:
-                if "loading" in gamestate:
-                    sandstack.append(deepcopy(land))
+                if "loading" in gameState:
+                    undoList.append(deepcopy(land))
                     backupx = landx
                     backupy = landy
                     bacnupsx = screenx
@@ -951,7 +1072,7 @@ try:
                         print(f'An error occured, but it\'s complicated: {x}')
                         print("Please contact the creator of this sandbox to see what the issue could be")
                     if fail:
-                        sandstack.pop()
+                        undoList.pop()
                         landx = backupx
                         landy = backupy
                         screenx = bacnupsx
@@ -984,7 +1105,7 @@ try:
                     except:
                         print(f'An error occured, but we don\'t know how!')
                         print("Please contact the creator of this sandbox to see what the issue could be")
-                gamestate = "sandbox"
+                gameState = "sandbox"
                 filename = ""
                 continue
 

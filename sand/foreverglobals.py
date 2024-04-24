@@ -78,7 +78,8 @@ elementNames = {
     73:"Coal",
     74:"Natural Gas",
     75:"Polluted Water",
-    76:"Greenhouse Sun"
+    76:"Greenhouse Sun",
+    77:"Wax"
 }
 
 
