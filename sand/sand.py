@@ -52,7 +52,7 @@ if usesavefolder:
 pygame.init()
 screen = pygame.display.set_mode((10,10))
 pygame.display.set_caption("Sandbox game!")
-breaking=True
+playingMySandbox=True
 clock = pygame.time.Clock()
 
 #mouse variables--------------------------------
@@ -113,11 +113,11 @@ shiftKey = False
 dontgointothenegatives = [False,False]
 wasdkeys = [False,False,False,False]
 
-while breaking and setup:
+while playingMySandbox and setup:
     d = 0
     for event in pygame.event.get(): #Event Queue (or whatever it's called)
         if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
-            breaking = False
+            playingMySandbox = False
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LSHIFT:
                 shiftKey = True
@@ -286,10 +286,10 @@ fliposwitch = True
 
 yesbutton = buttons.button(Color(0,255,0),Rect(0,0,100,70),None,"Yes")
 nobutton = buttons.button(Color(255,0,0),Rect(0,0,100,70),None,"No")
-
+wannaBreak = False
 #this makes sure that the sand keeps going in a straight line while placing it when it's active, and also some other stuff
 try:
-    while breaking:
+    while playingMySandbox:
         yesbutton.box = Rect(screenx/2-110,screeny*0.6,100,70)
         nobutton.box = Rect(screenx/2+10,screeny*0.6,100,70)
         if gameState == "sandbox":
@@ -297,11 +297,12 @@ try:
             doingafilething = False
             d = 0
             if tutorial != 0:
-                if tutorial == 1 or tutorial == 2:
+                
+                if tutorial == 1:
                     for event in pygame.event.get(): #Event Queue but it's heavily restricted and you can only do mouse stuff for now
-                        if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
-                            if input("Are you sure you want to quit?\n").lower() in foreverglobals.yeses:
-                                breaking = False
+                        if (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                            tutorial = 0
+                            print("Skipping Tutorial!")
                         if event.type == pygame.MOUSEBUTTONDOWN and tap:
                             undoList.append(deepcopy(land))
                             fire = True
@@ -313,18 +314,33 @@ try:
                             ice = False
                         if event.type == pygame.MOUSEMOTION:
                             mousePos = Vector2(event.pos)
-                
-                if tutorial == 1:
+                    
                     for event in pygame.event.get(): #Event Queue but you can only escape
                         if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
-                            if input("Are you sure you want to quit?\n").lower() in foreverglobals.yeses:
-                                breaking = False
+                            tutorial = 0
+                            print("Skipping Tutorial!")
                     texts = [
                         font[1].render("Welcome to the sandbox!",1,Color(255,255,255)),
                         font[1].render("Would you like a tutorial?",1,Color(255,255,255))
                     ]
                 elif tutorial == 2:
-                    
+                    for event in pygame.event.get(): #Event Queue but it's heavily restricted and you can only do mouse stuff for now
+                        if (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                            tutorial = 0
+                            print("Skipping Tutorial!")
+                        if event.type == pygame.MOUSEBUTTONDOWN and tap:
+                            undoList.append(deepcopy(land))
+                            fire = True
+                            tap = False
+                            if event.button == 3:
+                                ice = True
+                        if event.type == pygame.MOUSEBUTTONUP:
+                            tap = True
+                            ice = False
+                        if event.type == pygame.MOUSEMOTION:
+                            mousePos = Vector2(event.pos)
+
+
                     texts = [
                         font[3].render("Time for the basics of the basics.",1,Color(255,255,255)),
                         font[3].render("Using your mouse, you can click",1,Color(255,255,255)),
@@ -339,9 +355,9 @@ try:
                         continue
                 elif tutorial == 3:
                     for event in pygame.event.get(): #Event Queue to do very basic sandbox stuff
-                        if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
-                            if input("Are you sure you want to quit?\n").lower() in foreverglobals.yeses:
-                                breaking = False
+                        if (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                            tutorial = 0
+                            print("Skipping Tutorial!")
                         if event.type == pygame.MOUSEBUTTONDOWN and tap:
                             undoList.append(deepcopy(land))
                             fire = True
@@ -383,9 +399,13 @@ try:
                         continue
             else:
                 for event in pygame.event.get(): #Event Queue (or whatever it's called)
-                    if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
-                        if input("Are you sure you want to quit?\n").lower() in foreverglobals.yeses:
-                            breaking = False
+                    if (event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE)) and not wannaBreak:
+                        texts = [
+                            font[1].render("Are you sure you want to quit?",1,Color(255,255,255)),
+                            font[3].render("(Be sure to save your sandbox if you haven't!)",1,Color(255,255,255)),
+                        ]
+                        alive = False
+                        wannaBreak = True
                     if event.type == pygame.MOUSEBUTTONDOWN and tap:
                         undoList.append(deepcopy(land))
                         fire = True
@@ -645,8 +665,14 @@ try:
                 elif nobutton.tick(fire,mousePos):
                     tutorial = 0
 
+            if wannaBreak:
+                if yesbutton.tick(fire,mousePos):
+                    playingMySandbox = False
+                elif nobutton.tick(fire,mousePos):
+                    wannaBreak = False
 
-            if (not (tap or tutorial == 1)) and fliposwitch:
+            #Where the mouse input matters!
+            if (not (tap or tutorial == 1 or wannaBreak)) and fliposwitch:
                 if tutorial == 2:
                     tutorialprogress += 1
                 x = int(mousePos.x/landyx)
@@ -966,12 +992,12 @@ try:
             
             pygame.draw.rect(screen,(255,255,255),(mousePos.x-(landyx/2)*brushsize*2,mousePos.y-(landyy/2)*brushsize*2,landyx*(brushsize*2+1),landyy*(brushsize*2+1)),2)
 
-            if tutorial != 0:
+            if tutorial != 0 or wannaBreak:
                 for l in range(len(texts)):
                     screen.blit(texts[l],Vector2(20, 10+40*l))
             
             #Render the yes and no buttons
-            if tutorial == 1:
+            if tutorial == 1 or wannaBreak:
                 yesbutton.render(screen)
                 nobutton.render(screen)
 
