@@ -2292,12 +2292,18 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                 #Wax
 
                 elif e == 77:
+                    l = [False,False]
                     if physics.neighborCheck(miniplain,(9,30,55,67)):
-                        l = True
-                    elif physics.neighborCount(miniplain, (0,13,16,64)) > 6:
-                        p = True
+                        l[0] = True
+                        if t < 15:
+                            t += 1
+                    else:
+                        if t > 0 and random.randint(1,5) == 1:
+                            t -= 1
+                        if physics.neighborCount(miniplain, (0,13,16,64)) > 6:
+                            l[1] = True
                     c = physics.sandCheck(minigrid,localPos,True)
-                    if l:
+                    if l[0] or (t > 0 and (t > 10 or random.randint(1,101-t*10)) == 1):
                         if c[0] == 0:
                             d = physics.lrWanderCheck(minigrid,localPos)
                             if not d[0]:
@@ -2317,7 +2323,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                             grid[a][bb] = [0,0]
 
                             grid[a+1][bb+(c[0]-2)] = [e,t]
-                    elif p or random.randint(1,123) == 1:
+                    elif l[1] or random.randint(1,123) == 1:
                         if coinflip():
                             c = physics.sandCheck(minigrid,localPos)
                             if c[0] == 0:

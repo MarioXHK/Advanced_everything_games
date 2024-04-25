@@ -8,7 +8,9 @@ def keyboard(onlyNums = False):
     ctrlKey = False
     returnKey = ""
     for event in pygame.event.get(): #Keyboard logging!!
-        if event.type == pygame.KEYDOWN:
+        if (event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE)):
+            returnKey = "escape"
+        elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_KP_ENTER or event.key == pygame.K_RETURN:
                 returnKey = "end"
             elif event.key == pygame.K_BACKSPACE:
@@ -132,7 +134,7 @@ def keyboard(onlyNums = False):
     if pygame.key.get_pressed()[pygame.K_LCTRL] or pygame.key.get_pressed()[pygame.K_RCTRL]:
         ctrlKey = True
 
-    unShiftable = ("end"," ")
+    unShiftable = ("end"," ","escape")
     if not onlyNums:
         if shiftKey:
             #Numbers being shifted
@@ -170,11 +172,15 @@ def keyboard(onlyNums = False):
                 legal = True
                 text = pygame.scrap.get(pygame.SCRAP_TEXT)
                 text = str(text)[2:-5]
-                for l in text:
-                    if l in illegals:
-                        print("Cannot paste text with illegal characters!")
-                        legal = False
-                        break
+                if "//" in text or text[0] == "/":
+                    print("Cannot paste text with blank path!")
+                    legal = False
+                else:
+                    for l in text:
+                        if l in illegals:
+                            print("Cannot paste text with illegal characters!")
+                            legal = False
+                            break
                 if legal:
                     returnKey = str(text)
                 else:

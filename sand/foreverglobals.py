@@ -165,7 +165,12 @@ crashSplash = (
         "Erm, what the blast?",
         "I put a period instead of a comma...",
         "...",
-        "NOT FEELING UP TO IT RIGHT NOW SORRY!!!"
+        "NOT FEELING UP TO IT RIGHT NOW SORRY!!!",
+        "OW!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
+        "OWEY! OUCH, YEOUCH!",
+        "YEEEEEOOWWWW!!!",
+        "That hurt!",
+        "It burns!"
     )
 
 yeses = ("y","yes","yeah","do it","sure","alright","ok","ig","i guess","yay","pull the lever, cronk!","pull the lever, cronk","alrighty then","whatever","heck yes","hell yes","probably","ye","yea","yeah!","oh yes","i don't see why not","i dont see why not","the opposite of no","yep","yes sir","yessir","please do","do","1","i'd love to","i'd love to try it out","let's see what you've got","let's-a go!","lets a go","let's a go","lets a go!","mushroom kingdom here we come","may","smash","yeah, sure","yesure","let's kick bubblegum","activate","throttle","upgrade","proceed","bb","shure","surry boi","surry","yes please","yes maam","yes hoobaab","what could go wrong","what could possibly go wrong")
@@ -298,5 +303,6 @@ splashes = (
     "Press Start, Player 2!",
     "Ready, Player 1!",
     "Insert Coin, Player 3!",
-    "Player 4!"
+    "Player 4!",
+    "It burns!"
 )
