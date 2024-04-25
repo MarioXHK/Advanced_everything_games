@@ -50,7 +50,7 @@ if usesavefolder:
         print("sandsave folder already in place (yippee!)")
 
 pygame.init()
-screen = pygame.display.set_mode((10,10))
+screen = pygame.display.set_mode((600,600))
 pygame.display.set_caption("Sandbox game!")
 playingMySandbox=True
 clock = pygame.time.Clock()
@@ -138,7 +138,7 @@ pickAnElement = False
 
 tutorial = 1
 tutorialprogress = 0
-gameState = "setup"
+gameState = "title"
 responded = False
 fliposwitch = True
 
@@ -146,7 +146,9 @@ yesbutton = buttons.button(Color(0,255,0),Rect(0,0,100,70),None,"Yes")
 nobutton = buttons.button(Color(255,0,0),Rect(0,0,100,70),None,"No")
 wannaBreak = False
 
-circleBrush = False
+titleLand = deepcopy(foreverglobals.titleScreenSandbox)
+
+
 # ===============================================================================================
 # ====================================== THE GAME LOOP ==========================================
 # ===============================================================================================
@@ -156,11 +158,59 @@ try:
     while playingMySandbox:
         yesbutton.box = Rect(screenx/2-(10+screenx/5),screeny*0.6,screenx/5,screeny/7)
         nobutton.box = Rect(screenx/2+10,screeny*0.6,screenx/5,screeny/7)
-        if gameState == "setup":
+        
+        #Title screen!
+
+        if gameState == "title":
+            
+            for event in pygame.event.get(): #It's just your mouse and stuff!
+                if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                    playingMySandbox = False
+                if event.type == pygame.MOUSEBUTTONDOWN and tap:
+                    fire = True
+                    tap = False
+                    if event.button == 3:
+                        ice = True
+                if event.type == pygame.MOUSEBUTTONUP:
+                    tap = True
+                    ice = False
+                if event.type == pygame.MOUSEMOTION:
+                    mousePos = Vector2(event.pos)
+            clock.tick(fps)
+
+            #Rendering these buttons and screen!
+            if screen != pygame.display.set_mode((600,600)):
+                screen = pygame.display.set_mode((600,600))
+                print("Set it to correct screen")
+            
+            screen.fill((255,204,44))
+
+            for i in range(len(titleLand)):
+                for j in range(len(titleLand[0])):
+                    rel = titleLand[i][j]
+
+                    if rel == 1:
+                        pygame.draw.rect(screen,(255,255,128),(j*10,i*10,10,10))
+                    elif rel == 2:
+                        pygame.draw.rect(screen,(150,150,150),(j*10,i*10,10,10))
+                    elif rel == 3:
+                        pygame.draw.rect(screen,(0,0,255),(j*10,i*10,10,10))
+                    elif rel == 4:
+                        pygame.draw.rect(screen,(0,0,0),(j*10,i*10,10,10))
+                    else:
+                        if rel != 0:
+                            pygame.draw.rect(screen,(255,0,255),(j*landyx,i*landyy,landyx,landyy))
+
+            #pygame.display.flip()
+
+        
+        #Sandbox Setup gamestate!
+
+        elif gameState == "setup":
             d = 0
             for event in pygame.event.get(): #Event Queue for the setup,
                 if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
-                    playingMySandbox = False
+                    gameState = "title"
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_LSHIFT:
                         shiftKey = True
@@ -209,7 +259,7 @@ try:
                     elif event.key == pygame.K_d:
                         wasdkeys[3] = False
                         delayme[1] = 0
-            clock.tick(60)
+            clock.tick(fps)
             amount = 1
             if shiftKey:
                 amount = 10
@@ -259,24 +309,23 @@ try:
                         screenx += amount
 
 
-            if changeScreen:
-                screen.fill((0,0,0))
-                texts[-2] = font[2].render((str("Current size: a " + str(landx) + " by " + str(landy) + " grid.")),1,Color(0,0,0))
-                texts[-1] = font[2].render((str("On a " + str(screenx) + " by " + str(screeny) + " screen.")),1,Color(0,0,0))
-                screen = pygame.display.set_mode((screenx,screeny))
-                landyx = (screenx/landx)
-                landyy = (screeny/landy)
-                for i in range(landy):
-                    for j in range(landx):
-                        if True in dontgointothenegatives:
-                            pygame.draw.rect(screen,(255,0,0),(j*landyx,i*landyy,landyx,landyy),1)
-                        else:
-                            pygame.draw.rect(screen,(255,255,255),(j*landyx,i*landyy,landyx,landyy),1)
-                
-                pygame.draw.rect(screen,(255,255,255),(0,0,300,230))
-                for l in range(len(texts)):
-                    screen.blit(texts[l],Vector2(10, 10+20*l))
-                pygame.display.flip()
+            screen.fill((0,0,0))
+            texts[-2] = font[2].render((str("Current size: a " + str(landx) + " by " + str(landy) + " grid.")),1,Color(0,0,0))
+            texts[-1] = font[2].render((str("On a " + str(screenx) + " by " + str(screeny) + " screen.")),1,Color(0,0,0))
+            screen = pygame.display.set_mode((screenx,screeny))
+            landyx = (screenx/landx)
+            landyy = (screeny/landy)
+            for i in range(landy):
+                for j in range(landx):
+                    if True in dontgointothenegatives:
+                        pygame.draw.rect(screen,(255,0,0),(j*landyx,i*landyy,landyx,landyy),1)
+                    else:
+                        pygame.draw.rect(screen,(255,255,255),(j*landyx,i*landyy,landyx,landyy),1)
+            
+            pygame.draw.rect(screen,(255,255,255),(0,0,300,230))
+            for l in range(len(texts)):
+                screen.blit(texts[l],Vector2(10, 10+20*l))
+                #pygame.display.flip()
             unanswered = True
             changeScreen = False
             if not setup:
@@ -300,7 +349,7 @@ try:
                 
 
         
-        if gameState == "sandbox":
+        elif gameState == "sandbox":
             changeScreen = True
             doingafilething = False
             d = 0
@@ -655,10 +704,10 @@ try:
                                 rememberme = True
                                 sht = 1/0
             
-            clock.tick(60)
+            clock.tick(fps)
             if showfps and fps != int(clock.get_fps()):
-                fps = int(clock.get_fps())
-                print("fps:", fps)
+                tempFps = int(clock.get_fps())
+                print("fps:", tempFps)
             
             if live:
                 if tutorial == 3:
@@ -679,7 +728,7 @@ try:
 
             if wannaBreak:
                 if yesbutton.tick(fire,mousePos):
-                    playingMySandbox = False
+                    gameState = "title"
                 elif nobutton.tick(fire,mousePos):
                     wannaBreak = False
 
@@ -692,11 +741,8 @@ try:
                 y = int(mousePos.y/landyy)
                 if eyeDropper:
                     brushSize = 0
-                    circleBrush = False
                 for l in range(0-brushSize,1+brushSize):
                     for m in range(0-brushSize,1+brushSize):
-                        if circleBrush:
-                            continue
                         t = 0
                         try:
                             if eyeDropper:
@@ -1021,13 +1067,15 @@ try:
 
             if not alive:
                 live = False
-            pygame.display.flip()
+            #pygame.display.flip()
         
         #Saving and loading files gamestate!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         
         elif "file" in gameState:
             
             appendkey = keyboard()
+            clock.tick(fps)
+
             if appendkey != "":
                 changeScreen = True
             
@@ -1161,15 +1209,15 @@ try:
                 filename = ""
                 continue
 
-            if changeScreen:
-                screen = pygame.display.set_mode((600,450))
-                
-                screen.fill((255,255,255))
-                
-                for l in range(len(texts)):
-                    screen.blit(texts[l],Vector2(10, 10+30*l))
-                pygame.display.flip()
+            screen = pygame.display.set_mode((600,450))
+            
+            screen.fill((255,255,255))
+            
+            for l in range(len(texts)):
+                screen.blit(texts[l],Vector2(10, 10+30*l))
+            #pygame.display.flip()
             changeScreen = False
+        pygame.display.flip()
     pygame.quit()
     print("Process exit with code: \":)\"")
     print("You went out of bounds", oob, "times!")

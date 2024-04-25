@@ -6,6 +6,90 @@ import physics
 import random
 from copy import deepcopy
 
+def doLessStuff(plain: list[list[int]]) -> list[list[int]]:
+    e = 0
+    
+    grid = deepcopy(plain)
+    for a in range(len(plain)):
+        for b in range(len(plain[0])):
+            if coinflip():
+                bb = len(plain[0])-b-1
+            else:
+                bb = b
+            
+            if plain[a][bb] != grid[a][bb]:
+                continue
+            
+            e = plain[a][bb]
+            
+            au = False
+            ad = False
+            al = False
+            ar = False
+            
+            if a + 1 < len(plain):
+                ad = True
+            if a - 1 > -1:
+                au = True
+            if bb + 1 < len(plain[0]):
+                ar = True
+            if bb - 1 > -1:
+                al = True
+            
+            miniplain = []
+            minigrid = []
+            localPos = (1,1)
+            
+            if plain[a][bb] != 0:
+                for i in range(0-int(au),1+int(ad)):
+                    p = []
+                    for j in range(0-int(al),1+int(ar)):
+                        if (i,j) == (0,0):
+                            p.append(("self",e))
+                            localPos = (1-int(not au),1-int(not al))
+                            continue
+                        p.append(tuple(plain[a+i][bb+j]))
+                    miniplain.append(tuple(p))
+            
+            if plain[a][bb] != 0:
+                for i in range(0-int(au),1+int(ad)):
+                    g = []
+                    for j in range(0-int(al),1+int(ar)):
+                        if (i,j) == (0,0):
+                            g.append(("self",e))
+                            localPos = (1-int(not au),1-int(not al))
+                            continue
+                        g.append(tuple(grid[a+i][bb+j]))
+                    minigrid.append(tuple(g))
+            
+            miniplain = tuple(miniplain)
+            minigrid = tuple(minigrid)
+            
+            #No need to try, there's no way it'll fail!
+                
+            #Air
+            
+            if e == 0:
+                continue
+            
+            #Sand
+            
+            elif e == 1:
+                c = physics.sandCheckLess(minigrid,localPos)
+                if c == 0:
+                    continue
+                else:
+                    grid[a][bb] = 0
+                    grid[a+1][bb+(c-2)] = e
+
+            #wall
+            elif e == 4:
+                continue
+    return grid
+
+
+
+
 def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> list[list[list[int]]]:
     e = 0
     t = 0

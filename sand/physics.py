@@ -89,6 +89,7 @@ def sandCheck(grid: list[list[list[int]]],pos: list[int] | tuple[int,int], float
     for m in range(len(grid[0])):
         if grid[pos[0]+l][m][0] in b:
             under = False
+            break
     
     
     if under:
@@ -107,6 +108,49 @@ def sandCheck(grid: list[list[list[int]]],pos: list[int] | tuple[int,int], float
         elif canRight and (grid[pos[0]+l][pos[1]+1][0] in b):
             return (3,grid[pos[0]+l][pos[1]+1][0])
     return (0,0) #To assure something gets returned if everything else is wrong
+
+
+# Oversimplified sand physics ---------------------------------------------------
+def sandCheckLess(grid: list[list[int]],pos: list[int] | tuple[int,int]) -> tuple[int,int]:
+    #Returns an int. If 0, then nowhere, 1 is left, 2 is falling middle, 3 is right
+    l = 1
+    if len(grid) == 2 and pos[0] == 1:
+        return 0
+    under = True
+    canLeft = True
+    canRight = True
+    if len(grid[0]) == 1:
+        canRight = False
+        canLeft = False
+    elif len(grid[0]) == 2:
+        if pos[1] == 0:
+            canLeft = False
+        else:
+            canRight = False
+    
+    for m in range(len(grid[0])):
+        if grid[pos[0]+l][m] == 0:
+            under = False
+            break
+    
+    
+    if under:
+        return 0
+    else:
+        if grid[pos[0]+l][pos[1]] == 0:
+            return 2
+        elif canLeft and canRight and (grid[pos[0]+l][pos[1]-1] == 0) and (grid[pos[0]+l][pos[1]+1] == 0):
+            doing = coinflip()
+            if doing:
+                return 1
+            else:
+                return 3
+        elif canLeft and (grid[pos[0]+l][pos[1]-1] == 0):
+            return 1
+        elif canRight and (grid[pos[0]+l][pos[1]+1] == 0):
+            return 3
+    return 0 #To assure something gets returned if everything else is wrong
+
 
 # Stone Physics ---------------------------------------------------
 def stoneCheck(grid: list[list[list[int]]],pos: list[int] | tuple[int,int], floats: bool = False, reverse: bool = False, gas: bool = False) -> tuple[bool,int]:
