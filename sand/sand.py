@@ -22,7 +22,10 @@ import buttons
 from physics import coinflip
 from physics import checkEverywhere
 from doing import doStuff
+from doing import gimmeAllElms
+from drawing import drawStuff
 from inputkeys import keyboard
+from drawing import drawLessStuff
 
 pygame.font.init()
 font = (
@@ -75,7 +78,7 @@ elements = []
 mirror = False
 
 doingafilething = False
-
+anElement = ""
 
 # ===============================================================================================
 # ===================================== THE SETUP LOOP ==========================================
@@ -113,6 +116,7 @@ shiftKey = False
 dontgointothenegatives = [False,False]
 wasdkeys = [False,False,False,False]
 
+unlockedElements = [0,1,2,3,4,5,6,7,8,9]
 
 def remindMe() -> None:
     print("ELEMENTS: Press the keys for the element!  1: Sand  2: Stone  3: Water  4: Sugar  5: Wall  6: Dirt  7: Mud  8: Plant  9: Lava ")
@@ -138,7 +142,7 @@ pickAnElement = False
 
 tutorial = 1
 tutorialprogress = 0
-gameState = "title"
+gameState = "setup"
 responded = False
 fliposwitch = True
 
@@ -147,7 +151,7 @@ nobutton = buttons.button(Color(255,0,0),Rect(0,0,100,70),None,"No")
 wannaBreak = False
 
 titleLand = deepcopy(foreverglobals.titleScreenSandbox)
-
+appendKey = ""
 
 # ===============================================================================================
 # ====================================== THE GAME LOOP ==========================================
@@ -162,6 +166,9 @@ try:
         #Title screen!
 
         if gameState == "title":
+            
+            if screen != pygame.display.set_mode((600,600)):
+                screen = pygame.display.set_mode((600,600))
             
             for event in pygame.event.get(): #It's just your mouse and stuff!
                 if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
@@ -179,27 +186,11 @@ try:
             clock.tick(fps)
 
             #Rendering these buttons and screen!
-            if screen != pygame.display.set_mode((600,600)):
-                screen = pygame.display.set_mode((600,600))
-                print("Set it to correct screen")
+            
             
             screen.fill((255,204,44))
 
-            for i in range(len(titleLand)):
-                for j in range(len(titleLand[0])):
-                    rel = titleLand[i][j]
-
-                    if rel == 1:
-                        pygame.draw.rect(screen,(255,255,128),(j*10,i*10,10,10))
-                    elif rel == 2:
-                        pygame.draw.rect(screen,(150,150,150),(j*10,i*10,10,10))
-                    elif rel == 3:
-                        pygame.draw.rect(screen,(0,0,255),(j*10,i*10,10,10))
-                    elif rel == 4:
-                        pygame.draw.rect(screen,(0,0,0),(j*10,i*10,10,10))
-                    else:
-                        if rel != 0:
-                            pygame.draw.rect(screen,(255,0,255),(j*landyx,i*landyy,landyx,landyy))
+            drawLessStuff(screen,titleLand,10,10)
 
             #pygame.display.flip()
 
@@ -389,8 +380,6 @@ try:
                             undoList.append(deepcopy(land))
                             fire = True
                             tap = False
-                            if event.button == 3:
-                                ice = True
                         if event.type == pygame.MOUSEBUTTONUP:
                             tap = True
                             ice = False
@@ -411,6 +400,36 @@ try:
                         tutorial = 3
                         continue
                 elif tutorial == 3:
+                    for event in pygame.event.get(): #Event Queue but it's heavily restricted and you can only do mouse stuff for now
+                        if (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                            tutorial = 0
+                            print("Skipping Tutorial!")
+                        if event.type == pygame.MOUSEBUTTONDOWN and tap:
+                            undoList.append(deepcopy(land))
+                            fire = True
+                            tap = False
+                            if event.button == 3:
+                                ice = True
+                        if event.type == pygame.MOUSEBUTTONUP:
+                            tap = True
+                            ice = False
+                        if event.type == pygame.MOUSEMOTION:
+                            mousePos = Vector2(event.pos)
+
+
+                    texts = [
+                        font[3].render("That's quite a bit of sand, maybe",1,Color(255,255,255)),
+                        font[3].render("it's time to get rid of some of it?",1,Color(255,255,255)),
+                        font[3].render("The right click acts as an eraser no",1,Color(255,255,255)),
+                        font[3].render("matter the element",1,Color(255,255,255)),
+                        font[3].render("Progress: " + str(tutorialprogress//2) + "%",1,Color(255,255,255))
+                        
+                    ]
+                    if tutorialprogress >= 200:
+                        tutorialprogress = 0
+                        tutorial = 4
+                        continue
+                elif tutorial == 4:
                     for event in pygame.event.get(): #Event Queue to do very basic sandbox stuff
                         if (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                             tutorial = 0
@@ -436,7 +455,7 @@ try:
                                     redoList = []
                                 live = True
                                 #Go a single step forward
-                            if event.key == pygame.K_LCTRL:
+                            elif event.key == pygame.K_LCTRL:
                                 live = True
                                 if alive:
                                     alive = False
@@ -452,11 +471,54 @@ try:
                     ]
                     if tutorialprogress >= 600:
                         tutorialprogress = 0
-                        tutorial = 3
+                        tutorial = 5
                         continue
+                elif tutorial == 5:
+                    for event in pygame.event.get(): #Event Queue to do very basic sandbox stuff
+                        if (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                            tutorial = 0
+                            print("Skipping Tutorial!")
+                        if event.type == pygame.MOUSEBUTTONDOWN and tap:
+                            undoList.append(deepcopy(land))
+                            fire = True
+                            tap = False
+                            if event.button == 3:
+                                ice = True
+                        if event.type == pygame.MOUSEBUTTONUP:
+                            tap = True
+                            ice = False
+                        if event.type == pygame.MOUSEMOTION:
+                            mousePos = Vector2(event.pos)
+                        if event.type == pygame.KEYDOWN:
+                            
+                            #Command Keys
+                            
+                            if event.key == pygame.K_SPACE:
+                                if not alive:
+                                    undoList.append(deepcopy(land))
+                                    redoList = []
+                                live = True
+                                #Go a single step forward
+                            elif event.key == pygame.K_LCTRL:
+                                live = True
+                                if alive:
+                                    alive = False
+                                else:
+                                    alive = True
+                                #Go a step forward every tick until pressed again
+                            elif event.key == pygame.K_TAB:
+                                gameState = "elementmenu"
+                            
+                    texts = [
+                        font[3].render("So far so good. You probably don't",1,Color(255,255,255)),
+                        font[3].render("want to just play with only sand,",1,Color(255,255,255)),
+                        font[3].render("that'll get old fast! How about we",1,Color(255,255,255)),
+                        font[3].render("Place some stone? Press the TAB",1,Color(255,255,255)),
+                        font[3].render("key to access the Elemental Menu.",1,Color(255,255,255))
+                    ]
             else:
                 if pickAnElement:
-                    appendkey = keyboard()
+                    appendKey = keyboard(True)
                 else:
                     for event in pygame.event.get(): #Event Queue for the main sandbox (or whatever it's called)
                         if (event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE)) and not wannaBreak:
@@ -554,7 +616,7 @@ try:
                                     print("brush size is now", (brushSize*2+1))
                             elif event.key == pygame.K_BACKSPACE:
                                 remindMe()
-                            elif event.key == pygame.K_TAB:
+                            elif event.key == pygame.K_F1:
                                 if showfps:
                                     showfps = False
                                 else:
@@ -678,14 +740,7 @@ try:
                             #For elements that aren't here
                             elif event.key == pygame.K_RSHIFT:
                                 pickAnElement = True
-                                try:
-                                    element = int(input("Enter the element ID\n"))
-                                    try:
-                                        print("Set element to", foreverglobals.elementNames[element])
-                                    except:
-                                        print("Set to an unknown element:", element)
-                                except:
-                                    print("THAT'S NOT A VALID NUMBER FOR AN ELEMENT!!!")
+                                anElement = ""
                             elif event.key == pygame.K_PERIOD:
                                 eyeDropper = True
                                 print("Pick an element from the sandbox to copy")
@@ -703,6 +758,9 @@ try:
                                 print("Oh, I heard you like dividing by 0! (Crashing intentionally~)")
                                 rememberme = True
                                 sht = 1/0
+                            
+                            elif event.key == pygame.K_TAB:
+                                gameState = "elementmenu"
             
             clock.tick(fps)
             if showfps and fps != int(clock.get_fps()):
@@ -710,7 +768,7 @@ try:
                 print("fps:", tempFps)
             
             if live:
-                if tutorial == 3:
+                if tutorial == 4:
                     tutorialprogress += 1
                 land = doStuff(land,fliposwitch,werealsodoinglife)
 
@@ -731,10 +789,36 @@ try:
                     gameState = "title"
                 elif nobutton.tick(fire,mousePos):
                     wannaBreak = False
-
+            
+            if pickAnElement:
+                texts = [
+                        font[1].render("Enter the element's ID",1,Color(255,255,255)),
+                        font[1].render(anElement,1,Color(255,255,255))
+                    ]
+                if appendKey == "end" and len(anElement) != 0:
+                    if len(anElement) != 0:
+                        element = int(anElement)
+                        try:
+                            print("Set element to", foreverglobals.elementNames[element])
+                        except:
+                            print("Set to an unknown element:", element)
+                        pickAnElement = False
+                    appendKey = ""
+                elif appendKey == "escape":
+                    print("Cancelling...")
+                    pickAnElement = False
+                elif appendKey == "back":
+                    appendKey = ""
+                    if len(anElement) > 0:
+                        anElement = anElement[:-1]
+                else:
+                    anElement += appendKey
+            
             #Where the mouse input matters!
             if (not (tap or tutorial == 1 or wannaBreak)) and fliposwitch:
                 if tutorial == 2:
+                    tutorialprogress += 1
+                elif tutorial == 3 and ice:
                     tutorialprogress += 1
                 x = int(mousePos.x/landyx)
                 mx = int((screenx-mousePos.x)/landyx)
@@ -781,327 +865,110 @@ try:
                             oob += 1
 
             fire = False
-            screen.fill((0,0,0))
-            for i in range(len(land)):
-                for j in range(len(land[0])):
-                    el = land[i][j][0]
-                    et = land[i][j][1]
-                    if el == 1:
-                        pygame.draw.rect(screen,(255,255,0),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 2:
-                        pygame.draw.rect(screen,(150,150,150),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 3:
-                        pygame.draw.rect(screen,(0,0,255),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 4:
-                        pygame.draw.rect(screen,(250,250,250),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 5:
-                        pygame.draw.rect(screen,(100,100,100),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 6:
-                        pygame.draw.rect(screen,(200,100,50),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 7:
-                        pygame.draw.rect(screen,(150,50,10),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 8:
-                        pygame.draw.rect(screen,(0,200,0),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 9:
-                        cool = 200+et*10+random.randint(0,50)
-                        if cool > 255:
-                            cool = 255
-                        elif cool < 0:
-                            cool = 0
-                        pygame.draw.rect(screen,(cool,random.randint(0,50),0),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 10:
-                        pygame.draw.rect(screen,(200,200,50),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 11:
-                        pygame.draw.rect(screen,(200,200,200),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 12:
-                        pygame.draw.rect(screen,(30,20,40),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 13:
-                        pygame.draw.rect(screen,(128,200,255),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 14:
-                        pygame.draw.rect(screen,(0,255,255),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 15:
-                        pygame.draw.rect(screen,(0,128,255),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 16:
-                        pygame.draw.rect(screen,(230,230,230),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 17:
-                        pygame.draw.rect(screen,(150,90,60),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 18:
-                        pygame.draw.rect(screen,(0,128,0),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 19:
-                        random.seed(et)
-                        pygame.draw.rect(screen,(random.randint(0,50),50+random.randint(0,200),100+random.randint(0,150)),(j*landyx,i*landyy,landyx,landyy))
-                        random.seed()
-                    elif el == 20:
-                        pygame.draw.rect(screen,(255,255,128),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 21:
-                        pygame.draw.rect(screen,(10,60,180),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 22:
-                        pygame.draw.rect(screen,(240,250,255),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 23:
-                        pygame.draw.rect(screen,(200,255,255),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 24:
-                        pygame.draw.rect(screen,(240,220,255),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 25:
-                        pygame.draw.rect(screen,(100,200,230),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 26:
-                        pygame.draw.rect(screen,(255,255,255),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 27:
-                        pygame.draw.rect(screen,(170,210,250),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 28:
-                        if et == 0:
-                            pygame.draw.rect(screen,(40,20,10),(j*landyx,i*landyy,landyx,landyy))
-                        else:
-                            pygame.draw.rect(screen,(0,255,0),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 29:
-                        pygame.draw.rect(screen,(24,24,24),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 30:
-                        cool = 200+et*10
-                        if cool > 255:
-                            cool = 255
-                        cooler = random.randint(50,100+et*random.randint(20,30))
-                        if cooler > 255:
-                            cooler = 255
-                        pygame.draw.rect(screen,(cool,cooler,0),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 31:
-                        pygame.draw.rect(screen,(140,70,30),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 32:
-                        cool = 100-et//2
-                        pygame.draw.rect(screen,(cool,cool,cool),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 33:
-                        cool = 0
-                        if et != 0:
-                            cool = 100+random.randint(-20,20)
-                        pygame.draw.rect(screen,(100+cool,cool//2,255),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 34:
-                        pygame.draw.rect(screen,(160,170,180),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 35:
-                        pygame.draw.rect(screen,(10,10,10),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 36:
-                        colour = (255,255,255)
-                        if et == 1:
-                            colour = (255,0,0)
-                        elif et == 2:
-                            colour = (255,128,0)
-                        elif et == 3:
-                            colour = (255,255,0)
-                        elif et == 4:
-                            colour = (128,255,0)
-                        elif et == 5:
-                            colour = (0,255,0)
-                        elif et == 6:
-                            colour = (0,255,128)
-                        elif et == 7:
-                            colour = (255,255,255)
-                        elif et == 8:
-                            colour = (0,128,255)
-                        elif et == 9:
-                            colour = (0,0,255)
-                        elif et == 8:
-                            colour = (128,0,255)
-                        elif et == 9:
-                            colour = (255,0,255)
-                        elif et == 10:
-                            colour = (128,0,255)
-                        elif et == 11:
-                            colour = (128,128,128)
-                        pygame.draw.rect(screen,colour,(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 37:
-                        pygame.draw.rect(screen,(random.randint(0,250),random.randint(0,100),random.randint(150,250)),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 38:
-                        if et == 1:
-                            pygame.draw.rect(screen,(255,255,20),(j*landyx,i*landyy,landyx,landyy))
-                        else:
-                            pygame.draw.rect(screen,(180,180,170),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 39:
-                        if et == 1:
-                            pygame.draw.rect(screen,(255,255,20),(j*landyx,i*landyy,landyx,landyy))
-                        else:
-                            pygame.draw.rect(screen,(200,200,190),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 40:
-                        if et == 1:
-                            pygame.draw.rect(screen,(255,255,20),(j*landyx,i*landyy,landyx,landyy))
-                        else:
-                            pygame.draw.rect(screen,(200,200,150),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 41:
-                        cool = 0
-                        if et != 0:
-                            cool = random.randint(-20,20)
-                        pygame.draw.rect(screen,(100,20+cool//2,240),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 42:
-                        cool = 0
-                        if et != 0:
-                            cool = random.randint(-50,50)
-                        pygame.draw.rect(screen,(200+cool,50+cool,50+cool),(j*landyx,i*landyy,landyx,landyy))
-                    
-                    elif el == 43:
-                        if coinflip():
-                            pygame.draw.rect(screen,(255,255,0),(j*landyx,i*landyy,landyx,landyy))
-                        else:
-                            pygame.draw.rect(screen,(255,255,128),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 44:
-                        pygame.draw.rect(screen,(180,130,100),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 45:
-                        pygame.draw.rect(screen,(60,30,15),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 46:
-                        pygame.draw.rect(screen,(255,255,255),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 47:
-                        if random.randint(1,111) == 1 and et == 1:
-                            pygame.draw.rect(screen,(255,255,0),(j*landyx,i*landyy,landyx,landyy))
-                        else:
-                            pygame.draw.rect(screen,(128,128,255),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 48:
-                        pygame.draw.rect(screen,(200,230,255),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 49:
-                        if et < 0:
-                            et = 0
-                        elif et > 10:
-                            et = 10
-                        pygame.draw.rect(screen,(et*20,150-et*10,0),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 50:
-                        if fliposwitch:
-                            pygame.draw.rect(screen,(255,255,255),(j*landyx,i*landyy,landyx,landyy))
-                        else:
-                            pygame.draw.rect(screen,(255,0,0),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 51:
-                        pygame.draw.rect(screen,(0,0,255),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 52:
-                        pygame.draw.rect(screen,(105,105,105),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 53:
-                        pygame.draw.rect(screen,(255,255,0),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 54:
-                        if et == 1:
-                            pygame.draw.rect(screen,(255,255,0),(j*landyx,i*landyy,landyx,landyy))
-                        elif et == 2:
-                            pygame.draw.rect(screen,(150,150,150),(j*landyx,i*landyy,landyx,landyy))
-                        elif et == 3:
-                            pygame.draw.rect(screen,(0,0,255),(j*landyx,i*landyy,landyx,landyy))
-                        elif et == 4:
-                            pygame.draw.rect(screen,(250,250,250),(j*landyx,i*landyy,landyx,landyy))
-                        elif et == 5:
-                            pygame.draw.rect(screen,(100,100,100),(j*landyx,i*landyy,landyx,landyy))
-                        elif et == 6:
-                            pygame.draw.rect(screen,(200,100,50),(j*landyx,i*landyy,landyx,landyy))
-                        else:
-                            pygame.draw.rect(screen,(255,0,255),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 55:
-                        pygame.draw.rect(screen,(255,200+random.randint(0,55),200+random.randint(0,55)),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 56:
-                        pygame.draw.rect(screen,(et*5,et*5,et*5),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 57:
-                        pygame.draw.rect(screen,(100,20+random.randint(-20,20)//2,240),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 58:
-                        if et == 1:
-                            pygame.draw.rect(screen,(255,255,255),(j*landyx,i*landyy,landyx,landyy))
-                        else:
-                            pygame.draw.rect(screen,(240,230,0),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 59:
-                        pygame.draw.rect(screen,(25,25,30),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 60:
-                        pygame.draw.rect(screen,(random.randint(0,50),random.randint(25,255),random.randint(0,50)),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 61:
-                        if et == 0:
-                            pygame.draw.rect(screen,(64,64,64),(j*landyx,i*landyy,landyx,landyy))
-                        elif et == 1:
-                            pygame.draw.rect(screen,(128,128,128),(j*landyx,i*landyy,landyx,landyy))
-                        else:
-                            pygame.draw.rect(screen,(255,255,255),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 62:
-                        if et == 0:
-                            pygame.draw.rect(screen,(32,24,16),(j*landyx,i*landyy,landyx,landyy))
-                        else:
-                            pygame.draw.rect(screen,(140,70,30),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 63:
-                        pygame.draw.rect(screen,(130,80,60),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 64:
-                        pygame.draw.rect(screen,(170,250,190),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 65:
-                        pygame.draw.rect(screen,(0,255,0),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 66:
-                        pygame.draw.rect(screen,(random.randint(0,20),200+random.randint(0,20),random.randint(0,20)),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 67:
-                        pygame.draw.rect(screen,(random.randint(150,255),random.randint(50,230),random.randint(0,40)),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 68:
-                        pygame.draw.rect(screen,(200,0,0),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 69:
-                        if et == 1:
-                            pygame.draw.rect(screen,(255,random.randint(0,255),random.randint(0,255)),(j*landyx,i*landyy,landyx,landyy))
-                        else:
-                            pygame.draw.rect(screen,(200,180,150),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 70:
-                        pygame.draw.rect(screen,(80,100,60),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 71:
-                        if et != 0:
-                            pygame.draw.rect(screen,(200,255,230),(j*landyx,i*landyy,landyx,landyy))
-                        else:
-                            pygame.draw.rect(screen,(200,200,255),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 72:
-                        pygame.draw.rect(screen,(120-et,60-(et//5),10-(et//10)),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 73:
-                        pygame.draw.rect(screen,(20,20,20),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 74:
-                        pygame.draw.rect(screen,(60,30,15),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 75:
-                        pygame.draw.rect(screen,(0,random.randint(100,200),random.randint(30,100)),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 76:
-                        pygame.draw.rect(screen,(255,150,120),(j*landyx,i*landyy,landyx,landyy))
-                    elif el == 77:
-                        pygame.draw.rect(screen,(200+et*2,150+et*5,60+et*10),(j*landyx,i*landyy,landyx,landyy))
-
-
-                    else:
-                        if el != 0:
-                            pygame.draw.rect(screen,(255,0,255),(j*landyx,i*landyy,landyx,landyy))
             
-            if tutorial != 1:
-                pygame.draw.rect(screen,(255,255,255),(mousePos.x-(landyx/2)*(brushSize*2+1),mousePos.y-(landyy/2)*(brushSize*2+1),landyx*(brushSize*2+1),landyy*(brushSize*2+1)),2)
+            for i in gimmeAllElms(land):
+                if not i in unlockedElements:
+                    unlockedElements.append(i)
+            
+            
+            screen.fill((0,0,0))
+            
+            
+            drawStuff(screen,land,landyx,landyy,fliposwitch)
+            
+            
 
-            if tutorial != 0 or wannaBreak:
+            if tutorial != 0 or wannaBreak or pickAnElement:
                 for l in range(len(texts)):
                     screen.blit(texts[l],Vector2(20, 10+40*l))
             
             #Render the yes and no buttons
+            yn = False
             if tutorial == 1 or wannaBreak:
+                yn = True
                 yesbutton.render(screen)
                 nobutton.render(screen)
 
+            if not (tutorial == 1 or wannaBreak or yn or pickAnElement):
+                pygame.draw.rect(screen,(255,255,255),(mousePos.x-(landyx/2)*(brushSize*2+1),mousePos.y-(landyy/2)*(brushSize*2+1),landyx*(brushSize*2+1),landyy*(brushSize*2+1)),(1+brushSize//5))
 
             if not alive:
                 live = False
             #pygame.display.flip()
         
+        elif gameState == "elementmenu":
+            
+            if screen != pygame.display.set_mode((600,450)):
+                screen = pygame.display.set_mode((600,450))
+            
+            for event in pygame.event.get(): #It's just your mouse and stuff!
+                if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                    gameState = "sandbox"
+                    screen = pygame.display.set_mode((screenx,screeny))
+                    
+            clock.tick(fps)
+            if gameState == "sandbox":
+                continue
+            
+            if tutorial == 5:
+                print()
+            
+            if tutorial == 5:
+                   texts = [
+                        font[1].render("Welcome to the element menu, where",1,Color(255,255,255)),
+                        font[1].render("You can find all of the elements you",1,Color(255,255,255)),
+                        font[1].render("have unlocked. After the tutorial",1,Color(255,255,255)),
+                        font[1].render("There are a bunch of elements that",1,Color(255,255,255)),
+                        font[1].render("Will already be unlocked, but for now",1,Color(255,255,255)),
+                        font[1].render("You will only have stone.",1,Color(255,255,255))
+                    ] 
+                    
+                    
+                    
+            #Render the menu
+            
+            screen.fill((0,0,0))
+            
+            if tutorial == 5:
+                for l in range(len(texts)):
+                    screen.blit(texts[l],Vector2(20, 10+40*l))
+                
+        
+        
+        
         #Saving and loading files gamestate!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         
         elif "file" in gameState:
             
-            appendkey = keyboard()
+            appendKey = keyboard()
             clock.tick(fps)
 
-            if appendkey != "":
+            if appendKey != "":
                 changeScreen = True
             
-            if appendkey == "end":
-                appendkey = ""
+            if appendKey == "end":
+                appendKey = ""
                 doingafilething = True
-            elif appendkey == "back":
-                    appendkey = ""
+            elif appendKey == "back":
+                    appendKey = ""
                     if len(filename) > 0:
                         filename = filename[:-1]
-            elif appendkey == "fullback":
-                    appendkey = ""
+            elif appendKey == "fullback":
+                    appendKey = ""
                     filename = ""
-            elif appendkey == "\"":
-                appendkey = ""
-            elif appendkey == "escape":
-                appendkey = ""
+            elif appendKey == "\"":
+                appendKey = ""
+            elif appendKey == "escape":
+                appendKey = ""
                 gameState = "sandbox"
                 print("Saveing/Loading aborted!")
                 continue
 
 
-            if appendkey == "/" and ((len(filename) > 0 and filename[-1] == "/") or len(filename) <= 0):
-                appendkey = ""
+            if appendKey == "/" and ((len(filename) > 0 and filename[-1] == "/") or len(filename) <= 0):
+                appendKey = ""
 
-            filename += appendkey
+            filename += appendKey
 
 
             if "saving" in gameState:
@@ -1115,97 +982,98 @@ try:
                     font[1].render(str(filename),1,Color(0,0,0))
                 ]
             else:
-                gameState = "sandbox"
-                continue
-            
-            if doingafilething:
-                if "loading" in gameState:
-                    undoList.append(deepcopy(land))
-                    backupx = landx
-                    backupy = landy
-                    bacnupsx = screenx
-                    backupsy = screeny
-                    backupland = deepcopy(land)
-                    fail = True
-                    print("Loading", filename+ ".txt from your saves folder...")
-                    try:
-                        if usesavefolder:
-                            thefile = open('sandsaves/'+filename+'.txt', 'r')
-                        else:
-                            thefile = open(filename+'.txt', 'r')
-                        reading = thefile.read().split()
-                        thefile.close()
-                        print(filename, "read with", len(reading), "numbers!")
-                        readed = []
-                        for inny in range(len(reading)):
-                            readed.append(int(reading[inny]))
-                        landx = readed[0]
-                        landy = readed[1]
-                        screenx = readed[2]
-                        screeny = readed[3]
-                        print("Grid size:", landx, "by", landy, "pixels on a", screenx, "by", screeny, "gaming window.")
-                        land = []
-                        for ay in range(landy):
-                            land.append([])
-                            for bx in range(landx):
-                                pxl = (bx+(landx*ay)) * 2 + 4
-                                land[ay].append([readed[pxl],readed[pxl+1]])
-                        
-                        screen = pygame.display.set_mode((screenx,screeny))
-                        #The loading should go smoothly from here so we don't have to worry about these variables being screwed
-                        landyx = (screenx/landx)
-                        landyy = (screeny/landy)
-                        fail = False
-                        if (not werealsodoinglife) and (checkEverywhere(land,[26,0]) or checkEverywhere(land,[37,0])):
-                            print("Warning! This save contains life particles and life isn't enabled. You should probably enable it for the intended experience!")
-                        print("Load successful!")
-                    except FileNotFoundError as e:
-                        print(f'An error occured: {e}')
-                        print("Try again with a file that exists. (Maybe you don't have any :/))")
-                    except TypeError as e:
-                        print(f'An error occured: {e}')
-                        print("Your file might have more than just numbers in it.")
-                    except IndexError as e:
-                        print(f'An error occured: {e}')
-                        print("It's possible your grid isn't matching up with the data in a way!")
-                    except Exception as x:
-                        print(f'An error occured, but it\'s complicated: {x}')
-                        print("Please contact the creator of this sandbox to see what the issue could be")
-                    if fail:
-                        undoList.pop()
-                        landx = backupx
-                        landy = backupy
-                        screenx = bacnupsx
-                        screeny = backupsy
-                        land = deepcopy(backupland)
-                        screen = pygame.display.set_mode((screenx,screeny))
-                else:
-                    print("Saving", filename+ ".txt to your saves folder... (You better not close your program!)")
-                    try:
-                        if usesavefolder:
-                            thefile = open('sandsaves/'+filename+'.txt', 'w')
-                        else:
-                            thefile = open(filename+'.txt', 'w')
-                        data = []
-                        data.append(str(landx))
-                        data.append(str(landy))
-                        data.append(str(screenx))
-                        data.append(str(screeny))
-                        for ay in range(len(land)):
-                            for bx in range(len(land[0])):
-                                data.append(str(land[ay][bx][0]))
-                                data.append(str(land[ay][bx][1]))
-                        writing = ' '.join(data)
-                        thefile.write(writing)
-                        thefile.close()
-                        print("Save successful!")
-                    except FileNotFoundError as e:
-                        print(f'An error occured: {e}')
-                        print("Maybe you don't have a sandsaves folder for the saves to go to. (You'll have to make it manually)")
-                    except:
-                        print(f'An error occured, but we don\'t know how!')
-                        print("Please contact the creator of this sandbox to see what the issue could be")
-                gameState = "sandbox"
+                gameState = "sandbox"            
+            if doingafilething or gameState == "sandbox":
+                if gameState != "sandbox":
+                    if "loading" in gameState:
+                        undoList.append(deepcopy(land))
+                        backupx = landx
+                        backupy = landy
+                        bacnupsx = screenx
+                        backupsy = screeny
+                        backupland = deepcopy(land)
+                        fail = True
+                        print("Loading", filename+ ".txt from your saves folder...")
+                        try:
+                            if usesavefolder:
+                                thefile = open('sandsaves/'+filename+'.txt', 'r')
+                            else:
+                                thefile = open(filename+'.txt', 'r')
+                            reading = thefile.read().split()
+                            thefile.close()
+                            print(filename, "read with", len(reading), "numbers!")
+                            readed = []
+                            for inny in range(len(reading)):
+                                readed.append(int(reading[inny]))
+                            landx = readed[0]
+                            landy = readed[1]
+                            screenx = readed[2]
+                            screeny = readed[3]
+                            print("Grid size:", landx, "by", landy, "pixels on a", screenx, "by", screeny, "gaming window.")
+                            land = []
+                            for ay in range(landy):
+                                land.append([])
+                                for bx in range(landx):
+                                    pxl = (bx+(landx*ay)) * 2 + 4
+                                    land[ay].append([readed[pxl],readed[pxl+1]])
+                            
+                            screen = pygame.display.set_mode((screenx,screeny))
+                            #The loading should go smoothly from here so we don't have to worry about these variables being screwed
+                            landyx = (screenx/landx)
+                            landyy = (screeny/landy)
+                            fail = False
+                            if (not werealsodoinglife) and (checkEverywhere(land,[26,0]) or checkEverywhere(land,[37,0])):
+                                print("Warning! This save contains life particles and life isn't enabled. You should probably enable it for the intended experience!")
+                            print("Load successful!")
+                        except FileNotFoundError as e:
+                            print(f'An error occured: {e}')
+                            print("Try again with a file that exists. (Maybe you don't have any :/))")
+                        except TypeError as e:
+                            print(f'An error occured: {e}')
+                            print("Your file might have more than just numbers in it.")
+                        except IndexError as e:
+                            print(f'An error occured: {e}')
+                            print("It's possible your grid isn't matching up with the data in a way!")
+                        except Exception as x:
+                            print(f'An error occured, but it\'s complicated: {x}')
+                            print("Please contact the creator of this sandbox to see what the issue could be")
+                        if fail:
+                            undoList.pop()
+                            landx = backupx
+                            landy = backupy
+                            screenx = bacnupsx
+                            screeny = backupsy
+                            land = deepcopy(backupland)
+                            
+                            
+                    else:
+                        print("Saving", filename+ ".txt to your saves folder... (You better not close your program!)")
+                        try:
+                            if usesavefolder:
+                                thefile = open('sandsaves/'+filename+'.txt', 'w')
+                            else:
+                                thefile = open(filename+'.txt', 'w')
+                            data = []
+                            data.append(str(landx))
+                            data.append(str(landy))
+                            data.append(str(screenx))
+                            data.append(str(screeny))
+                            for ay in range(len(land)):
+                                for bx in range(len(land[0])):
+                                    data.append(str(land[ay][bx][0]))
+                                    data.append(str(land[ay][bx][1]))
+                            writing = ' '.join(data)
+                            thefile.write(writing)
+                            thefile.close()
+                            print("Save successful!")
+                        except FileNotFoundError as e:
+                            print(f'An error occured: {e}')
+                            print("Maybe you don't have a sandsaves folder for the saves to go to. (You'll have to make it manually)")
+                        except:
+                            print(f'An error occured, but we don\'t know how!')
+                            print("Please contact the creator of this sandbox to see what the issue could be")
+                    screen = pygame.display.set_mode((screenx,screeny))
+                    gameState = "sandbox"
                 filename = ""
                 continue
 

@@ -311,3 +311,5 @@ def checkAbsolutelyEverywhere(grid: list[list[list[int]]], thing) -> bool:
             if grid[i][j][0] == thing:
                 return True
     return False
+
+print("Newton says an object in motion stays in motion.\nI say....Gravity is a lie, and so is the sky.")

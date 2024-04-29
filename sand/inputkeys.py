@@ -186,3 +186,5 @@ def keyboard(onlyNums = False):
                 else:
                     returnKey = ""
     return returnKey
+
+print("You'll need your keyboard for this~")

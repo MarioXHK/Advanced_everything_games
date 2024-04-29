@@ -96,3 +96,5 @@ class graphNode(circleButton):
         self.weights = []
     def countNeighbors(self):
         return len(self.connections)
+
+print("Beep boop!")
