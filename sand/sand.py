@@ -902,7 +902,7 @@ try:
                 screen = pygame.display.set_mode((600,450))
             
             for event in pygame.event.get(): #It's just your mouse and stuff!
-                if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and (event.key == pygame.K_ESCAPE or event.key == pygame.K_TAB)):
                     gameState = "sandbox"
                     screen = pygame.display.set_mode((screenx,screeny))
                     
