@@ -96,7 +96,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
     #I'll take my small victories in optimization where I can
     
     #The tuple that holds the elements that are required to have a mini plane map
-    requireminip = [1,2,3,4,6,7,8,9,10,11,14,15,16,17,18,19,20,22,23,24,25,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,44,45,46,47,48,49,50,54,55,56,58,59,60,62,65,66,68,69,70,71,72,73,74,75,77,78]
+    requireminip = [1,2,3,4,6,7,8,9,10,11,14,15,16,17,18,19,20,22,23,24,25,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,44,45,46,47,48,49,50,53,54,55,56,58,59,60,62,65,66,68,69,70,71,72,73,74,75,77,78]
     if lifeIG:
         requireminip.append(0)
         requireminip.append(26)
@@ -249,7 +249,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                 
                 elif e == 3:
                     if coinflip():
-                        if physics.neighborCheck(miniplain,(30,67)):
+                        if (physics.neighborCheck(miniplain,(30,67)) or (sun and random.randint(1,20000) == 1)):
                             e = 13
                             t = 10
                         elif physics.neighborCount(miniplain,(22,23,27)) > 3:
@@ -263,10 +263,6 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                     elif random.randint(1,10000) == 1:
                         if physics.neighborCheck(miniplain,[18]):
                             e = 18
-                    elif random.randint(1,20000) == 1:
-                        if sun:
-                            e = 13
-                            t = 10
                     elif (random.randint(1,101) == 1 and physics.neighborCheck(miniplain,(29,45,50))) or (random.randint(1,12) == 1 and physics.neighborCheck(miniplain,(56,64,65,66))):
                         e = 75
                     c = physics.sandCheck(minigrid,localPos,True)
@@ -1539,6 +1535,11 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                 #Antiwater
                 
                 elif e == 53:
+                    if (physics.neighborCheck(miniplain,(30,67)) or (sun and random.randint(1,20000) == 1)):
+                            e = 25
+                    elif (moon and random.randint(1,20000) == 1):
+                            e = 13
+                            t = 5
                     c = physics.sandCheck(minigrid,localPos,True,True)
                     if c[0] == 0:
                         d = physics.lrWanderCheck(minigrid,localPos,False,True,True)

@@ -167,8 +167,9 @@ try:
 
         if gameState == "title":
             
-            if screen != pygame.display.set_mode((600,600)):
+            if changeScreen:
                 screen = pygame.display.set_mode((600,600))
+                changeScreen = False
             
             for event in pygame.event.get(): #It's just your mouse and stuff!
                 if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
@@ -202,6 +203,7 @@ try:
             for event in pygame.event.get(): #Event Queue for the setup,
                 if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                     gameState = "title"
+                    changeScreen = True
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_LSHIFT:
                         shiftKey = True
@@ -303,7 +305,9 @@ try:
             screen.fill((0,0,0))
             texts[-2] = font[2].render((str("Current size: a " + str(landx) + " by " + str(landy) + " grid.")),1,Color(0,0,0))
             texts[-1] = font[2].render((str("On a " + str(screenx) + " by " + str(screeny) + " screen.")),1,Color(0,0,0))
-            screen = pygame.display.set_mode((screenx,screeny))
+            if changeScreen and gameState == "setup":
+                screen = pygame.display.set_mode((screenx,screeny))
+                changeScreen = False
             landyx = (screenx/landx)
             landyy = (screeny/landy)
             for i in range(landy):
@@ -318,7 +322,7 @@ try:
                 screen.blit(texts[l],Vector2(10, 10+20*l))
                 #pygame.display.flip()
             unanswered = True
-            changeScreen = False
+
             if not setup:
                 #Setting up the sandbox variables after the setup!
                 gameState = "sandbox"
@@ -508,6 +512,7 @@ try:
                                 #Go a step forward every tick until pressed again
                             elif event.key == pygame.K_TAB:
                                 gameState = "elementmenu"
+                                changeScreen = True
                             
                     texts = [
                         font[3].render("So far so good. You probably don't",1,Color(255,255,255)),
@@ -750,9 +755,11 @@ try:
                             #The ultimate thing: SAVING!
                             elif event.key == pygame.K_LSHIFT:
                                 gameState = "file saving"
+                                changeScreen = True
                             #What's the use of saving if you can't LOAD?
                             elif event.key == pygame.K_0:
                                 gameState = "file loading"
+                                changeScreen = True
                                     
                             elif event.key == pygame.K_F12:
                                 print("Oh, I heard you like dividing by 0! (Crashing intentionally~)")
@@ -787,6 +794,7 @@ try:
             if wannaBreak:
                 if yesbutton.tick(fire,mousePos):
                     gameState = "title"
+                    changeScreen = True
                 elif nobutton.tick(fire,mousePos):
                     wannaBreak = False
             
@@ -898,8 +906,9 @@ try:
         
         elif gameState == "elementmenu":
             
-            if screen != pygame.display.set_mode((600,450)):
+            if changeScreen:
                 screen = pygame.display.set_mode((600,450))
+                changeScreen = False
             
             for event in pygame.event.get(): #It's just your mouse and stuff!
                 if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and (event.key == pygame.K_ESCAPE or event.key == pygame.K_TAB)):
@@ -1077,7 +1086,9 @@ try:
                 filename = ""
                 continue
 
-            screen = pygame.display.set_mode((600,450))
+            if changeScreen:
+                screen = pygame.display.set_mode((600,450))
+                changeScreen = False
             
             screen.fill((255,255,255))
             
