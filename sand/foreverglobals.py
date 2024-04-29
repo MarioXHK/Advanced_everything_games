@@ -81,7 +81,9 @@ elementNames = {
     76:"Greenhouse Sun",
     77:"Wax",
     78:"Honeycomb",
-    79:"Honey"
+    79:"Honey",
+    80:"Bee",
+    81:"Blood"
 }
 
 
@@ -306,7 +308,8 @@ splashes = (
     "Ready, Player 1!",
     "Insert Coin, Player 3!",
     "Player 4!",
-    "It burns!"
+    "It burns!",
+    "Blood and Honey!"
 )
 
 titleScreenSandbox=[

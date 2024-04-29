@@ -455,7 +455,14 @@ def drawStuff(screen,plain: list[list[list[int]]],lyx: int,lyy: int, switch: boo
             elif el == 79:
                 pygame.draw.rect(screen,(160,100,23),(j*lyx,i*lyy,lyx,lyy))
             
+            #Bees
+            elif el == 80:
+                pygame.draw.rect(screen,(230,230,100),(j*lyx,i*lyy,lyx,lyy))
             
+            #Blood
+            elif el == 81:
+                pygame.draw.rect(screen,(255,0,0),(j*lyx,i*lyy,lyx,lyy))
+
             #If all else fails...
             else:
                 #Look magenta, no other element looks entirely magenta
