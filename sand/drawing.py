@@ -493,7 +493,7 @@ def drawLessStuff(screen,plain: list[list[int]],lyx:int,lyy:int):
 
             #Basic sand
             if rel == 1:
-                pygame.draw.rect(screen,(255,255,128),(j*lyx,i*lyy,lyx,lyy))
+                pygame.draw.rect(screen,(255,255,255),(j*lyx,i*lyy,lyx,lyy))
             
             #Basic stone
             elif rel == 2:

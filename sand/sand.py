@@ -22,6 +22,7 @@ import buttons
 from physics import coinflip
 from physics import checkEverywhere
 from doing import doStuff
+from doing import doLessStuff
 from doing import gimmeAllElms
 from drawing import drawStuff
 from inputkeys import keyboard
@@ -32,7 +33,8 @@ font = (
     pygame.font.Font("PressStart2P.ttf", 30),
     pygame.font.SysFont('Comic Sans MS', 30),
     pygame.font.SysFont('Comic Sans MS', 15),
-    pygame.font.SysFont('Comic Sans MS', 20)
+    pygame.font.SysFont('Comic Sans MS', 20),
+    pygame.font.Font("PressStart2P.ttf", 24)
     )
 
 texts = []
@@ -142,7 +144,8 @@ pickAnElement = False
 
 tutorial = 1
 tutorialprogress = 0
-gameState = "setup"
+gameState = "title"
+loadState = gameState
 responded = False
 fliposwitch = True
 
@@ -150,8 +153,15 @@ yesbutton = buttons.button(Color(0,255,0),Rect(0,0,100,70),None,"Yes")
 nobutton = buttons.button(Color(255,0,0),Rect(0,0,100,70),None,"No")
 wannaBreak = False
 
+createbutton = buttons.button(Color(255,255,0),Rect(50,250,200,50),Color(0,0,0),"Create",Color(0,0,0),0)
+
+continuebutton = buttons.button(Color(255,255,128),Rect(200,400,200,50),Color(0,0,0),"Continue",Color(0,0,0),4)
+
+loadbutton = buttons.button(Color(255,255,0),Rect(350,250,200,50),Color(0,0,0),"Load",Color(0,0,0),0)
+
 titleLand = deepcopy(foreverglobals.titleScreenSandbox)
 appendKey = ""
+sandboxed = False
 
 # ===============================================================================================
 # ====================================== THE GAME LOOP ==========================================
@@ -166,10 +176,12 @@ try:
         #Title screen!
 
         if gameState == "title":
-            
+            buttonPressed = False
             if changeScreen:
                 screen = pygame.display.set_mode((600,600))
                 changeScreen = False
+                if sandboxed:
+                    createbutton.text = font[4].render("New Box", 1, Color(0,0,0))
             
             for event in pygame.event.get(): #It's just your mouse and stuff!
                 if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
@@ -186,19 +198,64 @@ try:
                     mousePos = Vector2(event.pos)
             clock.tick(fps)
 
+            #Omg another sandbox in the sandbox???
+            titleLand = doLessStuff(titleLand)
+
+            if createbutton.tick(fire,mousePos):
+                gameState = "setup"
+                setup = True
+                buttonPressed = True
+            elif sandboxed and continuebutton.tick(fire,mousePos):
+                gameState = "sandbox"
+                buttonPressed = True
+                landyx = (screenx/landx)
+                landyy = (screeny/landy)
+
+                screen = pygame.display.set_mode((screenx,screeny))
+            elif loadbutton.tick(fire,mousePos):
+                gameState = "title file loading"
+                buttonPressed = True
+
+            if buttonPressed:
+                changeScreen = True
+
+            if fliposwitch:
+                fliposwitch = False
+            else:
+                fliposwitch = True
+            
+            if (not tap) and fliposwitch:
+                x = int(mousePos.x/10)
+                y = int(mousePos.y/10)
+                try:
+                    if titleLand[int(y)][int(x)] != 4 and not buttonPressed:
+                        if ice:
+                            titleLand[int(y)][int(x)] = 0
+                        else:
+                            titleLand[int(y)][int(x)] = 1
+                except IndexError:
+                    oob += 1
+
+            
+
             #Rendering these buttons and screen!
             
             
             screen.fill((255,204,44))
 
             drawLessStuff(screen,titleLand,10,10)
-
+            
+            createbutton.render(screen)
+            loadbutton.render(screen)
+            if sandboxed:
+                continuebutton.render(screen)
             #pygame.display.flip()
 
         
         #Sandbox Setup gamestate!
 
         elif gameState == "setup":
+            fliposwitch = True
             d = 0
             for event in pygame.event.get(): #Event Queue for the setup,
                 if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
@@ -345,6 +402,8 @@ try:
 
         
         elif gameState == "sandbox":
+            if not sandboxed:
+                sandboxed = True
             changeScreen = True
             doingafilething = False
             d = 0
@@ -795,6 +854,7 @@ try:
                 if yesbutton.tick(fire,mousePos):
                     gameState = "title"
                     changeScreen = True
+                    wannaBreak = False
                 elif nobutton.tick(fire,mousePos):
                     wannaBreak = False
             
@@ -872,7 +932,7 @@ try:
                         except IndexError:
                             oob += 1
 
-            fire = False
+            
             
             for i in gimmeAllElms(land):
                 if not i in unlockedElements:
@@ -948,7 +1008,7 @@ try:
         #Saving and loading files gamestate!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         
         elif "file" in gameState:
-            
+            tap = True
             appendKey = keyboard()
             clock.tick(fps)
 
@@ -995,12 +1055,14 @@ try:
             if doingafilething or gameState == "sandbox":
                 if gameState != "sandbox":
                     if "loading" in gameState:
-                        undoList.append(deepcopy(land))
-                        backupx = landx
-                        backupy = landy
-                        bacnupsx = screenx
-                        backupsy = screeny
-                        backupland = deepcopy(land)
+                        tutorial = 0
+                        if not "title" in gameState:
+                            undoList.append(deepcopy(land))
+                            backupx = landx
+                            backupy = landy
+                            bacnupsx = screenx
+                            backupsy = screeny
+                            backupland = deepcopy(land)
                         fail = True
                         print("Loading", filename+ ".txt from your saves folder...")
                         try:
@@ -1046,7 +1108,7 @@ try:
                         except Exception as x:
                             print(f'An error occured, but it\'s complicated: {x}')
                             print("Please contact the creator of this sandbox to see what the issue could be")
-                        if fail:
+                        if fail and not "title" in gameState:
                             undoList.pop()
                             landx = backupx
                             landy = backupy
@@ -1082,12 +1144,15 @@ try:
                             print(f'An error occured, but we don\'t know how!')
                             print("Please contact the creator of this sandbox to see what the issue could be")
                     screen = pygame.display.set_mode((screenx,screeny))
-                    gameState = "sandbox"
+                    if "title" in gameState and fail:
+                        gameState = "title"
+                    else:
+                        gameState = "sandbox"
                 filename = ""
                 continue
 
             if changeScreen:
-                screen = pygame.display.set_mode((600,450))
+                screen = pygame.display.set_mode((800,450))
                 changeScreen = False
             
             screen.fill((255,255,255))
@@ -1096,7 +1161,17 @@ try:
                 screen.blit(texts[l],Vector2(10, 10+30*l))
             #pygame.display.flip()
             changeScreen = False
+        
+        #This code runs no matter the gamestate
+        
+        if loadState != gameState:
+            changeScreen = True
+            loadState = gameState
+
+
         pygame.display.flip()
+        fire = False
+
     pygame.quit()
     print("Process exit with code: \":)\"")
     print("You went out of bounds", oob, "times!")

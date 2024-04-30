@@ -45,10 +45,10 @@ def doLessStuff(plain: list[list[int]]) -> list[list[int]]:
                     p = []
                     for j in range(0-int(al),1+int(ar)):
                         if (i,j) == (0,0):
-                            p.append(("self",e))
+                            p.append("self")
                             localPos = (1-int(not au),1-int(not al))
                             continue
-                        p.append(tuple(plain[a+i][bb+j]))
+                        p.append(plain[a+i][bb+j])
                     miniplain.append(tuple(p))
             
             if plain[a][bb] != 0:
@@ -56,10 +56,10 @@ def doLessStuff(plain: list[list[int]]) -> list[list[int]]:
                     g = []
                     for j in range(0-int(al),1+int(ar)):
                         if (i,j) == (0,0):
-                            g.append(("self",e))
+                            g.append("self")
                             localPos = (1-int(not au),1-int(not al))
                             continue
-                        g.append(tuple(grid[a+i][bb+j]))
+                        g.append(grid[a+i][bb+j])
                     minigrid.append(tuple(g))
             
             miniplain = tuple(miniplain)

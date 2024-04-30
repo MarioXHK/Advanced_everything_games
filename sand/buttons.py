@@ -5,7 +5,10 @@ from pygame.color import Color
 pygame.font.init()
 font = (
     pygame.font.Font("PressStart2P.ttf", 30),
-    pygame.font.SysFont('Comic Sans MS', 30)
+    pygame.font.SysFont('Comic Sans MS', 30),
+    pygame.font.SysFont('Comic Sans MS', 15),
+    pygame.font.SysFont('Comic Sans MS', 20),
+    pygame.font.Font("PressStart2P.ttf", 20)
     )
 
 class button:
