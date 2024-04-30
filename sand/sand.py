@@ -854,7 +854,7 @@ try:
                                     else:
                                         if elementary:
                                             element = random.choice(elements)
-                                        if element in (13, 30, 56):
+                                        if element in (13, 30, 56,83):
                                             t = 5
                                         elif element == 19:
                                             t = random.randint(0,255)

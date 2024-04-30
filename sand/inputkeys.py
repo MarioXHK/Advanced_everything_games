@@ -157,7 +157,7 @@ def keyboard(onlyNums = False):
             elif returnKey == "0":
                 returnKey = ")"
             #Symbols
-            if returnKey == "'":
+            elif returnKey == "'":
                 returnKey = "\""
             elif returnKey == "back":
                 returnKey = "fullback"
@@ -165,6 +165,8 @@ def keyboard(onlyNums = False):
                 returnKey = "{"
             elif returnKey == "]":
                 returnKey = "}"
+            elif returnKey == "/":
+                returnKey = ""
             elif not returnKey in unShiftable:
                 returnKey = returnKey.upper()
         if ctrlKey:

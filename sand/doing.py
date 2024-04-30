@@ -96,14 +96,14 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
     #I'll take my small victories in optimization where I can
     
     #The tuple that holds the elements that are required to have a mini plane map
-    requireminip = [1,2,3,4,6,7,8,9,10,11,14,15,16,17,18,19,20,22,23,24,25,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,44,45,46,47,48,49,50,53,54,55,56,58,59,60,62,65,66,68,69,70,71,72,73,74,75,77,78,79,80,81]
+    requireminip = [1,2,3,4,6,7,8,9,10,11,14,15,16,17,18,19,20,22,23,24,25,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,44,45,46,47,48,49,50,53,54,55,56,58,59,60,62,65,66,68,69,70,71,72,73,74,75,77,78,79,80,81,82,83,84]
     if lifeIG:
         requireminip.append(0)
         requireminip.append(26)
     requireminip = tuple(requireminip)
     
     #The tuple that holds the elements that are required to have a mini grid map
-    requireminig = (1,2,3,4,6,7,8,9,10,11,12,13,14,15,16,17,18,19,22,23,24,25,27,28,29,30,32,34,36,39,40,41,42,43,44,45,46,47,48,49,51,52,53,54,55,56,57,58,60,62,63,64,65,66,68,70,71,72,73,74,75,77,78,79,80,81)
+    requireminig = (1,2,3,4,6,7,8,9,10,11,12,13,14,15,16,17,18,19,22,23,24,25,27,28,29,30,32,34,36,39,40,41,42,43,44,45,46,47,48,49,51,52,53,54,55,56,57,58,60,62,63,64,65,66,68,70,71,72,73,74,75,77,78,79,80,81,82,83,84)
     
     
     waters = (3,15,47,71,75)
@@ -208,6 +208,8 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                         t = 2
                     elif random.randint(1,50) == 1:
                         if physics.neighborCheck(miniplain,(3,15,71)):
+                            e = 10
+                        elif physics.neighborCheck(miniplain,(79,81)):
                             e = 10
                     elif random.randint(1,42) == 1:
                         if physics.neighborCheck(miniplain,[53]):
@@ -2089,8 +2091,11 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                 
                 elif e == 66:
                     if (not moon) and random.randint(1,13) == 1:
+                        if random.randint(1,10) == 1:
+                            e = 84   
+                        else:
                             e = 0
-                            t = 0
+                        t = 0
                     elif physics.neighborCheck(miniplain,[71]):
                         e = 74
                     c = physics.sandCheck(minigrid,localPos)
@@ -2491,9 +2496,9 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                 #Bees!
                 
                 elif e == 80:
-                    if physics.neighborCheck(miniplain,(9,20,30,35,53,57,60,61,66)):
+                    if physics.neighborCheck(miniplain,(9,20,30,35,53,57,60,61,66)) or (random.randint(1,20000) == 1 and not physics.neighborCheck(miniplain,[0])):
                         e = 81
-                    if physics.neighborCount(miniplain,(3,10,13,16,21,22,27,29,32,34,37,39,43,45,46,47,48,51,52,54,56,73,74,75)) > 3:
+                    if physics.neighborCount(miniplain,(3,10,13,16,21,22,27,29,32,34,37,39,43,45,46,47,48,51,52,54,56,73,74,75)) > random.randint(2,4):
                         t = 1
                     if t <= 0:
                         if random.randint(1,5) == 1:
@@ -2551,7 +2556,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                     elif random.randint(1,2000) == 1:
                         if physics.neighborCheck(miniplain,[18]):
                             e = 18
-                    elif (random.randint(1,101) == 1 and physics.neighborCheck(miniplain,waters)):
+                    elif sun and (random.randint(1,10101) == 1 and physics.neighborCheck(miniplain,waters)):
                         e = 75
                     c = physics.sandCheck(minigrid,localPos,True)
                     if c[0] == 0:
@@ -2574,7 +2579,84 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
 
                         grid[a+1][bb+(c[0]-2)] = [e,t]
 
+                #Red Sand
 
+                elif e == 82:
+                    if physics.neighborCheck(miniplain,(9,30,55,67)):
+                        e = 14
+                        t = 2
+                    elif physics.neighborCheck(miniplain,[71]):
+                        e = 1
+                    if coinflip():
+                        c = physics.sandCheck(minigrid,localPos)
+                        if c[0] == 0:
+                            grid[a][bb] = [e,t]
+                        else:
+                            grid[a][bb] = [c[1],0]
+                            grid[a+1][bb+(c[0]-2)] = [e,t]
+                    else:
+                        c = physics.stoneCheck(minigrid,localPos)
+                        if not c[0]:
+                            grid[a][bb] = [c[1],0]
+                            grid[a+1][bb] = [e,t]
+                        else:
+                            grid[a][bb] = [e,t]
+
+                #Good Smoke
+
+                elif e == 83:
+                    if (random.randint(1,10) == 1 and not (moon or sun)) or (random.randint(1,6) == 1 and moon and not sun) or (random.randint(1,12) == 1 and sun and not supersun) or (random.randint(1,20) == 1 and supersun):
+                        t -= 1
+                    if t <= 0 or physics.neighborCheck(miniplain,[71]):
+                        e = 0
+                    else:
+                        o = physics.neighborTempCheck(miniplain,[83], ">", 5)
+                        oo = physics.neighborTempCheck(miniplain,[83], ">", 10)
+                        if (not (moon or oo[0])) and ((not sun and random.randint(1,70000) == 1) or (sun and random.randint(1,7000) == 1)) and physics.neighborCount(miniplain,[56]) >= 8 and o[0]:
+                            e = 16
+                    c = physics.sandCheck(minigrid,localPos,False,True,True)
+                    if c[0] == 0:
+                        d = physics.lrWanderCheck(minigrid,localPos,False,False,True)
+                        if not d[0]:
+                            grid[a][bb] = [e,t]
+                        else:
+                            grid[a][bb] = [d[2],0]
+
+                            if d[1]:
+                                grid[a][bb+1] = [e,t]
+                            else:
+                                grid[a][bb-1] = [e,t]
+                    else:
+                        grid[a][bb] = [c[1],0]
+                        if c[0] == 2:
+                            d = physics.lrWanderCheck(minigrid,localPos,True,False,True)
+                            if not d[0]:
+                                grid[a-1][bb] = [e,t]
+                            else:
+                                if d[1]:
+                                    grid[a-1][bb+1] = [e,t]
+                                else:
+                                    grid[a-1][bb-1] = [e,t]
+                        else:
+                            grid[a-1][bb+(c[0]-2)] = [e,t]
+                
+                #Acid Waste
+                
+                elif e == 84:
+                    if (sun or moon) and random.randint(1,1337) == 1:
+                        e = 0
+                        t = 0
+                    elif physics.neighborCheck(miniplain,[71]):
+                        e = 74
+                    c = physics.sandCheck(minigrid,localPos)
+                    if c[0] == 0:
+                        grid[a][bb] = [e,t]
+                    else:
+                        grid[a][bb] = [c[1],t]
+                        if c[0] == 2:
+                            grid[a+1][bb] = [e,t]
+                        else:
+                            grid[a+1][bb+(c[0]-2)] = [e,t]
 
             except IndexError:
                 print("Error in doing element", grid[a][bb], "index out of range (Did you remember to put the element ID in the corisponding mini-allowed tuple?)")

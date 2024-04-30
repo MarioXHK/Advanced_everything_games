@@ -83,7 +83,10 @@ elementNames = {
     78:"Honeycomb",
     79:"Honey",
     80:"Bee",
-    81:"Blood"
+    81:"Blood",
+    82:"Red Sand",
+    83:"Good Smoke (Fog maybe)",
+    84:"Acid Waste"
 }
 
 
