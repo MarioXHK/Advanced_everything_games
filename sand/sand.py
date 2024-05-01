@@ -12,7 +12,6 @@ from pygame.rect import Rect
 from pygame.color import Color
 #WHY DOES YOU NOT EVEN THE AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 from copy import deepcopy
-from copy import copy
 import random
 import time
 import foreverglobals
@@ -21,9 +20,7 @@ import buttons
 #I caved
 from physics import coinflip
 from physics import checkEverywhere
-from doing import doStuff
-from doing import doLessStuff
-from doing import gimmeAllElms
+import doing
 from drawing import drawStuff
 from inputkeys import keyboard
 from drawing import drawLessStuff
@@ -37,7 +34,7 @@ font = (
     pygame.font.Font("PressStart2P.ttf", 24)
     )
 
-texts = []
+texts = ()
 
 doaflip = True
 
@@ -87,16 +84,7 @@ anElement = ""
 # ===============================================================================================
 
 
-texts = [
-    font[2].render("Setting up your sandbox (Preview mode)",1,Color(0,0,0)),
-    font[2].render("The grid you see is what your sandbox",1,Color(0,0,0)),
-    font[2].render("will look like in scale.",1,Color(0,0,0)),
-    font[2].render("Press the arrow keys to change",1,Color(0,0,0)),
-    font[2].render("the size of the sandbox space.",1,Color(0,0,0)),
-    font[2].render("Press the WASD keys to change",1,Color(0,0,0)),
-    font[2].render("the size of the sandbox's screen.",1,Color(0,0,0)),
-    font[2].render("Once you're finished, press enter.",1,Color(0,0,0))
-]
+
 
 screenx: int = 500
 screeny: int = 500
@@ -106,9 +94,6 @@ landy: int = 50
 
 setup = True
 filename = ""
-
-texts.append(font[2].render((str("Current size: a " + str(landx) + " by " + str(landy) + " grid.")),1,Color(0,0,0)))
-texts.append(font[2].render((str("On a " + str(screenx) + " by " + str(screeny) + " screen.")),1,Color(0,0,0)))
 
 
 arrowkeys = [False,False,False,False]
@@ -199,7 +184,7 @@ try:
             clock.tick(fps)
 
             #Omg another sandbox in the sandbox???
-            titleLand = doLessStuff(titleLand)
+            titleLand = doing.doLessStuff(titleLand)
 
             if createbutton.tick(fire,mousePos):
                 gameState = "setup"
@@ -254,6 +239,9 @@ try:
         elif gameState == "setup":
             fliposwitch = True
             d = 0
+            
+            
+            
             for event in pygame.event.get(): #Event Queue for the setup,
                 if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                     gameState = "title"
@@ -357,8 +345,27 @@ try:
 
 
             screen.fill((0,0,0))
-            texts[-2] = font[2].render((str("Current size: a " + str(landx) + " by " + str(landy) + " grid.")),1,Color(0,0,0))
-            texts[-1] = font[2].render((str("On a " + str(screenx) + " by " + str(screeny) + " screen.")),1,Color(0,0,0))
+            if screenx > 300 and screeny > 230:
+                texts = (
+                    font[2].render("Setting up your sandbox (Preview mode)",1,Color(0,0,0)),
+                    font[2].render("The grid you see is what your sandbox",1,Color(0,0,0)),
+                    font[2].render("will look like in scale.",1,Color(0,0,0)),
+                    font[2].render("Press the arrow keys to change",1,Color(0,0,0)),
+                    font[2].render("the size of the sandbox space.",1,Color(0,0,0)),
+                    font[2].render("Press the WASD keys to change",1,Color(0,0,0)),
+                    font[2].render("the size of the sandbox's screen.",1,Color(0,0,0)),
+                    font[2].render("Once you're finished, press enter.",1,Color(0,0,0)),
+                    font[2].render((str("Current size: a " + str(landx) + " by " + str(landy) + " grid.")),1,Color(0,0,0)),
+                    font[2].render((str("On a " + str(screenx) + " by " + str(screeny) + " screen.")),1,Color(0,0,0))
+                )
+            else:
+                texts = (
+                    font[2].render((str("Current size: a " + str(landx))),1,Color(255,0,0)),
+                    font[2].render((str("by " + str(landy) + " grid.")),1,Color(255,0,0)),
+                    font[2].render((str("On a " + str(screenx))),1,Color(255,0,0)),
+                    font[2].render(("by " + str(screeny) + " screen."),1,Color(255,0,0))
+                )
+
             if changeScreen and gameState == "setup":
                 screen = pygame.display.set_mode((screenx,screeny))
             landyx = (screenx/landx)
@@ -370,7 +377,8 @@ try:
                     else:
                         pygame.draw.rect(screen,(255,255,255),(j*landyx,i*landyy,landyx,landyy),1)
             
-            pygame.draw.rect(screen,(255,255,255),(0,0,300,230))
+            if screenx > 300 and screeny > 230:
+                pygame.draw.rect(screen,(255,255,255),(0,0,300,230))
             for l in range(len(texts)):
                 screen.blit(texts[l],Vector2(10, 10+20*l))
                 #pygame.display.flip()
@@ -426,10 +434,10 @@ try:
                         if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                             tutorial = 0
                             print("Skipping Tutorial!")
-                    texts = [
+                    texts = (
                         font[1].render("Welcome to the sandbox!",1,Color(255,255,255)),
                         font[1].render("Would you like a tutorial?",1,Color(255,255,255))
-                    ]
+                    )
                 elif tutorial == 2:
                     for event in pygame.event.get(): #Event Queue but it's heavily restricted and you can only do mouse stuff for now
                         if (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
@@ -446,14 +454,14 @@ try:
                             mousePos = Vector2(event.pos)
 
 
-                    texts = [
+                    texts = (
                         font[3].render("Time for the basics of the basics.",1,Color(255,255,255)),
                         font[3].render("Using your mouse, you can click",1,Color(255,255,255)),
                         font[3].render("down and draw on the screen of an",1,Color(255,255,255)),
                         font[3].render("element (You're currently on sand)",1,Color(255,255,255)),
                         font[3].render("Progress: " + str(tutorialprogress//3) + "%",1,Color(255,255,255))
                         
-                    ]
+                    )
                     if tutorialprogress >= 300:
                         tutorialprogress = 0
                         tutorial = 3
@@ -476,14 +484,14 @@ try:
                             mousePos = Vector2(event.pos)
 
 
-                    texts = [
+                    texts = (
                         font[3].render("That's quite a bit of sand, maybe",1,Color(255,255,255)),
                         font[3].render("it's time to get rid of some of it?",1,Color(255,255,255)),
                         font[3].render("The right click acts as an eraser no",1,Color(255,255,255)),
                         font[3].render("matter the element",1,Color(255,255,255)),
                         font[3].render("Progress: " + str(tutorialprogress//2) + "%",1,Color(255,255,255))
                         
-                    ]
+                    )
                     if tutorialprogress >= 200:
                         tutorialprogress = 0
                         tutorial = 4
@@ -521,18 +529,18 @@ try:
                                 else:
                                     alive = True
                                 #Go a step forward every tick until pressed again
-                    texts = [
+                    texts = (
                         font[3].render("Great, if you want to see the sand",1,Color(255,255,255)),
                         font[3].render("move, press the Left Ctrl Button!",1,Color(255,255,255)),
                         font[3].render("(Alternatively you can go single",1,Color(255,255,255)),
                         font[3].render("Steps forward by pressing Space.)",1,Color(255,255,255)),
                         font[3].render("Progress: " + str(tutorialprogress//6) + "%",1,Color(255,255,255))
-                    ]
+                    )
                     if tutorialprogress >= 600:
                         tutorialprogress = 0
                         tutorial = 5
                         continue
-                elif tutorial == 5:
+                elif tutorial == 5 or tutorial == 6:
                     for event in pygame.event.get(): #Event Queue to do very basic sandbox stuff
                         if (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                             tutorial = 0
@@ -568,24 +576,29 @@ try:
                             elif event.key == pygame.K_TAB:
                                 gameState = "elementmenu"
                                 
-                            
-                    texts = [
-                        font[3].render("So far so good. You probably don't",1,Color(255,255,255)),
-                        font[3].render("want to just play with only sand,",1,Color(255,255,255)),
-                        font[3].render("that'll get old fast! How about we",1,Color(255,255,255)),
-                        font[3].render("Place some stone? Press the TAB",1,Color(255,255,255)),
-                        font[3].render("key to access the Elemental Menu.",1,Color(255,255,255))
-                    ]
+                    if tutorial == 5:
+                        texts = (
+                            font[3].render("So far so good. You probably don't",1,Color(255,255,255)),
+                            font[3].render("want to just play with only sand,",1,Color(255,255,255)),
+                            font[3].render("that'll get old fast! How about we",1,Color(255,255,255)),
+                            font[3].render("Place some stone? Press the TAB",1,Color(255,255,255)),
+                            font[3].render("key to access the Elemental Menu.",1,Color(255,255,255))
+                        )
+                    else:
+                        texts = (
+                            font[3].render("Go back to the Tab menu for",1,Color(255,255,255)),
+                            font[3].render("the tutorial!",1,Color(255,255,255))
+                        )
             else:
                 if pickAnElement:
                     appendKey = keyboard(True)
                 else:
                     for event in pygame.event.get(): #Event Queue for the main sandbox (or whatever it's called)
                         if (event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE)) and not wannaBreak:
-                            texts = [
+                            texts = (
                                 font[1].render("Are you sure you want to quit?",1,Color(255,255,255)),
                                 font[3].render("(Be sure to save your sandbox if you haven't!)",1,Color(255,255,255)),
-                            ]
+                            )
                             alive = False
                             wannaBreak = True
                         if event.type == pygame.MOUSEBUTTONDOWN and tap:
@@ -667,10 +680,10 @@ try:
                                 land = [[[0,0] for _ in range(landx)] for i in range(landy)]
                                 for u in range(10):
                                     land[u] = [[60,0] for _ in range(landx)]
-                            elif event.key == pygame.K_UP:
+                            elif event.key == pygame.K_EQUALS or event.key == pygame.K_PLUS:
                                 brushSize += 1
                                 print("brush size is now", (brushSize*2+1))
-                            elif event.key == pygame.K_DOWN:
+                            elif event.key == pygame.K_UNDERSCORE or event.key == pygame.K_MINUS:
                                 if 0 < brushSize:
                                     brushSize -= 1
                                     print("brush size is now", (brushSize*2+1))
@@ -832,7 +845,7 @@ try:
             if live:
                 if tutorial == 4:
                     tutorialprogress += 1
-                land = doStuff(land,fliposwitch,werealsodoinglife)
+                land = doing.doStuff(land,fliposwitch,werealsodoinglife)
 
 
             if fliposwitch and alive:
@@ -854,10 +867,10 @@ try:
                     wannaBreak = False
             
             if pickAnElement:
-                texts = [
+                texts = (
                         font[1].render("Enter the element's ID",1,Color(255,255,255)),
                         font[1].render(anElement,1,Color(255,255,255))
-                    ]
+                        )
                 if appendKey == "end" and len(anElement) != 0:
                     if len(anElement) != 0:
                         element = int(anElement)
@@ -921,6 +934,8 @@ try:
                                             t = 20
                                         elif element == 67:
                                             t = 10
+                                        elif element == 87:
+                                            t = random.randint(1,4)
                                         land[y+l][x+m] = [element,t]
                                         if mirror:
                                             land[y+l][mx+m] = [element,t]
@@ -929,7 +944,7 @@ try:
 
             
             
-            for i in gimmeAllElms(land):
+            for i in doing.gimmeAllElms(land):
                 if not i in unlockedElements:
                     unlockedElements.append(i)
             
@@ -968,23 +983,36 @@ try:
                 if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and (event.key == pygame.K_ESCAPE or event.key == pygame.K_TAB)):
                     gameState = "sandbox"
                     screen = pygame.display.set_mode((screenx,screeny))
-                    
+                if event.type == pygame.MOUSEBUTTONDOWN and tap:
+                    undoList.append(deepcopy(land))
+                    fire = True
+                    tap = False
+                    if event.button == 3:
+                        ice = True
+                if event.type == pygame.MOUSEBUTTONUP:
+                    tap = True
+                    ice = False
+                if event.type == pygame.MOUSEMOTION:
+                    mousePos = Vector2(event.pos)
             clock.tick(fps)
             if gameState == "sandbox":
                 continue
             
             if tutorial == 5:
-                print()
-            
-            if tutorial == 5:
-                   texts = [
+                   texts = (
                         font[1].render("Welcome to the element menu, where",1,Color(255,255,255)),
                         font[1].render("You can find all of the elements you",1,Color(255,255,255)),
                         font[1].render("have unlocked. After the tutorial",1,Color(255,255,255)),
                         font[1].render("There are a bunch of elements that",1,Color(255,255,255)),
-                        font[1].render("Will already be unlocked, but for now",1,Color(255,255,255)),
-                        font[1].render("You will only have stone.",1,Color(255,255,255))
-                    ] 
+                        font[1].render("Will already be unlocked.",1,Color(255,255,255))
+                   )
+                   if continuebutton.tick(fire,mousePos):
+                       tutorial = 6
+            if tutorial == 6:
+                   texts = (
+                        font[1].render("Click on the element you want to use",1,Color(255,255,255)),
+                        font[1].render("to draw.",1,Color(255,255,255))
+                   )
                     
                     
                     
@@ -992,7 +1020,8 @@ try:
             
             screen.fill((0,0,0))
             
-            if tutorial == 5:
+            if tutorial != 0:
+                continuebutton.render(screen)
                 for l in range(len(texts)):
                     screen.blit(texts[l],Vector2(20, 10+40*l))
                 
@@ -1024,6 +1053,7 @@ try:
             elif appendKey == "escape":
                 appendKey = ""
                 gameState = "sandbox"
+                screen = pygame.display.set_mode((screenx,screeny))
                 print("Saveing/Loading aborted!")
                 continue
 
@@ -1035,15 +1065,15 @@ try:
 
 
             if "saving" in gameState:
-                texts = [
+                texts = (
                     font[1].render("What would you like to save your sandbox as?",1,Color(0,0,0)),
                     font[1].render(str(filename),1,Color(0,0,0))
-                ]
+                )
             elif "loading" in gameState:
-                texts = [
+                texts = (
                     font[1].render("What is the filename of the save you want to load?",1,Color(0,0,0)),
                     font[1].render(str(filename),1,Color(0,0,0))
-                ]
+                )
             else:
                 gameState = "sandbox"            
             if doingafilething or gameState == "sandbox":
@@ -1147,7 +1177,6 @@ try:
 
             if changeScreen:
                 screen = pygame.display.set_mode((800,450))
-            
             screen.fill((255,255,255))
             
             for l in range(len(texts)):
@@ -1161,6 +1190,7 @@ try:
 
         if loadState != gameState:
             changeScreen = True
+            tap = True
             loadState = gameState
 
 

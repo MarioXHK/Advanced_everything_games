@@ -96,17 +96,17 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
     #I'll take my small victories in optimization where I can
     
     #The tuple that holds the elements that are required to have a mini plane map
-    requireminip = [1,2,3,4,6,7,8,9,10,11,14,15,16,17,18,19,20,22,23,24,25,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,44,45,46,47,48,49,50,53,54,55,56,58,59,60,62,65,66,68,69,70,71,72,73,74,75,77,78,79,80,81,82,83,84]
+    requireminip = [1,2,3,4,6,7,8,9,10,11,14,15,16,17,18,19,20,22,23,24,25,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,44,45,46,47,48,49,50,53,54,55,56,58,59,60,62,65,66,68,69,70,71,72,73,74,75,77,78,79,80,81,82,83,84,85]
     if lifeIG:
         requireminip.append(0)
         requireminip.append(26)
     requireminip = tuple(requireminip)
     
     #The tuple that holds the elements that are required to have a mini grid map
-    requireminig = (1,2,3,4,6,7,8,9,10,11,12,13,14,15,16,17,18,19,22,23,24,25,27,28,29,30,32,34,36,39,40,41,42,43,44,45,46,47,48,49,51,52,53,54,55,56,57,58,60,62,63,64,65,66,68,70,71,72,73,74,75,77,78,79,80,81,82,83,84)
+    requireminig = (1,2,3,4,6,7,8,9,10,11,12,13,14,15,16,17,18,19,22,23,24,25,27,28,29,30,32,34,36,39,40,41,42,43,44,45,46,47,48,49,51,52,53,54,55,56,57,58,60,62,63,64,65,66,68,70,71,72,73,74,75,77,78,79,80,81,82,83,84,85)
     
     
-    waters = (3,15,47,71,75)
+    waters = (3,15,47,71,75,85)
         
     goodFossilizers = (2,9,12,18,29,32,38,40,51,53,55,58,72,73)
     
@@ -265,8 +265,10 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                     elif random.randint(1,10000) == 1:
                         if physics.neighborCheck(miniplain,[18]):
                             e = 18
-                    elif (random.randint(1,101) == 1 and physics.neighborCheck(miniplain,(29,45,50))) or (random.randint(1,12) == 1 and physics.neighborCheck(miniplain,(56,64,65,66))):
+                    elif (random.randint(1,101) == 1 and physics.neighborCheck(miniplain,(29,45,50))) or (random.randint(1,12) == 1 and physics.neighborCheck(miniplain,(56,64,65,66,84))):
                         e = 75
+                    elif random.randint(1,500) == 1 and physics.neighborCheck(miniplain,(79,81)):
+                        e = 85
                     c = physics.sandCheck(minigrid,localPos,True)
                     if c[0] == 0:
                         d = physics.lrWanderCheck(minigrid,localPos)
@@ -2657,6 +2659,79 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                             grid[a+1][bb] = [e,t]
                         else:
                             grid[a+1][bb+(c[0]-2)] = [e,t]
+
+                #Thick water
+
+                elif e == 85:
+                    if coinflip():
+                        if (physics.neighborCheck(miniplain,(30,67)) or (sun and random.randint(1,20000) == 1)):
+                            e = 13
+                            t = 10
+                        elif physics.neighborCount(miniplain,(22,23,27)) > 3:
+                            e = 27
+                        elif physics.neighborCount(miniplain,[71]) > 3:
+                            e = 71
+                            t = 0
+                    if physics.neighborCheck(miniplain,(9,55)):
+                        e = 13
+                        t = 15
+                    elif random.randint(1,10000) == 1:
+                        if physics.neighborCheck(miniplain,[18]):
+                            e = 18
+                    
+                    if physics.neighborCount(miniplain, (0,85)) > 7:
+                        c = physics.sandCheck(minigrid,localPos,True)
+                        if c[0] == 0:
+                            d = physics.lrWanderCheck(minigrid,localPos)
+                            if not d[0]:
+                                grid[a][bb] = [e,t]
+                            else:
+                                grid[a][bb] = [0,0]
+
+                                if d[1]:
+                                    grid[a][bb+1] = [e,t]
+                                else:
+                                    grid[a][bb-1] = [e,t]
+
+                        else:
+                            grid[a][bb] = [0,0]
+
+                            grid[a+1][bb+(c[0]-2)] = [e,t]
+                    else:
+                        grid[a][bb] = [e,t]
+
+
+                #Filler! (It's most of TV)
+                
+                elif e == 86:
+                    if a + 1 != len(plain) and grid[a+1][bb][0] == 0:
+                        grid[a+1][bb] = [e,t]
+                    if a - 1 != -1 and grid[a-1][bb][0] == 0:
+                        grid[a-1][bb] = [e,t]
+                    if bb + 1 != len(plain[0]) and grid[a][bb+1][0] == 0:
+                        grid[a][bb+1] = [e,t]
+                    if bb - 1 != -1 and grid[a][bb-1][0] == 0:
+                        grid[a][bb-1] = [e,t]
+                    grid[a][bb] = [e,t]
+                
+                #Snake
+                
+                elif e == 87:
+                    if random.randint(1,15) == 1 and t != 0:
+                        tm = random.randint(1,4)
+                        if (t == 1 and tm != 2) and (t == 2 and tm != 2) and (t == 3 and tm != 4) and (t == 4 and tm != 3):
+                            t = random.randint(1,4)
+                    if t == 1 and a + 1 != len(plain) and grid[a+1][bb][0] == 0:
+                        grid[a+1][bb] = [e,t]
+                    if t == 2 and a - 1 != -1 and grid[a-1][bb][0] == 0:
+                        grid[a-1][bb] = [e,t]
+                    if t == 3 and bb + 1 != len(plain[0]) and grid[a][bb+1][0] == 0:
+                        grid[a][bb+1] = [e,t]
+                    if t == 4 and bb - 1 != -1 and grid[a][bb-1][0] == 0:
+                        grid[a][bb-1] = [e,t]
+                    grid[a][bb] = [e,0]
+
+
 
             except IndexError:
                 print("Error in doing element", grid[a][bb], "index out of range (Did you remember to put the element ID in the corisponding mini-allowed tuple?)")

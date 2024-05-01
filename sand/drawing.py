@@ -480,6 +480,23 @@ def drawStuff(screen,plain: list[list[list[int]]],lyx: int,lyy: int, switch: boo
             elif el == 84:
                 pygame.draw.rect(screen,(random.randint(0,10),150+random.randint(0,60),random.randint(0,10)),(j*lyx,i*lyy,lyx,lyy))
 
+            #Thick water
+            elif el == 85:
+                pygame.draw.rect(screen,(40,60,255),(j*lyx,i*lyy,lyx,lyy))
+
+            #Filler
+            elif el == 86:
+                pygame.draw.rect(screen,(100,0,240),(j*lyx,i*lyy,lyx,lyy))
+            
+            #Snake
+            elif el == 87:
+                pygame.draw.rect(screen,(0,128,0),(j*lyx,i*lyy,lyx,lyy))
+
+
+
+
+
+
             #If all else fails...
             else:
                 #Look magenta, no other element looks entirely magenta
