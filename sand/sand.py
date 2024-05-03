@@ -148,6 +148,14 @@ titleLand = deepcopy(foreverglobals.titleScreenSandbox)
 appendKey = ""
 sandboxed = False
 
+elementButtons = []
+for why in range(len(foreverglobals.elements)//8):
+    for ex in range(8):
+        if why*8 + ex >= len(foreverglobals.elements):
+            break
+        elementButtons.append(buttons.button(foreverglobals.elements[why*8 + ex].color,Rect(50,50,50,50)))
+
+
 # ===============================================================================================
 # ====================================== THE GAME LOOP ==========================================
 # ===============================================================================================
@@ -871,11 +879,11 @@ try:
                         font[1].render("Enter the element's ID",1,Color(255,255,255)),
                         font[1].render(anElement,1,Color(255,255,255))
                         )
-                if appendKey == "end" and len(anElement) != 0:
+                if appendKey == "end":
                     if len(anElement) != 0:
                         element = int(anElement)
                         try:
-                            print("Set element to", foreverglobals.elementNames[element])
+                            print("Set element to", foreverglobals.elements[element].name)
                         except:
                             print("Set to an unknown element:", element)
                         pickAnElement = False
@@ -910,7 +918,7 @@ try:
                                 print("Copied", end = " ")
                                 eyeDropper = False
                                 try:
-                                    print(foreverglobals.elementNames[element], end = " ")
+                                    print(foreverglobals.elements[element].name, end = " ")
                                 except:
                                     print("An unknown element", end = " ")
                                 print("from the sandbox. (ID:", str(element)+")")
@@ -1020,7 +1028,7 @@ try:
             
             screen.fill((0,0,0))
             
-            if tutorial != 0:
+            if tutorial == 5:
                 continuebutton.render(screen)
                 for l in range(len(texts)):
                     screen.blit(texts[l],Vector2(20, 10+40*l))

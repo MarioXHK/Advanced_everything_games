@@ -210,7 +210,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                         if physics.neighborCheck(miniplain,(3,15,71)):
                             e = 10
                         elif physics.neighborCheck(miniplain,(79,81)):
-                            e = 10
+                            e = 82
                     elif random.randint(1,42) == 1:
                         if physics.neighborCheck(miniplain,[53]):
                             e = 51
