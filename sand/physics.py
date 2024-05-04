@@ -1,4 +1,6 @@
 import random
+from foreverglobals import elements as els
+lel = len(els)-1
 #Function definitions
 
 def coinflip() -> bool:
@@ -294,7 +296,7 @@ def checkEverywhere(grid: list[list[list[int]]], thing) -> bool:
     return False
 
 def randomElement(randTemp:bool = True) -> list[int]:
-    e = random.randint(0,76)
+    e = random.randint(0,lel)
     t = 0
     if randTemp:
         if e in (30,49):

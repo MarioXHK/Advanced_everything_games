@@ -118,6 +118,8 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
     
     virusProof = (0,57,71)
     
+    plantSustainers = (8,28,31,62)
+    
     #Self explanitory
     supersun: bool = physics.checkEverywhere(plain,[76,0])
     sun: bool = (physics.checkEverywhere(plain,[20,0]) or supersun)
@@ -386,7 +388,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                 
                 elif e == 8:
                     
-                    if (random.randint(1,30) == 1 and physics.neighborCheck(miniplain,(23,46,47,48,61))) or (supersun and random.randint(1,10000) == 1) or physics.neighborCheck(miniplain,(30,55,67)):
+                    if (random.randint(1,30) == 1 and physics.neighborCheck(miniplain,(23,46,47,48,61))) or (supersun and random.randint(1,10000) == 1) or physics.neighborCheck(miniplain,(9,30,55,67)):
                         e = 72
                         t = 0
                     elif coinflip() and physics.neighborCheck(miniplain,[53]):
@@ -1172,7 +1174,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                                 t = 5
                             else:
                                 e = 32
-                    if physics.neighborCheck(miniplain,[8,28,36]):
+                    if physics.neighborCheck(miniplain,plantSustainers):
                         c = [True]
                     else:
                         c = physics.stoneCheck(minigrid,localPos)
@@ -1490,7 +1492,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                             e = 36
                             t = random.randint(0,11)
                     
-                    if coinflip() or (physics.neighborCheck(miniplain,(8,31)) and not (((random.randint(1,400) == 1 and moon)) or physics.neighborCheck(miniplain,[61]) or t == 1)):
+                    if coinflip() or (physics.neighborCheck(miniplain,plantSustainers) and not (((random.randint(1,400) == 1 and moon)) or physics.neighborCheck(miniplain,[61]) or t == 1)):
                         grid[a][bb] = [e,t]
                         continue
                     if t == 0:
@@ -2498,11 +2500,12 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                 #Bees!
                 
                 elif e == 80:
-                    if physics.neighborCheck(miniplain,(9,20,30,35,53,57,60,61,66)) or (random.randint(1,20000) == 1 and not physics.neighborCheck(miniplain,[0])):
+                    if physics.neighborCheck(miniplain,(9,20,30,35,53,57,60,61,66)) or (random.randint(1,20000) == 1 and not physics.neighborCheck(miniplain,(0,77,78,79))):
                         e = 81
-                    if physics.neighborCount(miniplain,(3,10,13,16,21,22,27,29,32,34,37,39,43,45,46,47,48,51,52,54,56,73,74,75)) > random.randint(2,4):
+                    if physics.neighborCount(miniplain,(3,10,13,16,21,22,27,29,32,34,37,39,43,45,46,47,48,51,52,54,56,73,74,75,78)) > random.randint(2,4):
                         t = 1
                     if t <= 0:
+                        
                         if random.randint(1,5) == 1:
                             if random.randint(1,4) != 1:
                                 d = physics.lrWanderCheck(minigrid,localPos, True)
@@ -2529,16 +2532,30 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                         else:
                             grid[a][bb] = [e,t]
                     else:
-                        if random.randint(1,50) == 1:
-                            t += 1
-                        if t == 25 or random.randint(1,500-20*t) == 1:
-                            t = 0
-                        c = physics.sandCheck(minigrid,localPos)
-                        if c[0] == 0:
-                            grid[a][bb] = [e,t]
+                        if physics.neighborCheck(miniplain,(77,78,79)):
+                            if random.randint(1,100):
+                                t = 0
+                            elif random.randint(1,1000):
+                                r = random.randint(1,4)
+                                if r == 1 and a + 1 != len(plain) and grid[a+1][bb][0] == 0:
+                                    grid[a+1][bb] = [random.randint(78,80),0]
+                                if r == 2 and a - 1 != -1 and grid[a-1][bb][0] == 0:
+                                    grid[a-1][bb] = [random.randint(78,80),0]
+                                if r == 3 and bb + 1 != len(plain[0]) and grid[a][bb+1][0] == 0:
+                                    grid[a][bb+1] = [random.randint(78,80),0]
+                                if r == 4 and bb - 1 != -1 and grid[a][bb-1][0] == 0:
+                                    grid[a][bb-1] = [random.randint(78,80),0]
                         else:
-                            grid[a][bb] = [c[1],0]
-                            grid[a+1][bb+(c[0]-2)] = [e,t]
+                            if random.randint(1,50) == 1:
+                                t += 1
+                            if t == 25 or random.randint(1,500-20*t) == 1:
+                                t = 0
+                            c = physics.sandCheck(minigrid,localPos)
+                            if c[0] == 0:
+                                grid[a][bb] = [e,t]
+                            else:
+                                grid[a][bb] = [c[1],0]
+                                grid[a+1][bb+(c[0]-2)] = [e,t]
                 
                 #Blood!
 
@@ -2737,8 +2754,6 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                 print("Error in doing element", grid[a][bb], "index out of range (Did you remember to put the element ID in the corisponding mini-allowed tuple?)")
     return grid
 
-print("I'm doing it!")
-
 def gimmeAllElms(plain: list[list[list[int]]]) -> list[int]:
     elements = []
     for a in plain:
@@ -2746,3 +2761,5 @@ def gimmeAllElms(plain: list[list[list[int]]]) -> list[int]:
             if not b[0] in elements:
                 elements.append(b[0])
     return elements
+
+print("I'm doing it!")

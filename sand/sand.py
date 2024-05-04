@@ -195,10 +195,11 @@ try:
                 if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                     playingMySandbox = False
                 if event.type == pygame.MOUSEBUTTONDOWN and tap:
-                    fire = True
-                    tap = False
-                    if event.button == 3:
-                        ice = True
+                    if event.button in (1,3):
+                        fire = True
+                        tap = False
+                        if event.button == 3:
+                            ice = True
                 if event.type == pygame.MOUSEBUTTONUP:
                     tap = True
                     ice = False
@@ -442,11 +443,12 @@ try:
                             tutorial = 0
                             print("Skipping Tutorial!")
                         if event.type == pygame.MOUSEBUTTONDOWN and tap:
-                            undoList.append(deepcopy(land))
-                            fire = True
-                            tap = False
-                            if event.button == 3:
-                                ice = True
+                            if event.button in (1,3):
+                                undoList.append(deepcopy(land))
+                                fire = True
+                                tap = False
+                                if event.button == 3:
+                                    ice = True
                         if event.type == pygame.MOUSEBUTTONUP:
                             tap = True
                             ice = False
@@ -495,11 +497,12 @@ try:
                             tutorial = 0
                             print("Skipping Tutorial!")
                         if event.type == pygame.MOUSEBUTTONDOWN and tap:
-                            undoList.append(deepcopy(land))
-                            fire = True
-                            tap = False
-                            if event.button == 3:
-                                ice = True
+                            if event.button in (1,3):
+                                undoList.append(deepcopy(land))
+                                fire = True
+                                tap = False
+                                if event.button == 3:
+                                    ice = True
                         if event.type == pygame.MOUSEBUTTONUP:
                             tap = True
                             ice = False
@@ -525,11 +528,12 @@ try:
                             tutorial = 0
                             print("Skipping Tutorial!")
                         if event.type == pygame.MOUSEBUTTONDOWN and tap:
-                            undoList.append(deepcopy(land))
-                            fire = True
-                            tap = False
-                            if event.button == 3:
-                                ice = True
+                            if event.button in (1,3):
+                                undoList.append(deepcopy(land))
+                                fire = True
+                                tap = False
+                                if event.button == 3:
+                                    ice = True
                         if event.type == pygame.MOUSEBUTTONUP:
                             tap = True
                             ice = False
@@ -569,11 +573,12 @@ try:
                             tutorial = 0
                             print("Skipping Tutorial!")
                         if event.type == pygame.MOUSEBUTTONDOWN and tap:
-                            undoList.append(deepcopy(land))
-                            fire = True
-                            tap = False
-                            if event.button == 3:
-                                ice = True
+                            if event.button in (1,3):
+                                undoList.append(deepcopy(land))
+                                fire = True
+                                tap = False
+                                if event.button == 3:
+                                    ice = True
                         if event.type == pygame.MOUSEBUTTONUP:
                             tap = True
                             ice = False
@@ -619,11 +624,12 @@ try:
                             tutorial = 0
                             print("Skipping Tutorial!")
                         if event.type == pygame.MOUSEBUTTONDOWN and tap:
-                            undoList.append(deepcopy(land))
-                            fire = True
-                            tap = False
-                            if event.button == 3:
-                                ice = True
+                            if event.button in (1,3):
+                                undoList.append(deepcopy(land))
+                                fire = True
+                                tap = False
+                                if event.button == 3:
+                                    ice = True
                         if event.type == pygame.MOUSEBUTTONUP:
                             tap = True
                             ice = False
@@ -709,11 +715,12 @@ try:
                             tutorial = 0
                             print("Skipping Tutorial!")
                         if event.type == pygame.MOUSEBUTTONDOWN and tap:
-                            undoList.append(deepcopy(land))
-                            fire = True
-                            tap = False
-                            if event.button == 3:
-                                ice = True
+                            if event.button in (1,3):
+                                undoList.append(deepcopy(land))
+                                fire = True
+                                tap = False
+                                if event.button == 3:
+                                    ice = True
                         if event.type == pygame.MOUSEBUTTONUP:
                             tap = True
                             ice = False
@@ -774,11 +781,12 @@ try:
                             tutorial = 0
                             print("Tutorial Complete!")
                         if event.type == pygame.MOUSEBUTTONDOWN and tap:
-                            undoList.append(deepcopy(land))
-                            fire = True
-                            tap = False
-                            if event.button == 3:
-                                ice = True
+                            if event.button in (1,3):
+                                undoList.append(deepcopy(land))
+                                fire = True
+                                tap = False
+                                if event.button == 3:
+                                    ice = True
                         if event.type == pygame.MOUSEBUTTONUP:
                             tap = True
                             ice = False
@@ -855,11 +863,12 @@ try:
                             alive = False
                             wannaBreak = True
                         if event.type == pygame.MOUSEBUTTONDOWN and tap:
-                            undoList.append(deepcopy(land))
-                            fire = True
-                            tap = False
-                            if event.button == 3:
-                                ice = True
+                            if event.button in (1,3):
+                                undoList.append(deepcopy(land))
+                                fire = True
+                                tap = False
+                                if event.button == 3:
+                                    ice = True
                         if event.type == pygame.MOUSEBUTTONUP:
                             tap = True
                             ice = False
@@ -1235,18 +1244,18 @@ try:
         elif gameState == "elementmenu":
             
             if changeScreen:
-                screen = pygame.display.set_mode((600,450))
+                screen = pygame.display.set_mode((650,450))
             
             for event in pygame.event.get(): #It's just your mouse and stuff!
                 if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and (event.key == pygame.K_ESCAPE or event.key == pygame.K_TAB)):
                     gameState = "sandbox"
                     screen = pygame.display.set_mode((screenx,screeny))
                 elif event.type == pygame.MOUSEBUTTONDOWN and tap:
-                    undoList.append(deepcopy(land))
-                    fire = True
-                    tap = False
-                    if event.button == 3:
-                        ice = True
+                    if event.button in (1,3):
+                        fire = True
+                        tap = False
+                        if event.button == 3:
+                            ice = True
                 elif event.type == pygame.MOUSEBUTTONUP:
                     tap = True
                     ice = False
@@ -1339,7 +1348,7 @@ try:
             airdid = False
             
             
-            pygame.draw.rect(screen,Color(30,30,30),Rect(eColumns*50,0,600-eColumns*50,450))
+            pygame.draw.rect(screen,Color(30,30,30),Rect(eColumns*50,0,650-eColumns*50,450))
             if foreverglobals.elements[element].color != None:
                 pygame.draw.rect(screen,foreverglobals.elements[element].color,Rect(eColumns*50+15,5,40,40))
             else:
@@ -1535,6 +1544,7 @@ try:
         if loadState != gameState:
             changeScreen = True
             tap = True
+            ice = False
             loadState = gameState
 
 
