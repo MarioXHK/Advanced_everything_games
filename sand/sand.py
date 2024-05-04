@@ -31,7 +31,9 @@ font = (
     pygame.font.SysFont('Comic Sans MS', 30),
     pygame.font.SysFont('Comic Sans MS', 15),
     pygame.font.SysFont('Comic Sans MS', 20),
-    pygame.font.Font("PressStart2P.ttf", 24)
+    pygame.font.Font("PressStart2P.ttf", 24),
+    pygame.font.Font("PressStart2P.ttf", 18),
+    pygame.font.Font("PressStart2P.ttf", 12)
     )
 
 texts = ()
@@ -62,6 +64,9 @@ mousePos = Vector2(0,0)
 fire = False
 tap = True
 
+wheeled = False
+wheel = 0
+
 #Element Variables
 
 element = 1
@@ -84,6 +89,7 @@ anElement = ""
 # ===============================================================================================
 
 
+elementNameText = font[0].render("",1,Color(255,255,255))
 
 
 screenx: int = 500
@@ -148,13 +154,20 @@ titleLand = deepcopy(foreverglobals.titleScreenSandbox)
 appendKey = ""
 sandboxed = False
 
-elementButtons = []
-for why in range(len(foreverglobals.elements)//8):
-    for ex in range(8):
-        if why*8 + ex >= len(foreverglobals.elements):
-            break
-        elementButtons.append(buttons.button(foreverglobals.elements[why*8 + ex].color,Rect(50,50,50,50)))
+eColumns = 6
 
+elementButtons = []
+for why in range(len(foreverglobals.elements)//eColumns):
+    for ex in range(eColumns):
+        if why*eColumns + ex < len(foreverglobals.elements):
+            buton = foreverglobals.elements[why*eColumns + ex]
+            elementButtons.append(buttons.elButton(foreverglobals.elements[why*eColumns + ex].id,Color(10,10,10),buton.color,Rect(40,40,40,40),Color(50,50,50),buton.mColors))
+            
+        else:
+            elementButtons.append(buttons.elButton(0,Color(0,0,0),Color(0,0,0),Rect(40,40,40,40),Color(40,40,40)))
+
+buttonYOffset = 0
+wheelv = 0
 
 # ===============================================================================================
 # ====================================== THE GAME LOOP ==========================================
@@ -583,6 +596,7 @@ try:
                                 #Go a step forward every tick until pressed again
                             elif event.key == pygame.K_TAB:
                                 gameState = "elementmenu"
+                                buttonYOffset = 0
                                 
                     if tutorial == 5:
                         texts = (
@@ -844,6 +858,7 @@ try:
                             
                             elif event.key == pygame.K_TAB:
                                 gameState = "elementmenu"
+                                buttonYOffset = 0
             
             clock.tick(fps)
             if showfps and fps != int(clock.get_fps()):
@@ -991,17 +1006,20 @@ try:
                 if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and (event.key == pygame.K_ESCAPE or event.key == pygame.K_TAB)):
                     gameState = "sandbox"
                     screen = pygame.display.set_mode((screenx,screeny))
-                if event.type == pygame.MOUSEBUTTONDOWN and tap:
+                elif event.type == pygame.MOUSEBUTTONDOWN and tap:
                     undoList.append(deepcopy(land))
                     fire = True
                     tap = False
                     if event.button == 3:
                         ice = True
-                if event.type == pygame.MOUSEBUTTONUP:
+                elif event.type == pygame.MOUSEBUTTONUP:
                     tap = True
                     ice = False
-                if event.type == pygame.MOUSEMOTION:
+                elif event.type == pygame.MOUSEMOTION:
                     mousePos = Vector2(event.pos)
+                elif event.type == pygame.MOUSEWHEEL:
+                    wheeled = True
+                    wheel = event.y
             clock.tick(fps)
             if gameState == "sandbox":
                 continue
@@ -1016,22 +1034,89 @@ try:
                    )
                    if continuebutton.tick(fire,mousePos):
                        tutorial = 6
-            if tutorial == 6:
+            elif tutorial == 6:
                    texts = (
                         font[1].render("Click on the element you want to use",1,Color(255,255,255)),
                         font[1].render("to draw.",1,Color(255,255,255))
                    )
+            elif tutorial == 7:
+                   texts = (
+                        font[1].render("Great! now go back into the sandbox",1,Color(255,255,255)),
+                        font[1].render("and mess with these elements!",1,Color(255,255,255))
+                   )
+            
+            if wheeled:
+                if wheelv < 16:
+                    wheelv += 2
+                else:
+                    wheelv = 16
+            else:
+                if wheelv > 0:
+                    wheelv -= 1
+                else:
+                    wheelv = 0
+            buttonYOffset += wheel * wheelv
+            
+            
+            for yan in range(len(elementButtons)//eColumns):
+                for yin in range(eColumns):
+                    elementButtons[yan*eColumns+yin].box.x = yin*50+5
+                    elementButtons[yan*eColumns+yin].box.y = yan*50+5+buttonYOffset
                     
-                    
+                    if elementButtons[yan*eColumns+yin].id in unlockedElements and elementButtons[yan*eColumns+yin].tick(fire,mousePos):
+                        element = elementButtons[yan*eColumns+yin].id
+                        if len(foreverglobals.elements[element].name) < 10:
+                            elementNameText = font[0].render(foreverglobals.elements[element].name,1,Color(255,255,255))
+                        elif len(foreverglobals.elements[element].name) < 12:
+                            elementNameText = font[4].render(foreverglobals.elements[element].name,1,Color(255,255,255))
+                        else:
+                            elementNameText = font[5].render(foreverglobals.elements[element].name,1,Color(255,255,255))
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
                     
             #Render the menu
             
             screen.fill((0,0,0))
             
+            airdid = False
+            
+            
+            pygame.draw.rect(screen,Color(30,30,30),Rect(eColumns*50,0,600-eColumns*50,450))
+            if foreverglobals.elements[element].color != None:
+                pygame.draw.rect(screen,foreverglobals.elements[element].color,Rect(eColumns*50+15,5,40,40))
+            else:
+                pygame.draw.rect(screen,foreverglobals.elements[element].mColors[0],Rect(eColumns*50+15,5,40,40))
+            screen.blit(elementNameText,(eColumns*50+10,50))
+            print(unlockedElements)
+            for butt in elementButtons:
+                if butt.id != 0:
+                    if butt.id in unlockedElements:
+                        butt.render(screen)
+                    else:
+                        pygame.draw.rect(screen,Color(0,0,0),butt.box)
+                        pygame.draw.rect(screen,Color(20,20,20),butt.box,2)
+                elif not airdid:
+                    butt.render(screen)
+                    airdid = True
+            
+            
             if tutorial == 5:
                 continuebutton.render(screen)
-                for l in range(len(texts)):
-                    screen.blit(texts[l],Vector2(20, 10+40*l))
+                for l in texts:
+                    screen.blit(l,Vector2(20, 10+40*l))
+                    
                 
         
         
@@ -1204,6 +1289,16 @@ try:
 
         pygame.display.flip()
         fire = False
+        wheeled = False
+        wheel = 0
+
+
+
+
+
+
+
+
 
     pygame.quit()
     print("Process exit with code: \":)\"")
@@ -1224,7 +1319,7 @@ try:
         print("Please remain inside these boundaries.")
     else:
         print("Are you trying to enter the backrooms or something???")
-except Exception as x:
+except ZeroDivisionError as x:
     print("A fatal error occured durring the sandbox!")
     print(random.choice(foreverglobals.crashSplash))
     if rememberme:

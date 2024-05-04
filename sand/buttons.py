@@ -12,10 +12,13 @@ font = (
     )
 
 class button:
-    def __init__(self,color: Color,rectangle: Rect, boardercolor: Color | None = None, text: str = "",textcolor: Color = Color(0,0,0),whichfont: int = 1):
+    def __init__(self,color: Color,rectangle: Rect, boardercolor: Color | None = None, text: str | None = None,textcolor: Color = Color(0,0,0),whichfont: int = 1):
         self.color = color
         self.box = rectangle
-        self.text = font[whichfont].render(str(text), 1, textcolor)
+        if text != None:
+            self.text = font[whichfont].render(str(text), 1, textcolor)
+        else:
+            self.text = None
         if boardercolor == None:
             self.bc = color
         else:
@@ -46,11 +49,18 @@ class button:
         if self.clicked:
             self.box.x = mousePos.x - self.moff.x
             self.box.y = mousePos.y - self.moff.y
+    def myPos(self,where: Vector2):
+        self.box.x = where.x
+        self.box.y = where.y
+    def movePos(self,how: Vector2):
+        self.box.x += how.x
+        self.box.y += how.y
     def render(self,screen: pygame.Surface):
         pygame.draw.rect(screen,self.color,self.box)
         if self.hover:
             pygame.draw.rect(screen,self.bc,self.box,5)
-        screen.blit(self.text,Vector2(self.box.x, self.box.y) - Vector2(0,0))
+        if self.text != None:
+            screen.blit(self.text,Vector2(self.box.x, self.box.y) - Vector2(0,0))
 
 class circleButton:
     def __init__(self,color: Color,position: Vector2, radius: float, bordercolor: Color | None = None, text: str = "", textcolor: Color = Color((0, 0, 0))):
@@ -100,4 +110,35 @@ class graphNode(circleButton):
     def countNeighbors(self):
         return len(self.connections)
 
+class elButton(button):
+    def __init__(self,id: int, color: Color, elementcolor: Color,rectangle: Rect, boardercolor: Color | None = None,colorList: tuple[Color, ...] | None = None):
+        super().__init__(color,rectangle, boardercolor)
+        
+        self.id = id
+        self.ecolor = elementcolor
+        self.clist = colorList
+        self.rtimer = 120
+        self.rticker = 120
+        self.frame = 0
+    def render(self,screen: pygame.Surface):
+        if self.ecolor == None:
+            self.rticker -= 1
+            if self.rticker <= 0:
+                self.rticker = self.rtimer
+                if self.frame+1 < len(self.clist):
+                    self.frame += 1
+                else:
+                    self.frame = 0
+        if self.hover:
+            pygame.draw.rect(screen,self.bc,self.box)
+        else:
+            pygame.draw.rect(screen,self.color,self.box)
+        
+        if self.ecolor != None:
+            pygame.draw.rect(screen,self.ecolor,Rect(self.box.x+self.box.w/4,self.box.y+self.box.h/4,self.box.w/2,self.box.h/2))
+        elif self.clist != None:
+            pygame.draw.rect(screen,self.clist[self.frame],Rect(self.box.x+self.box.w/4,self.box.y+self.box.h/4,self.box.w/2,self.box.h/2))
+            
+        if not self.hover:
+            pygame.draw.rect(screen,self.bc,self.box,2)
 print("Beep boop!")

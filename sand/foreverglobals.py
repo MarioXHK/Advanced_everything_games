@@ -9,8 +9,7 @@ class elementIdentity:
         self.name = name
         self.color = color
         self.desc = desc
-        if color == None:
-            self.mColors = otherColors
+        self.mColors = otherColors
 
 
 
@@ -196,7 +195,8 @@ crashSplash = (
         "It burns!",
         "This isn't so Supercalifragilisticexpialidocious of you",
         "Dociousaliexpiesticfragicalirupes",
-        "Dociousaliexpilisticfragicalirupes"
+        "Dociousaliexpilisticfragicalirupes",
+        "There you go, yelling out the U word!"
     )
 
 
