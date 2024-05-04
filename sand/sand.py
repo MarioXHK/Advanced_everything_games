@@ -89,8 +89,10 @@ anElement = ""
 # ===============================================================================================
 
 
-elementNameText = font[0].render("",1,Color(255,255,255))
-
+elementNameText = font[0].render("Sand",1,Color(255,255,255))
+elementText = [
+    font[6].render("Sand",1,Color(255,255,255))
+            ]
 
 screenx: int = 500
 screeny: int = 500
@@ -1307,7 +1309,15 @@ try:
                             elementNameText = font[4].render(foreverglobals.elements[element].name,1,Color(255,255,255))
                         else:
                             elementNameText = font[5].render(foreverglobals.elements[element].name,1,Color(255,255,255))
-            
+                        if foreverglobals.elements[element].desc != None:
+                            elt = foreverglobals.elements[element].desc.split("[n]")
+                            elementText = []
+                            for ttt in elt:
+                                elementText.append(font[6].render(ttt,1,Color(255,255,255)))
+                        else:
+                            elementText = [
+                                font[6].render("No description.",1,Color(255,255,255))
+                                           ]
             
             
             
@@ -1335,7 +1345,9 @@ try:
             else:
                 pygame.draw.rect(screen,foreverglobals.elements[element].mColors[0],Rect(eColumns*50+15,5,40,40))
             screen.blit(elementNameText,(eColumns*50+10,50))
-
+            for ree in range(len(elementText)):
+                screen.blit(elementText[ree],(eColumns*50+10,90+18*ree))
+            
             for butt in elementButtons:
                 if butt.id != 0:
                     if butt.id in unlockedElements:
