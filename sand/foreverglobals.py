@@ -9,7 +9,7 @@ class elementIdentity:
         self.name = name
         self.color = color
         self.desc = desc
-        self.mColors = otherColors
+        self.mColors = otherColors  
 
 
 

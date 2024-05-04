@@ -611,6 +611,235 @@ try:
                             font[3].render("Go back to the Tab menu for",1,Color(255,255,255)),
                             font[3].render("the tutorial!",1,Color(255,255,255))
                         )
+                elif tutorial == 7:
+                    for event in pygame.event.get(): #Event Queue, you're almost there...!
+                        if (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                            tutorial = 0
+                            print("Skipping Tutorial!")
+                        if event.type == pygame.MOUSEBUTTONDOWN and tap:
+                            undoList.append(deepcopy(land))
+                            fire = True
+                            tap = False
+                            if event.button == 3:
+                                ice = True
+                        if event.type == pygame.MOUSEBUTTONUP:
+                            tap = True
+                            ice = False
+                        if event.type == pygame.MOUSEMOTION:
+                            mousePos = Vector2(event.pos)
+                        if event.type == pygame.KEYDOWN:
+                            
+                            #Command Keys
+                            
+                            if event.key == pygame.K_SPACE:
+                                if not alive:
+                                    undoList.append(deepcopy(land))
+                                    redoList = []
+                                live = True
+                                #Go a single step forward
+                            elif event.key == pygame.K_LCTRL:
+                                live = True
+                                if alive:
+                                    alive = False
+                                else:
+                                    alive = True
+                                #Go a step forward every tick until pressed again
+                            elif event.key == pygame.K_TAB:
+                                gameState = "elementmenu"
+                                tutorialprogress += 5
+                                buttonYOffset = 0
+                            elif event.key == pygame.K_RIGHTBRACKET:
+                                
+                                if len(redoList) > 0:
+                                    undoList.append(deepcopy(land))
+                                    land = redoList.pop()
+                                    tutorialprogress += 10
+                            elif event.key == pygame.K_LEFTBRACKET:
+                                if len(undoList) > 0:
+                                    redoList.append(deepcopy(land))
+                                    land = undoList.pop()
+                                    tutorialprogress += 10
+                            elif event.key == pygame.K_EQUALS or event.key == pygame.K_PLUS:
+                                brushSize += 1
+                                print("brush size is now", (brushSize*2+1))
+                            elif event.key == pygame.K_UNDERSCORE or event.key == pygame.K_MINUS:
+                                if 0 < brushSize:
+                                    brushSize -= 1
+                                    print("brush size is now", (brushSize*2+1))        
+                                    
+                                    
+                                    
+                    if tutorialprogress < 1000 or unlockedElements == [0,1,2,3,4,5,6,7,8,9]:
+                        texts = (
+                            font[3].render("Fun tip: you can press the square",1,Color(255,255,255)),
+                            font[3].render("bracket keys ( [ and ] ) to undo",1,Color(255,255,255)),
+                            font[3].render("and redo actions you've done.",1,Color(255,255,255)),
+                            font[3].render("Progress: " + str(tutorialprogress//40) + "%",1,Color(255,255,255))
+                        )
+                    elif tutorialprogress < 2000:
+                        texts = (
+                            font[3].render("What odd new elements you seem to",1,Color(255,255,255)),
+                            font[3].render("be discovering! Each element you",1,Color(255,255,255)),
+                            font[3].render("unlock can be selected in the",1,Color(255,255,255)),
+                            font[3].render("elements menu.",1,Color(255,255,255)),
+                            font[3].render("Progress: " + str(tutorialprogress//40) + "%",1,Color(255,255,255))
+                        )
+                    elif tutorialprogress < 3000:
+                        texts = (
+                            font[3].render("Another fun tip: you can press the",1,Color(255,255,255)),
+                            font[3].render("plus and minus keys to change your",1,Color(255,255,255)),
+                            font[3].render("brush size.",1,Color(255,255,255)),
+                            font[3].render("Progress: " + str(tutorialprogress//40) + "%",1,Color(255,255,255))
+                        )
+                    else:
+                        texts = (
+                            font[3].render("You're almost at the end of the tutorial",1,Color(255,255,255)),
+                            font[3].render("Just a bit more...",1,Color(255,255,255)),
+                            font[3].render("Progress: " + str(tutorialprogress//40) + "%",1,Color(255,255,255))
+                        )
+                    if tutorialprogress >= 4000:
+                        tutorialprogress = 0
+                        tutorial = 8
+                        continue
+                elif tutorial == 8:
+                    for event in pygame.event.get(): #One last Event Queue
+                        if (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                            tutorial = 0
+                            print("Skipping Tutorial!")
+                        if event.type == pygame.MOUSEBUTTONDOWN and tap:
+                            undoList.append(deepcopy(land))
+                            fire = True
+                            tap = False
+                            if event.button == 3:
+                                ice = True
+                        if event.type == pygame.MOUSEBUTTONUP:
+                            tap = True
+                            ice = False
+                        if event.type == pygame.MOUSEMOTION:
+                            mousePos = Vector2(event.pos)
+                        if event.type == pygame.KEYDOWN:
+                            
+                            #Command Keys
+                            
+                            if event.key == pygame.K_SPACE:
+                                if not alive:
+                                    undoList.append(deepcopy(land))
+                                    redoList = []
+                                live = True
+                                #Go a single step forward
+                            elif event.key == pygame.K_LCTRL:
+                                live = True
+                                if alive:
+                                    alive = False
+                                else:
+                                    alive = True
+                                #Go a step forward every tick until pressed again
+                            elif event.key == pygame.K_TAB:
+                                gameState = "elementmenu"
+                                tutorialprogress += 5
+                                buttonYOffset = 0
+                            elif event.key == pygame.K_RIGHTBRACKET:
+                                
+                                if len(redoList) > 0:
+                                    undoList.append(deepcopy(land))
+                                    land = redoList.pop()
+                                    tutorialprogress += 10
+                            elif event.key == pygame.K_LEFTBRACKET:
+                                if len(undoList) > 0:
+                                    redoList.append(deepcopy(land))
+                                    land = undoList.pop()
+                                    tutorialprogress += 10
+                            elif event.key == pygame.K_EQUALS or event.key == pygame.K_PLUS:
+                                brushSize += 1
+                                print("brush size is now", (brushSize*2+1))
+                            elif event.key == pygame.K_UNDERSCORE or event.key == pygame.K_MINUS:
+                                if 0 < brushSize:
+                                    brushSize -= 1
+                                    print("brush size is now", (brushSize*2+1))        
+                            elif event.key == pygame.K_LSHIFT:
+                                gameState = "file saving"   
+                                           
+                    texts = (
+                            font[3].render("What a wonderful sandbox you've made!",1,Color(255,255,255)),
+                            font[3].render("How about you save it by pressing the",1,Color(255,255,255)),
+                            font[3].render("Left shift key, that way you can",1,Color(255,255,255)),
+                            font[3].render("load it later by typing out the save's",1,Color(255,255,255)),
+                            font[3].render("Name when pressing 0 after the tutorial.",1,Color(255,255,255))
+                        )
+                elif tutorial == 9:
+                    for event in pygame.event.get(): #One last Event Queue
+                        if (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                            tutorial = 0
+                            print("Tutorial Complete!")
+                        if event.type == pygame.MOUSEBUTTONDOWN and tap:
+                            undoList.append(deepcopy(land))
+                            fire = True
+                            tap = False
+                            if event.button == 3:
+                                ice = True
+                        if event.type == pygame.MOUSEBUTTONUP:
+                            tap = True
+                            ice = False
+                        if event.type == pygame.MOUSEMOTION:
+                            mousePos = Vector2(event.pos)
+                        if event.type == pygame.KEYDOWN:
+                            
+                            #Command Keys
+                            
+                            if event.key == pygame.K_SPACE:
+                                if not alive:
+                                    undoList.append(deepcopy(land))
+                                    redoList = []
+                                live = True
+                                #Go a single step forward
+                            elif event.key == pygame.K_LCTRL:
+                                live = True
+                                if alive:
+                                    alive = False
+                                else:
+                                    alive = True
+                                #Go a step forward every tick until pressed again
+                            elif event.key == pygame.K_TAB:
+                                gameState = "elementmenu"
+                                tutorialprogress += 5
+                                buttonYOffset = 0
+                            elif event.key == pygame.K_RIGHTBRACKET:
+                                
+                                if len(redoList) > 0:
+                                    undoList.append(deepcopy(land))
+                                    land = redoList.pop()
+                                    tutorialprogress += 10
+                            elif event.key == pygame.K_LEFTBRACKET:
+                                if len(undoList) > 0:
+                                    redoList.append(deepcopy(land))
+                                    land = undoList.pop()
+                                    tutorialprogress += 10
+                            elif event.key == pygame.K_EQUALS or event.key == pygame.K_PLUS:
+                                brushSize += 1
+                                print("brush size is now", (brushSize*2+1))
+                            elif event.key == pygame.K_UNDERSCORE or event.key == pygame.K_MINUS:
+                                if 0 < brushSize:
+                                    brushSize -= 1
+                                    print("brush size is now", (brushSize*2+1))        
+                            elif event.key == pygame.K_LSHIFT:
+                                gameState = "file saving"  
+                            elif event.key == pygame.K_0:
+                                gameState = "file loading" 
+                                           
+                    texts = (
+                            font[2].render("You did it, you've completed the",1,Color(255,255,255)),
+                            font[2].render("basics of Sandbox! One last thing",1,Color(255,255,255)),
+                            font[2].render("Before you go: After this tutorial,",1,Color(255,255,255)),
+                            font[2].render("All of the letters on the",1,Color(255,255,255)),
+                            font[2].render("keyboard are bound to an",1,Color(255,255,255)),
+                            font[2].render("element, meaning they will set",1,Color(255,255,255)),
+                            font[2].render("the current element to the element",1,Color(255,255,255)),
+                            font[2].render("the key is bound to without needing",1,Color(255,255,255)),
+                            font[2].render("to unlock it or press tab!",1,Color(255,255,255)),
+                            font[2].render("To finish this tutorial, press the",1,Color(255,255,255)),
+                            font[2].render("escape key! If you need this tutorial",1,Color(255,255,255)),
+                            font[2].render("again, press the backspace key.",1,Color(255,255,255))
+                        )
             else:
                 if pickAnElement:
                     appendKey = keyboard(True)
@@ -710,7 +939,7 @@ try:
                                     brushSize -= 1
                                     print("brush size is now", (brushSize*2+1))
                             elif event.key == pygame.K_BACKSPACE:
-                                remindMe()
+                                tutorial = 1
                             elif event.key == pygame.K_F1:
                                 if showfps:
                                     showfps = False
@@ -786,15 +1015,15 @@ try:
                             elif event.key == pygame.K_e:
                                 element = 12
                             elif event.key == pygame.K_r:
-                                element = 13
+                                element = 83
                             elif event.key == pygame.K_t:
-                                element = 14
+                                element = 80
                             elif event.key == pygame.K_y:
                                 element = 46
                             elif event.key == pygame.K_u:
                                 element = 16
                             elif event.key == pygame.K_i:
-                                element = 17
+                                element = 78
                             elif event.key == pygame.K_a:
                                 element = 18
                             elif event.key == pygame.K_s:
@@ -806,7 +1035,7 @@ try:
                             elif event.key == pygame.K_g:
                                 element = 22
                             elif event.key == pygame.K_h:
-                                element = 23
+                                element = 79
                             elif event.key == pygame.K_j:
                                 element = 68
                             elif event.key == pygame.K_k:
@@ -820,7 +1049,7 @@ try:
                             elif event.key == pygame.K_c:
                                 element = 29
                             elif event.key == pygame.K_v:
-                                element = 30
+                                element = 77
                             elif event.key == pygame.K_b:
                                 element = 41
                             elif event.key == pygame.K_n:
@@ -866,7 +1095,7 @@ try:
                 print("fps:", tempFps)
             
             if live:
-                if tutorial == 4:
+                if tutorial == 4 or tutorial == 7:
                     tutorialprogress += 1
                 land = doing.doStuff(land,fliposwitch,werealsodoinglife)
 
@@ -915,7 +1144,7 @@ try:
             
             #Where the mouse input matters!
             if (not (tap or tutorial == 1 or wannaBreak)) and fliposwitch:
-                if tutorial == 2:
+                if tutorial == 2 or tutorial == 7:
                     tutorialprogress += 1
                 elif tutorial == 3 and ice:
                     tutorialprogress += 1
@@ -980,8 +1209,12 @@ try:
             
 
             if tutorial != 0 or wannaBreak or pickAnElement:
-                for l in range(len(texts)):
-                    screen.blit(texts[l],Vector2(20, 10+40*l))
+                if tutorial == 9:
+                    for l in range(len(texts)):
+                        screen.blit(texts[l],Vector2(20, 10+20*l))
+                else:
+                    for l in range(len(texts)):
+                        screen.blit(texts[l],Vector2(20, 10+40*l))
             
             #Render the yes and no buttons
             yn = False
@@ -1039,10 +1272,13 @@ try:
                         font[1].render("Click on the element you want to use",1,Color(255,255,255)),
                         font[1].render("to draw.",1,Color(255,255,255))
                    )
+                   if element != 1:
+                       tutorial = 7
             elif tutorial == 7:
                    texts = (
                         font[1].render("Great! now go back into the sandbox",1,Color(255,255,255)),
-                        font[1].render("and mess with these elements!",1,Color(255,255,255))
+                        font[1].render("by pressing TAB again and mess with",1,Color(255,255,255)),
+                        font[1].render("these newfound elements!",1,Color(255,255,255))
                    )
             
             if wheeled:
@@ -1099,7 +1335,7 @@ try:
             else:
                 pygame.draw.rect(screen,foreverglobals.elements[element].mColors[0],Rect(eColumns*50+15,5,40,40))
             screen.blit(elementNameText,(eColumns*50+10,50))
-            print(unlockedElements)
+
             for butt in elementButtons:
                 if butt.id != 0:
                     if butt.id in unlockedElements:
@@ -1114,8 +1350,9 @@ try:
             
             if tutorial == 5:
                 continuebutton.render(screen)
-                for l in texts:
-                    screen.blit(l,Vector2(20, 10+40*l))
+            if tutorialprogress == 0 and tutorial in (5,6,7):
+                for l in range(len(texts)):
+                    screen.blit(texts[l],Vector2(20, 10+40*l))
                     
                 
         
@@ -1254,6 +1491,8 @@ try:
                             thefile.write(writing)
                             thefile.close()
                             print("Save successful!")
+                            if tutorial == 8:
+                                tutorial = 9
                         except FileNotFoundError as e:
                             print(f'An error occured: {e}')
                             print("Maybe you don't have a sandsaves folder for the saves to go to. (You'll have to make it manually)")
@@ -1319,7 +1558,7 @@ try:
         print("Please remain inside these boundaries.")
     else:
         print("Are you trying to enter the backrooms or something???")
-except ZeroDivisionError as x:
+except Exception as x:
     print("A fatal error occured durring the sandbox!")
     print(random.choice(foreverglobals.crashSplash))
     if rememberme:
