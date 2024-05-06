@@ -461,7 +461,12 @@ def drawStuff(screen,plain: list[list[list[int]]],lyx: int,lyy: int, switch: boo
             
             #Blood
             elif el == 81:
-                pygame.draw.rect(screen,(255,0,0),(j*lyx,i*lyy,lyx,lyy))
+                cool = random.randint(1,10)
+                if et == 1:
+                    cool *= 2
+                elif et == 0:
+                    cool = 0
+                pygame.draw.rect(screen,(255,cool,cool),(j*lyx,i*lyy,lyx,lyy))
 
             #Red Sand
             elif el == 82:
@@ -492,8 +497,19 @@ def drawStuff(screen,plain: list[list[list[int]]],lyx: int,lyy: int, switch: boo
             elif el == 87:
                 pygame.draw.rect(screen,(0,128,0),(j*lyx,i*lyy,lyx,lyy))
 
+            #Tesla Coil
+            elif el == 88:
+                if et == 0:
+                    pygame.draw.rect(screen,(200,200,0),(j*lyx,i*lyy,lyx,lyy))
+                elif et == 1:
+                    pygame.draw.rect(screen,(255,255,255),(j*lyx,i*lyy,lyx,lyy))
+                else:
+                    pygame.draw.rect(screen,(255,255,0),(j*lyx,i*lyy,lyx,lyy))
 
-
+            #Battery
+            elif el == 89:
+                #Visual pulsing~
+                pygame.draw.rect(screen,(60-et,60-et,60-et),(j*lyx,i*lyy,lyx,lyy))
 
 
 

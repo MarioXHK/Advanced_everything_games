@@ -101,7 +101,9 @@ elements = (
     elementIdentity(84,"Acid Waste",Color(randint(0,10),150+randint(0,60),randint(0,10)),"Sometimes acid sludge[n]leaves behind acid waste[n]which isn't very good."),
     elementIdentity(85,"Sticky Water",Color(40,60,255),"Water but sticky."),
     elementIdentity(86,"Filler",Color(100,0,240),"Will fill any space[n]it's placed in."),
-    elementIdentity(87,"Snake",Color(0,128,0),"I love Voxelbox")
+    elementIdentity(87,"Snake",Color(0,128,0),"I love Voxelbox"),
+    elementIdentity(88,"Tesla Coil",Color(200,200,0),"Makes Electricity (the[n]element) from current"),
+    elementIdentity(89,"Battery",Color(50,50,50),"When the morning's gone,[n]And you can't go on![n]Delivers pulses of[n]electricity.")
 )
 
 #These are just gui colors, they don't 100% predict what the element will look like

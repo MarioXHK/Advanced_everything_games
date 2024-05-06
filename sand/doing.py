@@ -96,7 +96,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
     #I'll take my small victories in optimization where I can
     
     #The tuple that holds the elements that are required to have a mini plane map
-    requireminip = [1,2,3,4,6,7,8,9,10,11,14,15,16,17,18,19,20,22,23,24,25,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,44,45,46,47,48,49,50,53,54,55,56,58,59,60,62,65,66,68,69,70,71,72,73,74,75,77,78,79,80,81,82,83,84,85]
+    requireminip = [1,2,3,4,6,7,8,9,10,11,14,15,16,17,18,19,20,22,23,24,25,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,44,45,46,47,48,49,50,53,54,55,56,58,59,60,62,65,66,68,69,70,71,72,73,74,75,77,78,79,80,81,82,83,84,85,88,89]
     if lifeIG:
         requireminip.append(0)
         requireminip.append(26)
@@ -110,9 +110,9 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
         
     goodFossilizers = (2,9,12,18,29,32,38,40,51,53,55,58,72,73)
     
-    conductors = (38,39,40,44,47,55,58,59,69)
+    conductors = (38,39,40,44,47,55,58,59,69,81,88,89)
 
-    acidImmune = (0,2,3,5,9,12,16,17,20,21,30,35,38,43,47,50,51,53,55,56,61,64,65,66,71)
+    acidImmune = (0,2,3,5,9,12,16,17,20,21,30,35,38,43,47,50,51,53,55,56,61,64,65,66,71,89)
 
     blastProof = (5,12,61,67)
     
@@ -2560,6 +2560,14 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                 #Blood!
 
                 elif e == 81:
+                    
+                    if t == 1 or jam:
+                        t = 2
+                    elif (physics.neighborCheck(miniplain,[43]) or physics.neighborTempCheck(miniplain,conductors,"==",1)[0]) and t == 0:
+                        t = 1
+                    elif t == 2:
+                        t = 0
+                    
                     if coinflip():
                         if (physics.neighborCheck(miniplain,(30,67))):
                             e = 13
@@ -2570,13 +2578,19 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                         e = 13
                         t = 15
                     elif physics.neighborCount(miniplain,[71]) > 3:
-                            e = 79
+                            if coinflip():
+                                e = 79
+                            else:
+                                e = 3
                             t = 0
                     elif random.randint(1,2000) == 1:
                         if physics.neighborCheck(miniplain,[18]):
                             e = 18
-                    elif sun and (random.randint(1,10101) == 1 and physics.neighborCheck(miniplain,waters)):
+                    elif (random.randint(1,20) == 1 and t != 0) or (sun and (random.randint(1,10101) == 1 and physics.neighborCheck(miniplain,waters))):
                         e = 75
+                    
+                    
+                    
                     c = physics.sandCheck(minigrid,localPos,True)
                     if c[0] == 0:
                         d = physics.lrWanderCheck(minigrid,localPos)
@@ -2747,6 +2761,52 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                     if t == 4 and bb - 1 != -1 and grid[a][bb-1][0] == 0:
                         grid[a][bb-1] = [e,t]
                     grid[a][bb] = [e,0]
+
+                #Tesla Coil
+                
+                elif e == 88:
+                    
+                    if t == 1 or jam:
+                        t = 2
+                    elif physics.neighborTempCheck(miniplain,conductors,"==",1)[0] and t == 0:
+                        t = 1
+                    elif t == 2:
+                        t = 0
+                    
+                    if t == 1:
+                        if a + 1 != len(plain) and grid[a+1][bb][0] == 0:
+                            #Electricity loves going down ngl
+                            grid[a+1][bb] = [43,0]
+                        else:
+                            cd = 0
+                            if (bb + 1 != len(plain[0]) and grid[a][bb+1][0] == 0) and (bb - 1 != -1 and grid[a][bb-1][0] == 0):
+                                cd = random.randint(1,2)
+                            elif bb + 1 != len(plain[0]) and grid[a][bb+1][0] == 0:
+                                cd = 1
+                            elif bb - 1 != -1 and grid[a][bb-1][0] == 0:
+                                cd = 2
+                            if cd == 1:
+                                grid[a][bb+1] = [43,0]
+                            elif cd == 2:
+                                grid[a][bb-1] = [43,0]
+
+                    grid[a][bb] = [e,t] 
+
+                #Battery
+                
+                elif e == 89:
+                    
+                    t -= 1
+                    if t <= 0 or jam:
+                        t = 10
+                    
+                    if coinflip() and physics.neighborCheck(miniplain,(64,65)):
+                        e = 65
+                        t = 10-t
+
+                    grid[a][bb] = [e,t] 
+
+
 
 
 

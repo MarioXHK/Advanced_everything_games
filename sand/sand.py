@@ -1199,6 +1199,8 @@ try:
                                             t = 10
                                         elif element == 87:
                                             t = random.randint(1,4)
+                                        elif element == 89:
+                                            t = 10
                                         land[y+l][x+m] = [element,t]
                                         if mirror:
                                             land[y+l][mx+m] = [element,t]
