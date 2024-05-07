@@ -511,6 +511,15 @@ def drawStuff(screen,plain: list[list[list[int]]],lyx: int,lyy: int, switch: boo
                 #Visual pulsing~
                 pygame.draw.rect(screen,(60-et,60-et,60-et),(j*lyx,i*lyy,lyx,lyy))
 
+            #Thunder Clouds
+            elif el == 90:
+                cool = random.randint(0,8)
+                pygame.draw.rect(screen,(120+cool,120+cool,120+cool),(j*lyx,i*lyy,lyx,lyy))
+
+            #Pollen
+            elif el == 91:
+                pygame.draw.rect(screen,(255,230,128),(j*lyx,i*lyy,lyx,lyy))
+
 
 
             #If all else fails...

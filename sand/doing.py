@@ -88,7 +88,9 @@ def doLessStuff(plain: list[list[int]]) -> list[list[int]]:
     return grid
 
 
-
+#ACTUALLY DOING STUFF
+#DOSTUFF HERE
+#WOOOOOOOOOOOOOOOOOOO!!!
 
 def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> list[list[list[int]]]:
     e = 0
@@ -96,14 +98,14 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
     #I'll take my small victories in optimization where I can
     
     #The tuple that holds the elements that are required to have a mini plane map
-    requireminip = [1,2,3,4,6,7,8,9,10,11,14,15,16,17,18,19,20,22,23,24,25,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,44,45,46,47,48,49,50,53,54,55,56,58,59,60,62,65,66,68,69,70,71,72,73,74,75,77,78,79,80,81,82,83,84,85,88,89]
+    requireminip = [1,2,3,4,6,7,8,9,10,11,14,15,16,17,18,19,20,22,23,24,25,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,44,45,46,47,48,49,50,53,54,55,56,58,59,60,62,65,66,68,69,70,71,72,73,74,75,77,78,79,80,81,82,83,84,85,88,89,90,91]
     if lifeIG:
         requireminip.append(0)
         requireminip.append(26)
     requireminip = tuple(requireminip)
     
     #The tuple that holds the elements that are required to have a mini grid map
-    requireminig = (1,2,3,4,6,7,8,9,10,11,12,13,14,15,16,17,18,19,22,23,24,25,27,28,29,30,32,34,36,39,40,41,42,43,44,45,46,47,48,49,51,52,53,54,55,56,57,58,60,62,63,64,65,66,68,70,71,72,73,74,75,77,78,79,80,81,82,83,84,85)
+    requireminig = (1,2,3,4,6,7,8,9,10,11,12,13,14,15,16,17,18,19,22,23,24,25,27,28,29,30,32,34,36,39,40,41,42,43,44,45,46,47,48,49,51,52,53,54,55,56,57,58,60,62,63,64,65,66,68,70,71,72,73,74,75,77,78,79,80,81,82,83,84,85,90,91)
     
     
     waters = (3,15,47,71,75,85)
@@ -120,9 +122,27 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
     
     plantSustainers = (8,28,31,62)
     
+    clouds = (16,51,52,53,64,83,90,91)
+
+    molten = (9,20,55,60,95,96)
+
+    onlyHot = (30,50,53,64,65,66,67,97)
+
+    hot = onlyHot + molten
+
+    onlyWarm = (3,15,18,26,32,43,46,47,48,57,71,80,81,82,84,94)
+
+    warm = hot + onlyWarm
+
+    onlyCold = (21,22,23,37,74,88)
+
+    freezing = (21,25,35)
+
+    cold = onlyCold + freezing
+
     #Self explanitory
     supersun: bool = physics.checkEverywhere(plain,[76,0])
-    sun: bool = (physics.checkEverywhere(plain,[20,0]) or supersun)
+    sun: bool = (supersun or physics.checkEverywhere(plain,[20,0]))
     moon: bool = physics.checkEverywhere(plain,[21,0])
     jam: bool = physics.checkAbsolutelyEverywhere(plain,50)
     grid = deepcopy(plain)
@@ -632,7 +652,19 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                                 else:
                                     grid[a-1][bb] = [e,t]
                     else:
-                        continue
+                        #This means there's a low chance for it to transform, but the chances will increase for every other cloud in the area
+                        o = physics.neighborCount(miniplain,clouds)
+                        if random.randint(1,(28-o*2)) == 1:
+                            grid[a][bb] = [e,t]
+                        else:
+                            if random.randint(1,10) == 1 and o > 5:
+                                t += 1
+                                if t > 5:
+                                    grid[a][bb] = [90,0]
+                                else:
+                                    grid[a][bb] = [16,t]
+                            else:
+                                grid[a][bb] = [16,t]
                 
                 #Brick
                 
@@ -2046,6 +2078,10 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                                     grid[a+1][bb] = [e,t]
                                 else:
                                     grid[a-1][bb] = [e,t]
+                    else:
+                        o = physics.neighborCount(miniplain,clouds)
+                        if random.randint(1,(28-o*2)) == 1:
+                            grid[a][bb] = [e,t]
                     
                 
                 #Acid (Acid rain ig lol)
@@ -2586,9 +2622,10 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                     elif random.randint(1,2000) == 1:
                         if physics.neighborCheck(miniplain,[18]):
                             e = 18
-                    elif (random.randint(1,20) == 1 and t != 0) or (sun and (random.randint(1,10101) == 1 and physics.neighborCheck(miniplain,waters))):
+                    elif (sun and (random.randint(1,10101) == 1 and physics.neighborCheck(miniplain,waters))):
                         e = 75
-                    
+                    elif random.randint(1,20) == 1 and t != 0:
+                        e = 85
                     
                     
                     c = physics.sandCheck(minigrid,localPos,True)
@@ -2806,6 +2843,58 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
 
                     grid[a][bb] = [e,t] 
 
+                #Thunder Clouds
+                
+                elif e == 90:
+                    if random.randint(1,1200) == 1:
+                        if moon:
+                            e = 22 
+                        else:
+                            e = 3
+                    elif random.randint(1,2000) == 1:
+                        fl = 3
+                        if moon:
+                            fl = 22
+                        elif coinflip():
+                            fl = 43
+                        if coinflip() and a + 1 != len(plain) and grid[a+1][bb][0] == 0:
+                            grid[a+1][bb] = [fl,0]
+                        if coinflip() and a - 1 != -1 and grid[a-1][bb][0] == 0:
+                            grid[a-1][bb] = [fl,0]
+                        if coinflip() and bb + 1 != len(plain[0]) and grid[a][bb+1][0] == 0:
+                            grid[a][bb+1] = [fl,0]
+                        if coinflip() and bb - 1 != -1 and grid[a][bb-1][0] == 0:
+                            grid[a][bb-1] = [fl,0]
+                    
+                    
+                    if random.randint(1,15) == 1:
+                        if random.randint(1,4) != 1:
+                            d = physics.lrWanderCheck(minigrid,localPos, True)
+                            if not d[0]:
+                                grid[a][bb] = [e,t]
+                            else:
+                                grid[a][bb] = [d[2],0]
+                                
+                                if d[1]:
+                                    grid[a][bb+1] = [e,t]
+                                else:
+                                    grid[a][bb-1] = [e,t]
+                        else:
+                            d = physics.udWanderCheck(minigrid,localPos)
+                            if not d[0]:
+                                grid[a][bb] = [e,t]
+                            else:
+                                grid[a][bb] = [d[2],0]
+
+                                if d[1]:
+                                    grid[a+1][bb] = [e,t]
+                                else:
+                                    grid[a-1][bb] = [e,t]
+                    else:
+                        #This means there's a low chance for it to transform, but the chances will increase for every other cloud in the area
+                        o = physics.neighborCount(miniplain,clouds)
+                        if random.randint(1,(28-o*2)) == 1:
+                            grid[a][bb] = [e,t]
 
 
 

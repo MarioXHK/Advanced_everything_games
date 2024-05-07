@@ -73,7 +73,7 @@ def sandCheck(grid: list[list[list[int]]],pos: list[int] | tuple[int,int], float
         if gas:
             b = [0,1,3,4,6,8,9,11,15,27,28,29,30,32,34,45,46,47,56,65,71,75,77,79,80,81,82,83,84]
         else:
-            b = [0,3,15,27,29,30,34,47,56,65,71,75,79,81]
+            b = [0,3,15,27,29,30,34,47,56,65,71,75,79,81,90]
         if grid[pos[0]][pos[1]][1] in b:
             b.remove(grid[pos[0]][pos[1]][1])
         b = tuple(b)
@@ -165,7 +165,7 @@ def stoneCheck(grid: list[list[list[int]]],pos: list[int] | tuple[int,int], floa
         if gas:
             b = [0,1,3,4,6,8,9,11,15,27,28,29,30,32,34,45,46,47,56,65,71,75,77,79,80,81]
         else:
-            b = [0,3,15,27,29,34,47,56,65,71,75,79,81]
+            b = [0,3,15,27,29,34,47,56,65,71,75,79,81,90]
         if grid[pos[0]][pos[1]][1] in b:
             b.remove(grid[pos[0]][pos[1]][1])
         b = tuple(b)

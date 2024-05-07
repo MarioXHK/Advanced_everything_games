@@ -22,7 +22,7 @@ elements = (
     elementIdentity(5,"Wall",Color(100,100,100), "Stays in place no[n]matter what forever."),
     elementIdentity(6,"Dirt",Color(200,100,50), "Floats on top of[n]things and turns into[n]mud when wet."),
     elementIdentity(7,"Mud",Color(150,50,10), "Good for plants."),
-    elementIdentity(8,"Plant",Color(0,50,0), "Will grow into dirt[n]and mud when possible."),
+    elementIdentity(8,"Plant",Color(0,128,0), "Will grow into dirt[n]and mud when possible."),
     elementIdentity(9,"Lava",Color(255,25,0), "Not made of floor.[n]Is very hot and will[n]burn things."),
     elementIdentity(10,"Wet Sand",Color(200,200,50), "Sand, but it won't[n]pile onto itself."),
     elementIdentity(11,"Gravel",Color(200,200,200), "Eroded stone that will[n]now pile onto itself."), #Fun fact: This was all inspired by someone in my class suggesting that they could make stone erode. If it weren't for that suggestion, I'm not sure I'd be writing this comment here! (Since I probably would've stopped making updates after the assignment was completed since this was an assignment)
@@ -32,7 +32,7 @@ elements = (
     elementIdentity(15,"Sugar Water",Color(0,128,255), "Sugar mixed with water."),
     elementIdentity(16,"Cloud",Color(230,230,230), "Floats about for awhile[n]before turning into water."),
     elementIdentity(17,"Brick",Color(150,90,60), "structurally sound and[n]can build houses."),
-    elementIdentity(18,"Algae",Color(0,128,0),"Will slowly spread[n]and take over the[n]world."),
+    elementIdentity(18,"Moss/Algae",Color(0,128,0),"Will slowly spread[n]and take over the[n]world."),
     elementIdentity(19,"Glass Shards",Color(randint(0,50),50+randint(0,200),100+randint(0,150)),"Acts as sand since[n]it's just clearer sand[n]now."),
     elementIdentity(20,"The Sun",Color(255,255,128),"Gives the sandbox life[n]by providing plants[n]with photosynthesis and[n]a water cycle."),
     elementIdentity(21,"The Moon",Color(10,60,180), "Makes the sandbox go[n]tame by turning down[n]the temperature."),
@@ -103,7 +103,15 @@ elements = (
     elementIdentity(86,"Filler",Color(100,0,240),"Will fill any space[n]it's placed in."),
     elementIdentity(87,"Snake",Color(0,128,0),"I love Voxelbox"),
     elementIdentity(88,"Tesla Coil",Color(200,200,0),"Makes Electricity (the[n]element) from current"),
-    elementIdentity(89,"Battery",Color(50,50,50),"When the morning's gone,[n]And you can't go on![n]Delivers pulses of[n]electricity.")
+    elementIdentity(89,"Battery",Color(50,50,50),"When the morning's gone,[n]And you can't go on![n]Delivers pulses of[n]electricity."),
+    elementIdentity(90,"Thunder Cloud",Color(128,128,128),"Floats in a less calm[n]way than it's... how do[n]I say this in the least[n]racist way possible?[n]Probably not like that.[n]It shoots lightning at[n]random points and can[n]give more water than[n]their non-thunder versions."),
+    elementIdentity(91,"Pollen",Color(255,230,128),"Can make things go bloom."),
+    elementIdentity(92,"Flower",Color(0,127,0),"The actual flower[n]part of the flower.[n]Will require time or[n]pollen for it to bloom."),
+    elementIdentity(93,"Feather",Color(235,235,235),"will slowly float down[n]in the air unless[n]something's in the way."),
+    elementIdentity(94,"Chicken",Color(230,230,230),"Welcome to the alive[n]club, chicken! A simple[n]thing that moves around[n]on the ground and[n]floats down softly."),
+    elementIdentity(95,"Molten Glass",Color(255,255,127),"At last, molten glass[n]is much better at[n]being glass. If only it[n]wasn't so hot."),
+    elementIdentity(96,"Molten Sugar",Color(255,255,128),"The heart of[n]cookie clicker"),
+    elementIdentity(97,"Molten Cheese",Color(230,230,0),"A wonderful thing.")
 )
 
 #These are just gui colors, they don't 100% predict what the element will look like
