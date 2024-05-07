@@ -142,6 +142,8 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
 
     cold = onlyCold + freezing
 
+    acids = (64,65)
+
     #Self explanitory
     supersun: bool = physics.checkEverywhere(plain,[76,0])
     sun: bool = (supersun or physics.checkEverywhere(plain,[20,0]))
@@ -2778,7 +2780,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                         elif physics.neighborCount(miniplain,[71]) > 3:
                             e = 71
                             t = 0
-                    if physics.neighborCheck(miniplain,(9,55)):
+                    if physics.neighborCheck(miniplain,molten):
                         e = 13
                         t = 15
                     elif random.randint(1,10000) == 1:
@@ -2875,7 +2877,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                     if t <= 0 or jam:
                         t = 10
                     
-                    if coinflip() and physics.neighborCheck(miniplain,(64,65)):
+                    if coinflip() and physics.neighborCheck(miniplain,acids):
                         e = 65
                         t = 10-t
 
