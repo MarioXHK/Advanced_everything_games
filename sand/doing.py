@@ -225,7 +225,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                 #Sand
                 
                 elif e == 1:
-                    if physics.neighborCheck(miniplain,(9,30,55,67)):
+                    if physics.neighborCheck(miniplain,hot):
                         e = 14
                         t = 2
                     elif random.randint(1,50) == 1:
@@ -257,6 +257,8 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                     if random.randint(1,1000) == 1:
                         if physics.neighborCheck(miniplain,waters):
                             e = 11
+                        elif random.randint(1,100) == 1 and physics.neighborCheck(miniplain,molten):
+                            e = 9
                     elif coinflip():
                         if physics.neighborCheck(miniplain,(61,65,66)):
                             e = 11
@@ -273,7 +275,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                 
                 elif e == 3:
                     if coinflip():
-                        if (physics.neighborCheck(miniplain,(30,67)) or (sun and random.randint(1,20000) == 1)):
+                        if (physics.neighborCheck(miniplain,hot) or (sun and random.randint(1,20000) == 1)):
                             e = 13
                             t = 10
                         elif physics.neighborCount(miniplain,(22,23,27)) > 3:
@@ -315,7 +317,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                 #Sugar
                 
                 elif e == 4:
-                    if physics.neighborCheck(miniplain,(9,20,21)):
+                    if physics.neighborCheck(miniplain,onlyHot):
                         e = 24
                     elif random.randint(1,5) == 1:
                         if physics.neighborCheck(miniplain,(30,67)):
@@ -381,7 +383,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                     if random.randint(1,400) == 1:
                         if sun and physics.neighborCheck(miniplain,[8]) and physics.neighborCount(miniplain,[8]) < 4:
                             e = 8
-                    if physics.neighborCheck(miniplain,(9,30,55,67)):
+                    if physics.neighborCheck(miniplain,hot):
                         e = 6
                     elif random.randint(1,100) == 1:
                         if physics.neighborCheck(miniplain,(46,47,48)):
@@ -408,7 +410,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                 
                 elif e == 8:
                     
-                    if (random.randint(1,30) == 1 and physics.neighborCheck(miniplain,(23,46,47,48,61))) or (supersun and random.randint(1,10000) == 1) or physics.neighborCheck(miniplain,(9,30,55,67)):
+                    if (random.randint(1,30) == 1 and physics.neighborCheck(miniplain,(23,46,47,48,61))) or (supersun and random.randint(1,10000) == 1) or physics.neighborCheck(miniplain,hot):
                         e = 72
                         t = 0
                     elif coinflip() and physics.neighborCheck(miniplain,[53]):
@@ -424,14 +426,18 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                 #Lava
                 
                 elif e == 9:
+                    m = list(molten)
+                    m.remove(9)
+                    if random.randint(1,7) == 1 and physics.neighborCheck(miniplain,m):
+                        t += 1
                     if physics.neighborCheck(miniplain,(3,7,10,13,15,18,22,23,25,27,47,71)):
                         t -= 2
-                        if physics.neighborCheck(miniplain,(3,15,22,23,25,27,47,71)):
+                        if physics.neighborCheck(miniplain,onlyCold):
                             t -= 4
                     
-                    if physics.neighborCheck(miniplain,[20]):
+                    if t > 10 or physics.neighborCheck(miniplain,[20]):
                         t = 10
-                    elif physics.neighborCheck(miniplain,[21]):
+                    elif physics.neighborCheck(miniplain,freezing):
                         t = -10
                     
                     if random.randint(1,10) == 1:
@@ -464,9 +470,12 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                 #Wet Sand
                 
                 elif e == 10:
-                    if physics.neighborCheck(miniplain,(9,30,55,67)):
+                    if physics.neighborCheck(miniplain,hot):
                         e = 14
                         t = 1
+                    elif random.randint(1,14) == 1 and physics.neighborCheck(miniplain,onlyWarm):
+                        e = 3
+                        t = 0
                     elif random.randint(1,100) == 1:
                         if physics.neighborCheck(miniplain,(46,47,48)):
                             e = 1

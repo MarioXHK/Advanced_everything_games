@@ -49,7 +49,7 @@ if usesavefolder:
     print("Using the sandsaves folder as a save directory")
     try:
         os.mkdir('sandsaves')
-        print("sandsave folder made automatically!")
+        print("sandsave folder made automatically.")
     except:
         print("sandsave folder already in place (yippee!)")
 
@@ -1185,6 +1185,8 @@ try:
                                     else:
                                         if elementary:
                                             element = random.choice(elements)
+                                        if element == 5:
+                                            t = 100100100
                                         if element in (13, 30, 56,83):
                                             t = 5
                                         elif element == 19:

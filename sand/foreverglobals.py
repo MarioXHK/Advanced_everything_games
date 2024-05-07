@@ -111,7 +111,10 @@ elements = (
     elementIdentity(94,"Chicken",Color(230,230,230),"Welcome to the alive[n]club, chicken! A simple[n]thing that moves around[n]on the ground and[n]floats down softly."),
     elementIdentity(95,"Molten Glass",Color(255,255,127),"At last, molten glass[n]is much better at[n]being glass. If only it[n]wasn't so hot."),
     elementIdentity(96,"Molten Sugar",Color(255,255,128),"The heart of[n]cookie clicker"),
-    elementIdentity(97,"Molten Cheese",Color(230,230,0),"A wonderful thing.")
+    elementIdentity(97,"Molten Cheese",Color(230,230,0),"A wonderful thing."),
+    elementIdentity(98,"Primordeal Ooze",Color(200,0,0),"All life in the[n]sandbox canotically came[n]from this stuff."),
+    elementIdentity(99,"Firework",None,"Celebrate this moment!",(Color(255,0,0),Color(255,255,0),Color(0,255,0),Color(0,255,255),Color(0,0,255),Color(255,0,255))),
+    elementIdentity(100,"Player",Color(0,230,230),"It's you.")
 )
 
 #These are just gui colors, they don't 100% predict what the element will look like

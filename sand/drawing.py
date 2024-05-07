@@ -25,7 +25,23 @@ def drawStuff(screen,plain: list[list[list[int]]],lyx: int,lyy: int, switch: boo
             
             #Wall
             elif el == 5:
-                pygame.draw.rect(screen,(100,100,100),(j*lyx,i*lyy,lyx,lyy))
+                coolr = et//1000000
+                cool = et%1000000
+                coolg = cool//1000
+                coolb = cool%1000
+                if coolr > 255:
+                    coolr = 255
+                elif coolr < 0:
+                    coolr = 0
+                if coolg > 255:
+                    coolg = 255
+                elif coolg < 0:
+                    coolg = 0
+                if coolb > 255:
+                    coolb = 255
+                elif coolb < 0:
+                    coolb = 0
+                pygame.draw.rect(screen,(coolr,coolg,coolb),(j*lyx,i*lyy,lyx,lyy))
             
             #Dirt
             elif el == 6:
