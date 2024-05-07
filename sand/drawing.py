@@ -75,7 +75,11 @@ def drawStuff(screen,plain: list[list[list[int]]],lyx: int,lyy: int, switch: boo
             
             #Obsidian
             elif el == 12:
-                pygame.draw.rect(screen,(30,20,40),(j*lyx,i*lyy,lyx,lyy))
+                if et > 225:
+                    et = 225
+                elif et < -30:
+                    et = -30
+                pygame.draw.rect(screen,(30+et,20,40),(j*lyx,i*lyy,lyx,lyy))
             
             #Steam
             elif el == 13:
