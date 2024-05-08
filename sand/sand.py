@@ -1308,29 +1308,29 @@ try:
                     wheelv = 0
             buttonYOffset += wheel * wheelv
             
-            
-            for yan in range(len(elementButtons)//eColumns):
-                for yin in range(eColumns):
-                    elementButtons[yan*eColumns+yin].box.x = yin*50+5
-                    elementButtons[yan*eColumns+yin].box.y = yan*50+5+buttonYOffset
-                    
-                    if elementButtons[yan*eColumns+yin].id in unlockedElements and elementButtons[yan*eColumns+yin].tick(fire,mousePos):
-                        element = elementButtons[yan*eColumns+yin].id
-                        if len(foreverglobals.elements[element].name) < 10:
-                            elementNameText = font[0].render(foreverglobals.elements[element].name,1,Color(255,255,255))
-                        elif len(foreverglobals.elements[element].name) < 12:
-                            elementNameText = font[4].render(foreverglobals.elements[element].name,1,Color(255,255,255))
-                        else:
-                            elementNameText = font[5].render(foreverglobals.elements[element].name,1,Color(255,255,255))
-                        if foreverglobals.elements[element].desc != None:
-                            elt = foreverglobals.elements[element].desc.split("[n]")
-                            elementText = []
-                            for ttt in elt:
-                                elementText.append(font[6].render(ttt,1,Color(255,255,255)))
-                        else:
-                            elementText = [
-                                font[6].render("No description.",1,Color(255,255,255))
-                                           ]
+            if tutorial != 5:
+                for yan in range(len(elementButtons)//eColumns):
+                    for yin in range(eColumns):
+                        elementButtons[yan*eColumns+yin].box.x = yin*50+5
+                        elementButtons[yan*eColumns+yin].box.y = yan*50+5+buttonYOffset
+                        
+                        if elementButtons[yan*eColumns+yin].id in unlockedElements and elementButtons[yan*eColumns+yin].tick(fire,mousePos):
+                            element = elementButtons[yan*eColumns+yin].id
+                            if len(foreverglobals.elements[element].name) < 10:
+                                elementNameText = font[0].render(foreverglobals.elements[element].name,1,Color(255,255,255))
+                            elif len(foreverglobals.elements[element].name) < 12:
+                                elementNameText = font[4].render(foreverglobals.elements[element].name,1,Color(255,255,255))
+                            else:
+                                elementNameText = font[5].render(foreverglobals.elements[element].name,1,Color(255,255,255))
+                            if foreverglobals.elements[element].desc != None:
+                                elt = foreverglobals.elements[element].desc.split("[n]")
+                                elementText = []
+                                for ttt in elt:
+                                    elementText.append(font[6].render(ttt,1,Color(255,255,255)))
+                            else:
+                                elementText = [
+                                    font[6].render("No description.",1,Color(255,255,255))
+                                            ]
             
             
             
