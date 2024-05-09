@@ -477,11 +477,11 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                     if physics.neighborCheck(miniplain,hot):
                         e = 14
                         t = 1
-                    elif random.randint(1,14) == 1 and physics.neighborCheck(miniplain,onlyWarm):
-                        e = 3
+                    elif random.randint(1,14) == 1 and physics.neighborCheck(miniplain,freezing):
+                        e = 101
                         t = 0
                     elif random.randint(1,100) == 1:
-                        if physics.neighborCheck(miniplain,(46,47,48)):
+                        if physics.neighborCheck(miniplain,salts):
                             e = 1
                     elif random.randint(1,40) == 1:
                         if sun and physics.neighborCount(miniplain,(3,10,7,15,27)) < 3:
@@ -491,15 +491,20 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                         if n[0]:
                             e = 14
                             t = n[1]-1
-                    c = physics.stoneCheck(minigrid,localPos)
-                    if not c[0]:
-                        grid[a][bb] = [c[1],0]
-                        grid[a+1][bb] = [e,t]
-                    else:
-                        if e == 10:
+                    if random.randint(1,20) == 1:
+                        c = physics.sandCheck(minigrid,localPos)
+                        if c[0] == 0:
                             grid[a][bb] = [e,t]
                         else:
-                            grid[a][bb] = [e,0]
+                            grid[a][bb] = [c[1],0]
+                            grid[a+1][bb+(c[0]-2)] = [e,t]
+                    else:
+                        c = physics.stoneCheck(minigrid,localPos)
+                        if not c[0]:
+                            grid[a][bb] = [c[1],0]
+                            grid[a+1][bb] = [e,t]
+                        else:
+                            grid[a][bb] = [e,t]
                 
                 #Gravel
                 
@@ -2937,6 +2942,29 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                             grid[a][bb] = [e,t]
 
 
+
+
+
+
+
+                elif e == 101:
+                    if (random.randint(1,100) == 1 and physics.neighborCheck(miniplain,onlyWarm)) or (random.randint(1,100) == 1 and (physics.neighborCheck(miniplain,onlyHot) or physics.neighborCheck(miniplain,salts))) or physics.neighborCheck(miniplain,molten):
+                        e = 10
+                        t = 1
+                    else:
+                        n = physics.neighborTempCheck(miniplain,[14])
+                        if n[0]:
+                            e = 14
+                            t = n[1]-1
+                    c = physics.stoneCheck(minigrid,localPos)
+                    if not c[0]:
+                        grid[a][bb] = [c[1],0]
+                        grid[a+1][bb] = [e,t]
+                    else:
+                        if e == 10:
+                            grid[a][bb] = [e,t]
+                        else:
+                            grid[a][bb] = [e,0]
 
 
             except IndexError:

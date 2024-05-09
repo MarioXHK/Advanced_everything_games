@@ -1,11 +1,13 @@
+aSeriousError = False
 #Can someone please tell me how to give more resources to this app so I can throttle it and have a smooth 60 fps while my computer combusts into flames
 #Some optimization help would be nice too
 showfps = False
 #the setting that controls if you'd like to do life or not (Experimental sorta)
 
 oob = 0
-
+import traceback
 import os
+
 import pygame
 from pygame import Vector2
 from pygame.rect import Rect
@@ -146,11 +148,30 @@ yesbutton = buttons.button(Color(0,255,0),Rect(0,0,100,70),None,"Yes")
 nobutton = buttons.button(Color(255,0,0),Rect(0,0,100,70),None,"No")
 wannaBreak = False
 
-createbutton = buttons.button(Color(255,255,0),Rect(50,250,200,50),Color(0,0,0),"Create",Color(0,0,0),0)
+playButton = buttons.button(Color(255,255,255),Rect(200,350,200,50),Color(255,255,0),"Play",Color(0,0,0),0)
 
-continuebutton = buttons.button(Color(255,255,128),Rect(200,400,200,50),Color(0,0,0),"Continue",Color(0,0,0),4)
 
-loadbutton = buttons.button(Color(255,255,0),Rect(350,250,200,50),Color(0,0,0),"Load",Color(0,0,0),0)
+createButton = buttons.button(Color(255,255,0),Rect(50,250,200,50),Color(0,0,0),"Create",Color(0,0,0),0)
+
+
+loadButton = buttons.button(Color(255,255,0),Rect(350,250,200,50),Color(0,0,0),"Load",Color(0,0,0),0)
+
+
+sandboxButton = buttons.button(Color(255,255,0),Rect(50,450,200,50),Color(0,0,0),"Sandbox",Color(0,0,0),0)
+
+
+terrariumButton = buttons.button(Color(100,60,20),Rect(350,450,200,50),Color(0,0,0),"Terrarium",Color(0,0,0),4)
+
+
+continueButton = buttons.button(Color(255,255,128),Rect(200,350,200,50),Color(0,0,0),"Continue",Color(0,0,0),4)
+
+
+titleState = 0
+#Title state has a few values for what it is:
+#0: Very start of the game, only the play button The options button can be selected in every other state
+#1: Gamemode Selection, selects weather to be a sandbox, or terrarium. There's also the continue button that puts you back where you last were in that session
+#2: Sandbox Gamemode
+#3: Terrarium Gamemode
 
 titleLand = deepcopy(foreverglobals.titleScreenSandbox)
 appendKey = ""
@@ -170,7 +191,7 @@ for why in range(len(foreverglobals.elements)//eColumns):
 
 buttonYOffset = 0
 wheelv = 0
-
+aboutToDie = False
 # ===============================================================================================
 # ====================================== THE GAME LOOP ==========================================
 # ===============================================================================================
@@ -180,7 +201,6 @@ try:
     while playingMySandbox:
         yesbutton.box = Rect(screenx/2-(10+screenx/5),screeny*0.6,screenx/5,screeny/7)
         nobutton.box = Rect(screenx/2+10,screeny*0.6,screenx/5,screeny/7)
-        
         #Title screen!
 
         if gameState == "title":
@@ -189,11 +209,15 @@ try:
                 screen = pygame.display.set_mode((600,600))
                 
                 if sandboxed:
-                    createbutton.text = font[4].render("New Box", 1, Color(0,0,0))
+                    createButton.text = font[4].render("New Box", 1, Color(0,0,0))
             
-            for event in pygame.event.get(): #It's just your mouse and stuff!
-                if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
-                    playingMySandbox = False
+            for event in pygame.event.get(): #Event Queue for the main sandbox (or whatever it's called)
+                if (event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE)) and not wannaBreak:
+                    texts = [
+                        font[1].render("Are you sure you want to quit?",1,Color(255,255,255))
+                    ]
+                    aboutToDie = True
+                    wannaBreak = True
                 if event.type == pygame.MOUSEBUTTONDOWN and tap:
                     if event.button in (1,3):
                         fire = True
@@ -207,23 +231,58 @@ try:
                     mousePos = Vector2(event.pos)
             clock.tick(fps)
 
+            if wannaBreak:
+                if yesbutton.tick(fire,mousePos):
+                    playingMySandbox = False
+                elif nobutton.tick(fire,mousePos):
+                    wannaBreak = False
+                    aboutToDie = False
+
+
+
             #Omg another sandbox in the sandbox???
-            titleLand = doing.doLessStuff(titleLand)
+            if not wannaBreak:
+                titleLand = doing.doLessStuff(titleLand)
+            if not aboutToDie:
+                if titleState == 1:
+                    if sandboxButton.tick(fire,mousePos):
+                        titleState = 2
+                        for layer in range(45,50):
+                            for pixl in range(30):
+                                if titleLand[layer][pixl] == 4:
+                                    titleLand[layer][pixl] = 1
+                    elif terrariumButton.tick(fire,mousePos):
+                        titleState = 3
+                        for layer in range(45,50):
+                            for pixl in range(30,60):
+                                if titleLand[layer][pixl] == 4:
+                                    titleLand[layer][pixl] = 1
+                if titleState == 2:
 
-            if createbutton.tick(fire,mousePos):
-                gameState = "setup"
-                setup = True
-                buttonPressed = True
-            elif sandboxed and continuebutton.tick(fire,mousePos):
-                gameState = "sandbox"
-                buttonPressed = True
-                landyx = (screenx/landx)
-                landyy = (screeny/landy)
+                    if createButton.tick(fire,mousePos):
+                        gameState = "setup"
+                        setup = True
+                        buttonPressed = True
+                    elif sandboxed and continueButton.tick(fire,mousePos):
+                        gameState = "sandbox"
+                        buttonPressed = True
+                        landyx = (screenx/landx)
+                        landyy = (screeny/landy)
+                        screen = pygame.display.set_mode((screenx,screeny))
 
-                screen = pygame.display.set_mode((screenx,screeny))
-            elif loadbutton.tick(fire,mousePos):
-                gameState = "title file loading"
-                buttonPressed = True
+                    elif loadButton.tick(fire,mousePos):
+                        gameState = "title file loading"
+                        buttonPressed = True
+                else:
+                    if playButton.tick(fire,mousePos):
+                        titleState = 1
+                        if not sandboxed:
+                            for layer in range(35,40):
+                                for pixl in range(60):
+                                    if titleLand[layer][pixl] == 4:
+                                        titleLand[layer][pixl] = 1
+
+
 
             if fliposwitch:
                 fliposwitch = False
@@ -246,15 +305,34 @@ try:
 
             #Rendering these buttons and screen!
             
-            
-            screen.fill((255,204,44))
+            if titleState == 2:
+                screen.fill((0,0,0))
+            elif titleState == 3:
+                screen.fill((100,200,255))
+            else:
+                screen.fill((255,204,44))
 
-            drawLessStuff(screen,titleLand,10,10)
+            drawLessStuff(screen,titleLand,10,10,titleState)
             
-            createbutton.render(screen)
-            loadbutton.render(screen)
-            if sandboxed:
-                continuebutton.render(screen)
+            if titleState == 1:
+                sandboxButton.render(screen)
+                terrariumButton.render(screen)
+            elif titleState in (2,3):
+                createButton.render(screen)
+                loadButton.render(screen)
+            else:
+                playButton.render(screen)
+            if sandboxed and titleState == 1:
+                continueButton.render(screen)
+            
+            
+            if aboutToDie:
+                for l in range(len(texts)):
+                    screen.blit(texts[l],Vector2(20, 10+40*l))
+                yesbutton.render(screen)
+                nobutton.render(screen)
+            
+            
             #pygame.display.flip()
 
         
@@ -269,6 +347,7 @@ try:
             for event in pygame.event.get(): #Event Queue for the setup,
                 if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                     gameState = "title"
+                    titleState = 0
                     changeScreen = True
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_LSHIFT:
@@ -857,7 +936,7 @@ try:
                     for event in pygame.event.get(): #Event Queue for the main sandbox (or whatever it's called)
                         if (event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE)) and not wannaBreak:
                             texts = (
-                                font[1].render("Are you sure you want to quit?",1,Color(255,255,255)),
+                                font[1].render("Are you sure you want to quit to title?",1,Color(255,255,255)),
                                 font[3].render("(Be sure to save your sandbox if you haven't!)",1,Color(255,255,255)),
                             )
                             alive = False
@@ -1125,6 +1204,7 @@ try:
             if wannaBreak:
                 if yesbutton.tick(fire,mousePos):
                     gameState = "title"
+                    titleState = 0
                     wannaBreak = False
                 elif nobutton.tick(fire,mousePos):
                     wannaBreak = False
@@ -1280,7 +1360,7 @@ try:
                         font[1].render("There are a bunch of elements that",1,Color(255,255,255)),
                         font[1].render("Will already be unlocked.",1,Color(255,255,255))
                    )
-                   if continuebutton.tick(fire,mousePos):
+                   if continueButton.tick(fire,mousePos):
                        tutorial = 6
             elif tutorial == 6:
                    texts = (
@@ -1374,7 +1454,7 @@ try:
             
             
             if tutorial == 5:
-                continuebutton.render(screen)
+                continueButton.render(screen)
             if tutorialprogress == 0 and tutorial in (5,6,7):
                 for l in range(len(texts)):
                     screen.blit(texts[l],Vector2(20, 10+40*l))
@@ -1527,6 +1607,7 @@ try:
                     screen = pygame.display.set_mode((screenx,screeny))
                     if "title" in gameState and fail:
                         gameState = "title"
+                        titleState = 0
                     else:
                         gameState = "sandbox"
                 filename = ""
@@ -1584,14 +1665,17 @@ try:
         print("Please remain inside these boundaries.")
     else:
         print("Are you trying to enter the backrooms or something???")
-except Exception as x:
+except Exception as err:
+    aSeriousError = True
     print("A fatal error occured durring the sandbox!")
     print(random.choice(foreverglobals.crashSplash))
     if rememberme:
         print("You caused it by hitting the F12 key, you silly billy")
     else:
         print("Here's what happened, share this for a bug fix maybe.")
-        print(x)
+        print(err)
+        traceback.print_tb(err.__traceback__)
+if aSeriousError:
     print("Saving your last instance to a backup file")
     t = time.localtime()
     h = []
@@ -1616,6 +1700,8 @@ except Exception as x:
         thefile.write(writing)
         thefile.close()
         print("Save successful in file \"backup"+h+".txt\"")
-    except:
+    except NameError:
+        print("Oh wait, I guess you haven't even made a sandbox yet.\nThere's nothing here to back-up.")
+    except Exception:
         print("Oh great, another error! Backup failed I guess")
     

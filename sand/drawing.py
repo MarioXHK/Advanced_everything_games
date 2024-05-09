@@ -548,14 +548,17 @@ def drawStuff(screen,plain: list[list[list[int]]],lyx: int,lyy: int, switch: boo
                 if el != 0:
                     pygame.draw.rect(screen,(255,0,255),(j*lyx,i*lyy,lyx,lyy))
 
-def drawLessStuff(screen,plain: list[list[int]],lyx:int,lyy:int):
+def drawLessStuff(screen,plain: list[list[int]],lyx:int,lyy:int, ts: int = 0):
     for i in range(len(plain)):
         for j in range(len(plain[0])):
             rel = plain[i][j]
 
             #Basic sand
             if rel == 1:
-                pygame.draw.rect(screen,(255,255,255),(j*lyx,i*lyy,lyx,lyy))
+                if ts in (2,3):
+                    pygame.draw.rect(screen,(255,255,0),(j*lyx,i*lyy,lyx,lyy))
+                else:
+                    pygame.draw.rect(screen,(255,255,255),(j*lyx,i*lyy,lyx,lyy))
             
             #Basic stone
             elif rel == 2:
@@ -567,7 +570,12 @@ def drawLessStuff(screen,plain: list[list[int]],lyx:int,lyy:int):
             
             #Basic wall
             elif rel == 4:
-                pygame.draw.rect(screen,(0,0,0),(j*lyx,i*lyy,lyx,lyy))
+                if ts == 2:
+                    pygame.draw.rect(screen,(255,255,255),(j*lyx,i*lyy,lyx,lyy))
+                elif ts == 3:
+                    pygame.draw.rect(screen,(random.randint(20,50),random.randint(20,50),random.randint(20,50)),(j*lyx,i*lyy,lyx,lyy))
+                else:
+                    pygame.draw.rect(screen,(0,0,0),(j*lyx,i*lyy,lyx,lyy))
             else:
                 if rel != 0:
                     #Basic Error
