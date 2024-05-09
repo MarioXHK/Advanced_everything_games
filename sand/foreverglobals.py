@@ -211,7 +211,8 @@ crashSplash = (
         "Dociousaliexpiesticfragicalirupes",
         "Dociousaliexpilisticfragicalirupes",
         "There you go, yelling out the U word!",
-        "I knew ya needed me!"
+        "I knew ya needed me!",
+        "Lmao bang!"
     )
 
 
