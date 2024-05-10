@@ -71,6 +71,7 @@ wheel = 0
 
 #Element Variables
 
+preEl = 1
 element = 1
 brushSize = 0
 
@@ -160,7 +161,7 @@ loadButton = buttons.button(Color(255,255,0),Rect(350,250,200,50),Color(0,0,0),"
 sandboxButton = buttons.button(Color(255,255,0),Rect(50,450,200,50),Color(0,0,0),"Sandbox",Color(0,0,0),0)
 
 
-terrariumButton = buttons.button(Color(100,60,20),Rect(350,450,200,50),Color(0,0,0),"Terrarium",Color(0,0,0),4)
+terrariumButton = buttons.button(Color(0,0,255),Rect(350,450,200,50),Color(0,0,0),"Terrarium",Color(255,255,255),4)
 
 
 continueButton = buttons.button(Color(255,255,128),Rect(200,350,200,50),Color(0,0,0),"Continue",Color(0,0,0),4)
@@ -213,11 +214,17 @@ try:
             
             for event in pygame.event.get(): #Event Queue for the main sandbox (or whatever it's called)
                 if (event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE)) and not wannaBreak:
-                    texts = [
-                        font[1].render("Are you sure you want to quit?",1,Color(255,255,255))
-                    ]
-                    aboutToDie = True
-                    wannaBreak = True
+                    if titleState == 0:
+                        playingMySandbox = False
+                    if titleState == 1:
+                        texts = [
+                            font[1].render("Are you sure you want to quit?",1,Color(255,255,255))
+                        ]
+                        aboutToDie = True
+                        wannaBreak = True
+                    else:
+                        titleState = 1
+                    
                 if event.type == pygame.MOUSEBUTTONDOWN and tap:
                     if event.button in (1,3):
                         fire = True
@@ -229,6 +236,15 @@ try:
                     ice = False
                 if event.type == pygame.MOUSEMOTION:
                     mousePos = Vector2(event.pos)
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_TAB:
+                        preEl += 1
+                        if preEl >= 5:
+                            preEl = 1
+                    elif event.key == pygame.K_LALT:
+                        titleLand = deepcopy(foreverglobals.titleScreenSandbox)
+            
+
             clock.tick(fps)
 
             if wannaBreak:
@@ -256,7 +272,7 @@ try:
                         for layer in range(45,50):
                             for pixl in range(30,60):
                                 if titleLand[layer][pixl] == 4:
-                                    titleLand[layer][pixl] = 1
+                                    titleLand[layer][pixl] = 3
                 if titleState == 2:
 
                     if createButton.tick(fire,mousePos):
@@ -272,6 +288,16 @@ try:
 
                     elif loadButton.tick(fire,mousePos):
                         gameState = "title file loading"
+                        buttonPressed = True
+                if titleState == 3:
+
+                    if createButton.tick(fire,mousePos):
+                        gameState = "terrarium"
+                        setup = True
+                        buttonPressed = True
+
+                    elif loadButton.tick(fire,mousePos):
+                        gameState = "title file loading terra"
                         buttonPressed = True
                 else:
                     if playButton.tick(fire,mousePos):
@@ -293,11 +319,11 @@ try:
                 x = int(mousePos.x/10)
                 y = int(mousePos.y/10)
                 try:
-                    if titleLand[int(y)][int(x)] != 4 and not buttonPressed:
+                    if (titleLand[int(y)][int(x)] != 4 or preEl == 4) and not buttonPressed:
                         if ice:
                             titleLand[int(y)][int(x)] = 0
                         else:
-                            titleLand[int(y)][int(x)] = 1
+                            titleLand[int(y)][int(x)] = preEl
                 except IndexError:
                     oob += 1
 
@@ -1612,7 +1638,7 @@ try:
                         gameState = "sandbox"
                 filename = ""
                 continue
-
+            
             if changeScreen:
                 screen = pygame.display.set_mode((800,450))
             screen.fill((255,255,255))
@@ -1621,6 +1647,10 @@ try:
                 screen.blit(texts[l],Vector2(10, 10+30*l))
             #pygame.display.flip()
         
+        elif gameState == "terrarium":
+            print("Coming soon(tm)")
+            gameState = "title"
+
         #This code runs no matter the gamestate
         
         if changeScreen:

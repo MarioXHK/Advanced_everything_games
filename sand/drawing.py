@@ -542,6 +542,13 @@ def drawStuff(screen,plain: list[list[list[int]]],lyx: int,lyy: int, switch: boo
 
 
 
+
+
+
+            #Frosted Sand
+            elif el == 101:
+                pygame.draw.rect(screen,(220,250,230),(j*lyx,i*lyy,lyx,lyy))
+
             #If all else fails...
             else:
                 #Look magenta, no other element looks entirely magenta

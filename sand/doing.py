@@ -4,6 +4,7 @@
 from physics import coinflip
 import physics
 import random
+import lessPhysics
 from copy import deepcopy
 
 def doLessStuff(plain: list[list[int]]) -> list[list[int]]:
@@ -40,16 +41,6 @@ def doLessStuff(plain: list[list[int]]) -> list[list[int]]:
             minigrid = []
             localPos = (1,1)
             
-            if plain[a][bb] != 0:
-                for i in range(0-int(au),1+int(ad)):
-                    p = []
-                    for j in range(0-int(al),1+int(ar)):
-                        if (i,j) == (0,0):
-                            p.append("self")
-                            localPos = (1-int(not au),1-int(not al))
-                            continue
-                        p.append(plain[a+i][bb+j])
-                    miniplain.append(tuple(p))
             
             if plain[a][bb] != 0:
                 for i in range(0-int(au),1+int(ad)):
@@ -75,12 +66,44 @@ def doLessStuff(plain: list[list[int]]) -> list[list[int]]:
             #Sand
             
             elif e == 1:
-                c = physics.sandCheckLess(minigrid,localPos)
+                c = lessPhysics.sandCheckLess(minigrid,localPos)
                 if c == 0:
                     continue
                 else:
                     grid[a][bb] = 0
                     grid[a+1][bb+(c-2)] = e
+
+            #Stone
+                
+            elif e == 2:
+                c = lessPhysics.stoneCheckLess(minigrid,localPos)
+                if c:
+                    continue
+                else:
+                    grid[a][bb] = 0
+                    grid[a+1][bb] = e
+            
+            #Water
+            
+            elif e == 3:
+                c = lessPhysics.sandCheckLess(minigrid,localPos)
+                if c == 0:
+                    d = lessPhysics.lrWanderCheckLess(minigrid,localPos)
+                    if not d[0]:
+                        continue
+                    else:
+                        grid[a][bb] = 0
+                        if d[1]:
+                            grid[a][bb+1] = e
+                        else:
+                            grid[a][bb-1] = e
+
+                else:
+                    grid[a][bb] = 0
+
+                    grid[a+1][bb+(c-2)] = e
+
+
 
             #wall
             elif e == 4:
