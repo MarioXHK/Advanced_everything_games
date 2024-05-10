@@ -549,6 +549,40 @@ def drawStuff(screen,plain: list[list[list[int]]],lyx: int,lyy: int, switch: boo
             elif el == 101:
                 pygame.draw.rect(screen,(220,250,230),(j*lyx,i*lyy,lyx,lyy))
 
+            #Static
+            elif el == 102:
+                coolr = et//1000000
+                cool = et%1000000
+                coolg = cool//1000
+                coolb = cool%1000
+                if coolr > 255:
+                    coolr = 255
+                elif coolr < 0:
+                    coolr = 0
+                if coolg > 255:
+                    coolg = 255
+                elif coolg < 0:
+                    coolg = 0
+                if coolb > 255:
+                    coolb = 255
+                elif coolb < 0:
+                    coolb = 0
+                pygame.draw.rect(screen,(coolr,coolg,coolb),(j*lyx,i*lyy,lyx,lyy))
+
+            #TV Static
+            elif el == 103:
+                et
+                if et > 255:
+                    et = 255
+                elif et < 0:
+                    et = 0
+                
+                pygame.draw.rect(screen,(et,et,et),(j*lyx,i*lyy,lyx,lyy))
+
+
+
+
+
             #If all else fails...
             else:
                 #Look magenta, no other element looks entirely magenta

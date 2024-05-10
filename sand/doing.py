@@ -128,7 +128,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
     requireminip = tuple(requireminip)
     
     #The tuple that holds the elements that are required to have a mini grid map
-    requireminig = (1,2,3,4,6,7,8,9,10,11,12,13,14,15,16,17,18,19,22,23,24,25,27,28,29,30,32,34,36,39,40,41,42,43,44,45,46,47,48,49,51,52,53,54,55,56,57,58,60,62,63,64,65,66,68,70,71,72,73,74,75,77,78,79,80,81,82,83,84,85,90,91)
+    requireminig = (1,2,3,4,6,7,8,9,10,11,12,13,14,15,16,17,18,19,22,23,24,25,27,28,29,30,32,34,36,39,40,41,42,43,44,45,46,47,48,49,51,52,53,54,55,56,57,58,60,62,63,64,65,66,68,70,71,72,73,74,75,77,78,79,80,81,82,83,84,85,90,91,102,103)
     
     
     waters = (3,15,47,71,75,85)
@@ -2968,7 +2968,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
 
 
 
-
+                #Frosted Sand
 
                 elif e == 101:
                     if (random.randint(1,100) == 1 and physics.neighborCheck(miniplain,onlyWarm)) or (random.randint(1,100) == 1 and (physics.neighborCheck(miniplain,onlyHot) or physics.neighborCheck(miniplain,salts))) or physics.neighborCheck(miniplain,molten):
@@ -2988,6 +2988,48 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                             grid[a][bb] = [e,t]
                         else:
                             grid[a][bb] = [e,0]
+                
+                #Static
+                
+                elif e == 102:
+                    t = random.randint(0,255)
+                    t += random.randint(0,255)*1000
+                    t += random.randint(0,255)*1000000
+                    c = physics.sandCheck(minigrid,localPos)
+                    if c[0] == 0:
+                        grid[a][bb] = [e,t]
+                    else:
+                        grid[a][bb] = [c[1],0]
+                        grid[a+1][bb+(c[0]-2)] = [e,t]
+
+                #TV Static
+
+                elif e == 103:
+                    t = random.randint(0,255)
+                    c = physics.sandCheck(minigrid,localPos,True)
+                    if c[0] == 0:
+                        d = physics.lrWanderCheck(minigrid,localPos)
+                        if not d[0]:
+                            grid[a][bb] = [e,t]
+                        else:
+                            grid[a][bb] = [0,0]
+
+                            if d[1]:
+                                grid[a][bb+1] = [e,t]
+                            else:
+                                grid[a][bb-1] = [e,t]
+
+                    else:
+                        grid[a][bb] = [0,0]
+
+                        grid[a+1][bb+(c[0]-2)] = [e,t]
+
+
+
+
+
+
+
 
 
             except IndexError:

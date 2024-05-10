@@ -115,7 +115,9 @@ elements = (
     elementIdentity(98,"Primordeal Ooze",Color(200,0,0),"All life in the[n]sandbox canotically came[n]from this stuff."),
     elementIdentity(99,"Firework",None,"Celebrate this moment!",(Color(255,0,0),Color(255,255,0),Color(0,255,0),Color(0,255,255),Color(0,0,255),Color(255,0,255))),
     elementIdentity(100,"Player",Color(0,230,230),"It's you."),
-    elementIdentity(101,"Frosted Sand",Color(220,250,230),"Frosted Sand.")
+    elementIdentity(101,"Frosted Sand",Color(220,250,230),"Sand that acts more[n]like stone than sand."),
+    elementIdentity(102,"Static",None,"Randomized Static noise,[n](Cai's favorite!)",(Color(randint(0,255),randint(0,255),randint(0,255)),Color(randint(0,255),randint(0,255),randint(0,255)),Color(randint(0,255),randint(0,255),randint(0,255)),Color(randint(0,255),randint(0,255),randint(0,255)),Color(randint(0,255),randint(0,255),randint(0,255)),Color(randint(0,255),randint(0,255),randint(0,255)),Color(randint(0,255),randint(0,255),randint(0,255)),Color(randint(0,255),randint(0,255),randint(0,255)),Color(randint(0,255),randint(0,255),randint(0,255)),Color(randint(0,255),randint(0,255),randint(0,255)))),
+    elementIdentity(103,"TV Static",Color(128,128,128),"It's static that's[n]much more watery.")
 )
 
 #These are just gui colors, they don't 100% predict what the element will look like
