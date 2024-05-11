@@ -485,7 +485,7 @@ def drawStuff(screen,plain: list[list[list[int]]],lyx: int,lyy: int, switch: boo
                 
                 pygame.draw.rect(screen,(cool,cool,100),(j*lyx,i*lyy,lyx,lyy))
                 #Wait...drawing more than just one thing? Only for lively creatures!
-                pygame.draw.rect(screen,(23,23,23),(j*lyx+lyx//3,i*lyy,lyx//3,lyy))
+                pygame.draw.rect(screen,(23,23,23),(j*lyx+lyx/4,i*lyy,lyx/2,lyy))
             
             #Blood
             elif el == 81:
