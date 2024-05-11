@@ -1,4 +1,5 @@
 aSeriousError = False
+killOrder = 100
 #Can someone please tell me how to give more resources to this app so I can throttle it and have a smooth 60 fps while my computer combusts into flames
 #Some optimization help would be nice too
 showfps = False
@@ -142,6 +143,8 @@ tutorial = 1
 tutorialprogress = 0
 gameState = "title"
 loadState = gameState
+actualGame = gameState
+games = ("title","sandbox","terrarium")
 responded = False
 fliposwitch = True
 
@@ -176,7 +179,7 @@ titleState = 0
 
 titleLand = deepcopy(foreverglobals.titleScreenSandbox)
 appendKey = ""
-sandboxed = False
+sandBoxed = False
 
 eColumns = 6
 
@@ -209,7 +212,7 @@ try:
             if changeScreen:
                 screen = pygame.display.set_mode((600,600))
                 
-                if sandboxed:
+                if sandBoxed:
                     createButton.text = font[4].render("New Box", 1, Color(0,0,0))
             
             for event in pygame.event.get(): #Event Queue for the main sandbox (or whatever it's called)
@@ -279,7 +282,7 @@ try:
                         gameState = "setup"
                         setup = True
                         buttonPressed = True
-                    elif sandboxed and continueButton.tick(fire,mousePos):
+                    elif sandBoxed and continueButton.tick(fire,mousePos):
                         gameState = "sandbox"
                         buttonPressed = True
                         landyx = (screenx/landx)
@@ -287,7 +290,7 @@ try:
                         screen = pygame.display.set_mode((screenx,screeny))
 
                     elif loadButton.tick(fire,mousePos):
-                        gameState = "title file loading"
+                        gameState = "file loading"
                         buttonPressed = True
                 if titleState == 3:
 
@@ -297,12 +300,12 @@ try:
                         buttonPressed = True
 
                     elif loadButton.tick(fire,mousePos):
-                        gameState = "title file loading terra"
+                        gameState = "file loading terra"
                         buttonPressed = True
                 else:
                     if playButton.tick(fire,mousePos):
                         titleState = 1
-                        if not sandboxed:
+                        if not sandBoxed:
                             for layer in range(35,40):
                                 for pixl in range(60):
                                     if titleLand[layer][pixl] == 4:
@@ -348,7 +351,7 @@ try:
                 loadButton.render(screen)
             else:
                 playButton.render(screen)
-            if sandboxed and titleState == 1:
+            if sandBoxed and titleState == 1:
                 continueButton.render(screen)
             
             
@@ -535,8 +538,8 @@ try:
 
         
         elif gameState == "sandbox":
-            if not sandboxed:
-                sandboxed = True
+            if not sandBoxed:
+                sandBoxed = True
             changeScreen = True
             doingafilething = False
             d = 0
@@ -1196,11 +1199,6 @@ try:
                             elif event.key == pygame.K_0:
                                 gameState = "file loading"
                                 
-                                    
-                            elif event.key == pygame.K_F12:
-                                print("Oh, I heard you like dividing by 0! (Crashing intentionally~)")
-                                rememberme = True
-                                sht = 1/0
                             
                             elif event.key == pygame.K_TAB:
                                 gameState = "elementmenu"
@@ -1542,7 +1540,7 @@ try:
                 if gameState != "sandbox":
                     if "loading" in gameState:
                         tutorial = 0
-                        if not "title" in gameState:
+                        if actualGame != "title":
                             undoList.append(deepcopy(land))
                             backupx = landx
                             backupy = landy
@@ -1595,7 +1593,7 @@ try:
                             print(f'An error occured, but it\'s complicated: {ler}')
                             traceback.print_tb(err.__traceback__)
                             print("Please contact the creator of this sandbox to see what the issue could be")
-                        if fail and not "title" in gameState:
+                        if fail and actualGame == "sandbox":
                             undoList.pop()
                             landx = backupx
                             landy = backupy
@@ -1633,9 +1631,8 @@ try:
                             print(f'An error occured, but we don\'t know how!')
                             print("Please contact the creator of this sandbox to see what the issue could be")
                     screen = pygame.display.set_mode((screenx,screeny))
-                    if "title" in gameState and fail:
-                        gameState = "title"
-                        titleState = 0
+                    if fail:
+                        gameState = actualGame
                     else:
                         gameState = "sandbox"
                 filename = ""
@@ -1663,7 +1660,21 @@ try:
             tap = True
             ice = False
             loadState = gameState
+            if gameState in games:
+                actualGame = gameState
 
+        if pygame.key.get_pressed()[pygame.K_F12]:
+            killOrder -= 1
+            if killOrder < 0:
+                print("Oh, I heard you like dividing by 0! (Crashing intentionally~)")
+                rememberme = True
+                #idc if I can force an exception just by using yet another boring function, I like to divide by 0
+                sht = 1/0
+        else:
+            killOrder = 100
+        if killOrder < 100:
+            ohmy = font[1].render("Crashing in "+str(killOrder),1,Color(255,255,255))
+            screen.blit(ohmy,(0,0))
 
         pygame.display.flip()
         fire = False
@@ -1716,18 +1727,12 @@ if aSeriousError:
     h = "-".join(h)
     try:
         try:
-            if usesavefolder:
-                os.mkdir('sandsaves/backup')
-            else:
-                os.mkdir('backup')
-            print("Making a backup folder for our mess.")
+            os.mkdir('backups')
+            print("Making a \"backups\" folder for our mess.")
         except:
             print("Backup folder spotted!")
         
-        if usesavefolder:
-            thefile = open('sandsaves/backup/'+h+'.txt', 'w')
-        else:
-            thefile = open('backup/'+h+'.txt', 'w')
+        open('backups/'+actualGame+h+'.txt', 'w')
         data = []
         data.append(str(landx))
         data.append(str(landy))
@@ -1740,7 +1745,7 @@ if aSeriousError:
         writing = ' '.join(data)
         thefile.write(writing)
         thefile.close()
-        print("Save successful in file \"backup/"+h+".txt\"")
+        print("Save successful in file \"backups/"+h+".txt\"")
     except NameError:
         print("Oh wait, I guess you haven't even made a sandbox yet.\nThere's nothing here to back-up.")
     except Exception as berror:
