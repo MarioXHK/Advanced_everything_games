@@ -1591,8 +1591,9 @@ try:
                         except IndexError as e:
                             print(f'An error occured: {e}')
                             print("It's possible your grid isn't matching up with the data in a way!")
-                        except Exception as x:
-                            print(f'An error occured, but it\'s complicated: {x}')
+                        except Exception as ler:
+                            print(f'An error occured, but it\'s complicated: {ler}')
+                            traceback.print_tb(err.__traceback__)
                             print("Please contact the creator of this sandbox to see what the issue could be")
                         if fail and not "title" in gameState:
                             undoList.pop()
@@ -1712,12 +1713,21 @@ if aSeriousError:
     h = []
     for _ in t:
         h.append(str(_))
-    h = "".join(h)
+    h = "-".join(h)
     try:
+        try:
+            if usesavefolder:
+                os.mkdir('sandsaves/backup')
+            else:
+                os.mkdir('backup')
+            print("Making a backup folder for our mess.")
+        except:
+            print("Backup folder spotted!")
+        
         if usesavefolder:
-            thefile = open('sandsaves/backup'+h+'.txt', 'w')
+            thefile = open('sandsaves/backup/'+h+'.txt', 'w')
         else:
-            thefile = open('backup'+h+'.txt', 'w')
+            thefile = open('backup/'+h+'.txt', 'w')
         data = []
         data.append(str(landx))
         data.append(str(landy))
@@ -1730,9 +1740,11 @@ if aSeriousError:
         writing = ' '.join(data)
         thefile.write(writing)
         thefile.close()
-        print("Save successful in file \"backup"+h+".txt\"")
+        print("Save successful in file \"backup/"+h+".txt\"")
     except NameError:
         print("Oh wait, I guess you haven't even made a sandbox yet.\nThere's nothing here to back-up.")
-    except Exception:
-        print("Oh great, another error! Backup failed I guess")
+    except Exception as berror:
+        print(f'Oh great, another error: {berror}')
+        traceback.print_tb(berror.__traceback__)
+        print("Backup failed I guess")
     

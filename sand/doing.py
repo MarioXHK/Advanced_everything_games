@@ -963,7 +963,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                         c = physics.sandCheck(minigrid,localPos)
                         if c[0] == 0:
                             if random.randint(1,100) == 1 and physics.neighborCheck(miniplain,(7,8,10,18,27,32,71)) and not physics.neighborCheck(miniplain,(46,47,48)):
-                                grid[a][bb] = [e,random.randint(2,8)]
+                                grid[a][bb] = [e,random.randint(2,10)]
                             else:
                                 grid[a][bb] = [e,t]
                         else:
@@ -976,15 +976,17 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                             grid[a][bb] = [c[1],0]
                             grid[a+1][bb] = [e,t]
                         else:
-                            if random.randint(1,20 == 1) or (random.randint(1,10 == 1) and sun)
-                            if t > 1 and a - 1 != 0:
-                                t -= 1
-                                grid[a-1][bb] = [e,t]
-                                t = -1
+                            if random.randint(1,20) == 1 or (random.randint(1,10) == 1 and sun):
+                                if t > 1 and a - 1 != 0:
+                                    t -= 1
+                                    grid[a-1][bb] = [e,t]
+                                    t = -1
+                                    grid[a][bb] = [e,t]
+                                #Flower growing!
+                                elif t != -1:
+                                    grid[a][bb] = [92,0]
+                            else:
                                 grid[a][bb] = [e,t]
-                            #Flower growing!
-                            elif t != -1:
-                                grid[a][bb] = [92,0]
                            
                 #Oil (Pls don't take americuh)
                 
@@ -2605,7 +2607,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                         t //= 100
                         t *= 100
                         t += 1
-                    if t <= 0:
+                    if t%100 <= 0:
                         if physics.neighborCheck(miniplain,[36]) and t//100 == 0:
                             if random.randint(1,10) == 1:
                                 t += 100
@@ -2689,7 +2691,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                             if random.randint(1,50) == 1:
                                 if t % 100 < 90:
                                     t += 1
-                            if t == 25 or random.randint(1,500-20*t) == 1:
+                            if t == 25 or random.randint(1,500-20*(t%100)) == 1:
                                 t //= 100
                                 t *= 100
                             c = physics.sandCheck(minigrid,localPos)
@@ -3059,7 +3061,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                         grid[a][bb] = [c[1],0]
                         grid[a+1][bb] = [e,t]
                     else:
-                        if (physics.neighborCheck(miniplain,[91]) or (sun and random.radnint(1,1000) == 1)) and (e,t) == (92,0):
+                        if (physics.neighborCheck(miniplain,[91]) or (sun and random.randint(1,1000) == 1)) and (e,t) == (92,0):
                             grid[a][bb] = [92,random.randint(1,12)]
                             c = random.randint(1,11)
                             if a + 1 != len(plain) and grid[a+1][bb][0] in (0,28,91):
