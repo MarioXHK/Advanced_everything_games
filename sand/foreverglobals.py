@@ -106,7 +106,7 @@ elements = (
     elementIdentity(89,"Battery",Color(50,50,50),"When the morning's gone,[n]And you can't go on![n]Delivers pulses of[n]electricity."),
     elementIdentity(90,"Thunder Cloud",Color(128,128,128),"Floats in a less calm[n]way than it's... how do[n]I say this in the least[n]racist way possible?[n]Probably not like that.[n]It shoots lightning at[n]random points and can[n]give more water than[n]their non-thunder versions."),
     elementIdentity(91,"Pollen",Color(255,230,128),"Can make things go bloom."),
-    elementIdentity(92,"Flower",Color(0,127,0),"The actual flower[n]part of the flower.[n]Will require time or[n]pollen for it to bloom."),
+    elementIdentity(92,"Flower bud",Color(0,64,0),"The actual flower[n]part of the flower.[n]Will either require time[n]and sunlight or pollen[n]for it to bloom."),
     elementIdentity(93,"Feather",Color(235,235,235),"will slowly float down[n]in the air unless[n]something's in the way."),
     elementIdentity(94,"Chicken",Color(230,230,230),"Welcome to the alive[n]club, chicken! A simple[n]thing that moves around[n]on the ground and[n]floats down softly."),
     elementIdentity(95,"Molten Glass",Color(255,255,127),"At last, molten glass[n]is much better at[n]being glass. If only it[n]wasn't so hot."),

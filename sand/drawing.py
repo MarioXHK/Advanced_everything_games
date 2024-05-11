@@ -477,7 +477,15 @@ def drawStuff(screen,plain: list[list[list[int]]],lyx: int,lyy: int, switch: boo
             
             #Bees
             elif el == 80:
-                pygame.draw.rect(screen,(230,230,100),(j*lyx,i*lyy,lyx,lyy))
+                cool = 230+(et//100)*10
+                if cool > 255:
+                    cool = 255
+                elif cool < 0:
+                    cool = 0
+                
+                pygame.draw.rect(screen,(cool,cool,100),(j*lyx,i*lyy,lyx,lyy))
+                #Wait...drawing more than just one thing? Only for lively creatures!
+                pygame.draw.rect(screen,(23,23,23),(j*lyx+lyx//3,i*lyy,lyx//3,lyy))
             
             #Blood
             elif el == 81:
@@ -539,7 +547,41 @@ def drawStuff(screen,plain: list[list[list[int]]],lyx: int,lyy: int, switch: boo
             #Pollen
             elif el == 91:
                 pygame.draw.rect(screen,(255,230,128),(j*lyx,i*lyy,lyx,lyy))
-
+            
+            #Flower bud
+            #Petal
+            elif el == 92:
+                colour = (255,255,255)
+                #Depending on it's temp, it'll be a different color
+                if et == 0:
+                    colour = (0,64,0)
+                elif et == 1:
+                    colour = (255,0,0)
+                elif et == 2:
+                    colour = (255,128,0)
+                elif et == 3:
+                    colour = (255,255,0)
+                elif et == 4:
+                    colour = (128,255,0)
+                elif et == 5:
+                    colour = (0,255,0)
+                elif et == 6:
+                    colour = (0,255,128)
+                elif et == 7:
+                    colour = (255,255,255)
+                elif et == 8:
+                    colour = (0,128,255)
+                elif et == 9:
+                    colour = (0,0,255)
+                elif et == 8:
+                    colour = (128,0,255)
+                elif et == 9:
+                    colour = (255,0,255)
+                elif et == 10:
+                    colour = (128,0,255)
+                elif et == 11:
+                    colour = (128,128,128)
+                pygame.draw.rect(screen,colour,(j*lyx,i*lyy,lyx,lyy))
 
 
 

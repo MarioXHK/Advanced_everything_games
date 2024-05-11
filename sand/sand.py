@@ -19,7 +19,7 @@ import time
 import foreverglobals
 import buttons
 
-#I caved
+#I caved (It was a good thing)
 from physics import coinflip
 from physics import checkEverywhere
 import doing
@@ -1181,6 +1181,7 @@ try:
                             elif event.key == pygame.K_RSHIFT:
                                 pickAnElement = True
                                 anElement = ""
+                                appendKey = ""
                             elif event.key == pygame.K_PERIOD:
                                 eyeDropper = True
                                 print("Pick an element from the sandbox to copy")

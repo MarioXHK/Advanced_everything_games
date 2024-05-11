@@ -121,17 +121,17 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
     #I'll take my small victories in optimization where I can
     
     #The tuple that holds the elements that are required to have a mini plane map
-    requireminip = [1,2,3,4,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,22,23,24,25,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,44,45,46,47,48,49,50,53,54,55,56,58,59,60,62,65,66,68,69,70,71,72,73,74,75,77,78,79,80,81,82,83,84,85,88,89,90,91]
+    requireminip = [1,2,3,4,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,22,23,24,25,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,44,45,46,47,48,49,50,53,54,55,56,58,59,60,62,65,66,68,69,70,71,72,73,74,75,77,78,79,80,81,82,83,84,85,88,89,90,91,92]
     if lifeIG:
         requireminip.append(0)
         requireminip.append(26)
     requireminip = tuple(requireminip)
     
     #The tuple that holds the elements that are required to have a mini grid map
-    requireminig = (1,2,3,4,6,7,8,9,10,11,12,13,14,15,16,17,18,19,22,23,24,25,27,28,29,30,32,34,36,39,40,41,42,43,44,45,46,47,48,49,51,52,53,54,55,56,57,58,60,62,63,64,65,66,68,70,71,72,73,74,75,77,78,79,80,81,82,83,84,85,90,91,102,103)
+    requireminig = (1,2,3,4,6,7,8,9,10,11,12,13,14,15,16,17,18,19,22,23,24,25,27,28,29,30,32,34,36,39,40,41,42,43,44,45,46,47,48,49,51,52,53,54,55,56,57,58,60,62,63,64,65,66,68,70,71,72,73,74,75,77,78,79,80,81,82,83,84,85,90,91,92,102,103)
     
     
-    waters = (3,15,47,71,75,85)
+    waters = (3,15,47,71,75,85,103)
         
     goodFossilizers = (2,9,12,18,29,32,38,40,51,53,55,58,72,73)
     
@@ -143,7 +143,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
     
     virusProof = (0,57,71)
     
-    plantSustainers = (8,28,31,62)
+    plantSustainers = (8,28,31,62,92)
     
     clouds = (16,51,52,53,64,83,90,91)
 
@@ -159,7 +159,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
 
     warm = hot + onlyWarm
 
-    onlyCold = (21,22,23,37,74,88)
+    onlyCold = (21,22,23,37,74,88,103)
 
     freezing = (21,25,35)
 
@@ -249,7 +249,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                             grid[a][bb] = [26,0]
                             continue
                 
-                #Sand
+                #Sand (Role Credits)
                 
                 elif e == 1:
                     if physics.neighborCheck(miniplain,hot):
@@ -270,10 +270,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                             t = n[1]-1
                     c = physics.sandCheck(minigrid,localPos)
                     if c[0] == 0:
-                        if e == 1:
-                            continue
-                        else:
-                            grid[a][bb] = [e,t]
+                        grid[a][bb] = [e,t]
                     else:
                         grid[a][bb] = [c[1],0]
                         grid[a+1][bb+(c[0]-2)] = [e,t]
@@ -948,13 +945,13 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                         else:
                             grid[a+1][bb+(c[0]-2)] = [e,t]
 
-                #Flower things
+                #Flower seed/stem
                 
                 elif e == 28:
                     if jam:
                         t = 1
                         continue
-                    if random.randint(1,4) == 1:
+                    if (t == 0 and coinflip()) or random.randint(1,4) == 1:
                         if physics.neighborCheck(miniplain,hot):
                             if coinflip():
                                 e = 30
@@ -962,7 +959,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                             else:
                                 e = 32
                     #Seed
-                    if plain[a][bb][1] == 0:
+                    if t == 0:
                         c = physics.sandCheck(minigrid,localPos)
                         if c[0] == 0:
                             if random.randint(1,100) == 1 and physics.neighborCheck(miniplain,(7,8,10,18,27,32,71)) and not physics.neighborCheck(miniplain,(46,47,48)):
@@ -973,23 +970,21 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                             grid[a][bb] = [c[1],0]
                             grid[a+1][bb+(c[0]-2)] = [e,t]
                     #Stem
-                    elif plain[a][bb][1] > 1 and a - 1 != 0:
-                        t -= 1
-                        grid[a-1][bb] = [e,t]
-                        t = -1
-                        grid[a][bb] = [e,t]
-                    #Bloom
-                    elif plain[a][bb][1] != -1:
-                        grid[a][bb] = [36,random.randint(0,11)]
-                        c = random.randint(0,11)
-                        if a + 1 != len(plain):
-                            grid[a+1][bb] = [36,c]
-                        if a - 1 != -1 and grid[a-1][bb][0] == 0:
-                            grid[a-1][bb] = [36,c]
-                        if bb + 1 != len(plain[0]) and grid[a][bb+1][0] == 0:
-                            grid[a][bb+1] = [36,c]
-                        if bb - 1 != -1 and grid[a][bb-1][0] == 0:
-                            grid[a][bb-1] = [36,c]
+                    else:
+                        c = physics.stoneCheck(minigrid,localPos)
+                        if not c[0]:
+                            grid[a][bb] = [c[1],0]
+                            grid[a+1][bb] = [e,t]
+                        else:
+                            if random.randint(1,20 == 1) or (random.randint(1,10 == 1) and sun)
+                            if t > 1 and a - 1 != 0:
+                                t -= 1
+                                grid[a-1][bb] = [e,t]
+                                t = -1
+                                grid[a][bb] = [e,t]
+                            #Flower growing!
+                            elif t != -1:
+                                grid[a][bb] = [92,0]
                            
                 #Oil (Pls don't take americuh)
                 
@@ -2607,9 +2602,48 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                     if physics.neighborCheck(miniplain,hot) or physics.neighborCheck(miniplain,(9,20,30,35,53,57,60,61,66)) or (random.randint(1,20000) == 1 and not physics.neighborCheck(miniplain,(0,77,78,79))):
                         e = 81
                     if physics.neighborCount(miniplain,(3,10,13,16,21,22,27,29,32,34,37,39,43,45,46,47,48,51,52,54,56,73,74,75,78)) > random.randint(2,4):
-                        t = 1
+                        t //= 100
+                        t *= 100
+                        t += 1
                     if t <= 0:
-                        
+                        if physics.neighborCheck(miniplain,[36]) and t//100 == 0:
+                            if random.randint(1,10) == 1:
+                                t += 100
+                            grid[a][bb] = [e,t]
+                            continue
+                        elif t//100 == 1:
+                            if random.randint(1,1000) == 1 and a + 1 != len(plain) and grid[a+1][bb][0] == 0:
+                                grid[a+1][bb] = [91,0]
+                            if random.randint(1,1000) == 1 and a - 1 != -1 and grid[a-1][bb][0] == 0:
+                                grid[a-1][bb] = [91,0]
+                            if random.randint(1,1000) == 1 and bb + 1 != len(plain[0]) and grid[a][bb+1][0] == 0:
+                                grid[a][bb+1] = [91,0]
+                            if random.randint(1,1000) == 1 and bb - 1 != -1 and grid[a][bb-1][0] == 0:
+                                grid[a][bb-1] = [91,0]
+                            if physics.neighborCheck(miniplain,[78]):
+                                t += 100
+                                grid[a][bb] = [e,t]
+                                continue
+                        elif t//100 == 2:
+                            g = 1
+                            if physics.neighborCount(miniplain,[79]) > 1:
+                                g += 1
+                            if random.randint(1,800) == 1 and a + 1 != len(plain) and grid[a+1][bb][0] == 0:
+                                grid[a+1][bb] = [79,0]
+                                g += 1
+                            if random.randint(1,800) == 1 and a - 1 != -1 and grid[a-1][bb][0] == 0:
+                                grid[a-1][bb] = [79,0]
+                                g += 1
+                            if random.randint(1,800) == 1 and bb + 1 != len(plain[0]) and grid[a][bb+1][0] == 0:
+                                grid[a][bb+1] = [79,0]
+                                g += 1
+                            if random.randint(1,800) == 1 and bb - 1 != -1 and grid[a][bb-1][0] == 0:
+                                grid[a][bb-1] = [79,0]
+                                g += 1
+                            if random.randint(1,g) >= 3:
+                                t %= 100
+                            grid[a][bb] = [e,t]
+                            continue
                         if random.randint(1,5) == 1:
                             if random.randint(1,4) != 1:
                                 d = physics.lrWanderCheck(minigrid,localPos, True)
@@ -2651,9 +2685,11 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                                     grid[a][bb-1] = [random.randint(78,80),0]
                         else:
                             if random.randint(1,50) == 1:
-                                t += 1
+                                if t % 100 < 90:
+                                    t += 1
                             if t == 25 or random.randint(1,500-20*t) == 1:
-                                t = 0
+                                t //= 100
+                                t *= 100
                             c = physics.sandCheck(minigrid,localPos)
                             if c[0] == 0:
                                 grid[a][bb] = [e,t]
@@ -2964,8 +3000,86 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                         if random.randint(1,(28-o*2)) == 1:
                             grid[a][bb] = [e,t]
 
+                #Pollen
+                
+                elif e == 91:
+                    
+                    if random.randint(1,15) == 1:
+                        if coinflip():
+                            d = physics.lrWanderCheck(minigrid,localPos, True)
+                            if not d[0]:
+                                grid[a][bb] = [e,t]
+                            else:
+                                grid[a][bb] = [d[2],0]
+                                
+                                if d[1]:
+                                    grid[a][bb+1] = [e,t]
+                                else:
+                                    grid[a][bb-1] = [e,t]
+                        else:
+                            if random.randint(1,10) != 1:
+                                c = physics.sandCheck(minigrid,localPos,True)
+                                if c[0] == 0:
+                                    if random.randint(1,4) == 1:
+                                        grid[a][bb] = [0,0]
+                                    else:
+                                        grid[a][bb] = [e,t]
+                                else:
+                                    grid[a][bb] = [c[1],0]
+                                    grid[a+1][bb+(c[0]-2)] = [e,t]
+                            else:
+                                d = physics.udWanderCheck(minigrid,localPos)
+                                if not d[0]:
+                                    grid[a][bb] = [e,t]
+                                else:
+                                    grid[a][bb] = [d[2],0]
 
-
+                                    if d[1]:
+                                        grid[a+1][bb] = [e,t]
+                                    else:
+                                        grid[a-1][bb] = [e,t]
+                    else:
+                        grid[a][bb] = [e,t]
+                
+                #Flower bud
+                
+                elif e == 92:
+                    if random.randint(1,3) == 1:
+                        if physics.neighborCheck(miniplain,hot):
+                            if coinflip():
+                                e = 30
+                                t = 5
+                            else:
+                                e = 32
+                    
+                    c = physics.stoneCheck(minigrid,localPos)
+                    if not c[0]:
+                        grid[a][bb] = [c[1],0]
+                        grid[a+1][bb] = [e,t]
+                    else:
+                        if (physics.neighborCheck(miniplain,[91]) or (sun and random.radnint(1,1000) == 1)) and (e,t) == (92,0):
+                            grid[a][bb] = [92,random.randint(1,12)]
+                            c = random.randint(1,11)
+                            if a + 1 != len(plain) and grid[a+1][bb][0] in (0,28,91):
+                                grid[a+1][bb] = [36,c]
+                            if a - 1 != -1 and grid[a-1][bb][0] in (0,91):
+                                grid[a-1][bb] = [36,c]
+                            if bb + 1 != len(plain[0]) and grid[a][bb+1][0] in (0,91):
+                                grid[a][bb+1] = [36,c]
+                            if bb - 1 != -1 and grid[a][bb-1][0] in (0,91):
+                                grid[a][bb-1] = [36,c]
+                        else:
+                            grid[a][bb] = [e,t]
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
 
 
                 #Frosted Sand
