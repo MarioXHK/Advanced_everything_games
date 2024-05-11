@@ -2620,7 +2620,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                                 grid[a][bb+1] = [91,0]
                             if random.randint(1,1000) == 1 and bb - 1 != -1 and grid[a][bb-1][0] == 0:
                                 grid[a][bb-1] = [91,0]
-                            if physics.neighborCheck(miniplain,[78]):
+                            if physics.neighborCheck(miniplain,[78]) or random.randint(1,1000) == 1:
                                 t += 100
                                 grid[a][bb] = [e,t]
                                 continue
@@ -2642,8 +2642,10 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                                 g += 1
                             if random.randint(1,g) >= 3:
                                 t %= 100
-                            grid[a][bb] = [e,t]
-                            continue
+                            
+                            if physics.neighborCheck(miniplain,[78]):
+                                grid[a][bb] = [e,t]
+                                continue
                         if random.randint(1,5) == 1:
                             if random.randint(1,4) != 1:
                                 d = physics.lrWanderCheck(minigrid,localPos, True)
