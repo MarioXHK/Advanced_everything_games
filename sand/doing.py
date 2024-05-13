@@ -137,7 +137,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
     
     conductors = (38,39,40,44,47,55,58,59,69,81,88,89)
 
-    acidImmune = (0,2,3,5,9,12,16,17,20,21,30,35,38,43,47,50,51,53,55,56,61,64,65,66,71,89)
+    acidImmune = (0,2,3,5,9,12,16,17,20,21,30,35,38,43,47,50,51,53,55,56,61,64,65,66,71,89,102)
 
     blastProof = (5,12,61,67)
     
@@ -159,7 +159,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
 
     warm = hot + onlyWarm
 
-    onlyCold = (21,22,23,37,74,88,103)
+    onlyCold = (22,23,37,74,88,103)
 
     freezing = (21,25,35)
 
@@ -548,8 +548,12 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                 #Obsidian
                 
                 elif e == 12:
-                    if coinflip() and coinflip() and physics.neighborCheck(miniplain,molten):
-                        t += 1
+                    if coinflip():
+                        if coinflip() and physics.neighborCheck(miniplain,molten):
+                            t += 1
+                    else:
+                        if (coinflip() and physics.neighborCheck(miniplain,waters)) or (physics.neighborCheck(miniplain,onlyCold) and t > 0) or (physics.neighborCheck(miniplain,freezing) and t > -20):
+                            t -= 2
                     if random.randint(1,20) == 1 and t >= 100:
                         e = 9
                         t = -5
@@ -2955,10 +2959,7 @@ def doStuff(plain: list[list[list[int]]],switch: bool,lifeIG: bool = False) -> l
                 
                 elif e == 90:
                     if random.randint(1,1200) == 1:
-                        if moon:
-                            e = 22 
-                        else:
-                            e = 3
+                        e = 43
                     elif random.randint(1,2000) == 1:
                         fl = 3
                         if moon:

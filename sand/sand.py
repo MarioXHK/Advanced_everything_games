@@ -88,6 +88,8 @@ mirror = False
 doingafilething = False
 anElement = ""
 
+gamma = 100
+smoothColors = True
 # ===============================================================================================
 # ===================================== THE SETUP LOOP ==========================================
 # ===============================================================================================
@@ -1324,7 +1326,7 @@ try:
             screen.fill((0,0,0))
             
             
-            drawStuff(screen,land,landyx,landyy,fliposwitch)
+            drawStuff(screen,land,landyx,landyy,smoothColors,gamma,fliposwitch)
             
             
 
