@@ -2,6 +2,12 @@ import pygame
 import random
 from physics import coinflip
 from pygame.color import Color
+def clamp(number:int,mina:int = 0,maxi:int = 255) -> int:
+    if number > maxi:
+        number = maxi
+    elif number < mina:
+        number = mina
+    return number
 
 def drawStuff(screen,plain: list[list[list[int]]],lyx: int,lyy: int, photo: bool = False, gamma: int | float = 100, switch: bool = True):
     for i in range(len(plain)):
@@ -38,18 +44,9 @@ def drawStuff(screen,plain: list[list[list[int]]],lyx: int,lyy: int, photo: bool
                 cool = et%1000000
                 coolg = cool//1000
                 coolb = cool%1000
-                if coolr > 255:
-                    coolr = 255
-                elif coolr < 0:
-                    coolr = 0
-                if coolg > 255:
-                    coolg = 255
-                elif coolg < 0:
-                    coolg = 0
-                if coolb > 255:
-                    coolb = 255
-                elif coolb < 0:
-                    coolb = 0
+                coolr = clamp(coolr)
+                coolg = clamp(coolg)
+                coolb = clamp(coolb)
                 eColor = Color(coolr,coolg,coolb)
             
             #Dirt
@@ -71,10 +68,7 @@ def drawStuff(screen,plain: list[list[list[int]]],lyx: int,lyy: int, photo: bool
                     cool = 200+et*10
                 else:
                     cool = 200+et*10+random.randint(0,50)
-                if cool > 255:
-                    cool = 255
-                elif cool < 0:
-                    cool = 0
+                cool = clamp(cool)
                 if photo:
                     eColor = Color(cool,25,0)
                 else:
@@ -90,11 +84,7 @@ def drawStuff(screen,plain: list[list[list[int]]],lyx: int,lyy: int, photo: bool
             
             #Obsidian
             elif el == 12:
-                if et > 225:
-                    et = 225
-                elif et < -30:
-                    et = -30
-                eColor = Color(30+et,20,40)
+                eColor = Color(clamp(30+et),20,40)
             
             #Steam
             elif el == 13:
@@ -188,12 +178,8 @@ def drawStuff(screen,plain: list[list[list[int]]],lyx: int,lyy: int, photo: bool
                     eColor = Color(255,200,0)
                 else:
                     cool = 200+et*10
-                    if cool > 255:
-                        cool = 255
                     cooler = random.randint(50,100+et*random.randint(20,30))
-                    if cooler > 255:
-                        cooler = 255
-                    eColor = Color(cool,cooler,0)
+                    eColor = Color(clamp(cool),clamp(cooler),0)
             
             #Wood
             elif el == 31:
@@ -201,7 +187,7 @@ def drawStuff(screen,plain: list[list[list[int]]],lyx: int,lyy: int, photo: bool
             
             #Ash
             elif el == 32:
-                cool = 100-et//2
+                cool = clamp(100-et//2)
                 eColor = Color(cool,cool,cool)
             
             #Cloner
@@ -213,7 +199,7 @@ def drawStuff(screen,plain: list[list[list[int]]],lyx: int,lyy: int, photo: bool
                     cool = 100
                     if not photo:
                         cool += random.randint(-20,20)
-                eColor = Color(100+cool,cool//2,255)
+                eColor = Color(clamp(100+cool),clamp(cool//2),255)
             
             #Clay
             elif el == 34:
@@ -320,7 +306,7 @@ def drawStuff(screen,plain: list[list[list[int]]],lyx: int,lyy: int, photo: bool
             
             #Salt Water
             elif el == 47:
-                if random.randint(1,111) == 1 and et == 1:
+                if random.randint(1,111) == 1 and et == 1 and not photo:
                     eColor = Color(255,255,0)
                 else:
                     eColor = Color(128,128,255)
@@ -335,7 +321,7 @@ def drawStuff(screen,plain: list[list[list[int]]],lyx: int,lyy: int, photo: bool
                     et = 0
                 elif et > 10:
                     et = 10
-                eColor = Color(et*20,150-et*10,0)
+                eColor = Color(clamp(et*20),clamp(150-et*10),0)
             
             #Jammer
             elif el == 50:
@@ -395,14 +381,15 @@ def drawStuff(screen,plain: list[list[list[int]]],lyx: int,lyy: int, photo: bool
             
             #Smoke
             elif el == 56:
-                eColor = Color(et*5,et*5,et*5)
+                cool = clamp(et*5)
+                eColor = Color(cool,cool,cool)
             
             #Virus
             elif el == 57:
                 if photo:
                     eColor = Color(100,20,240)
                 else:
-                    eColor = Color(100,20+random.randint(-20,20)//2,240)
+                    eColor = Color(100,clamp(20+random.randint(-20,20)//2),240)
             
             #Gold
             elif el == 58:
@@ -424,11 +411,7 @@ def drawStuff(screen,plain: list[list[list[int]]],lyx: int,lyy: int, photo: bool
             
             #Shockwave
             elif el == 61:
-                cool = et*64
-                if cool > 255:
-                    cool = 255
-                elif cool < 0:
-                    cool = 0
+                cool = clamp(et*64)
                 eColor = Color(cool,cool,cool)
             
             #Sapling
@@ -472,7 +455,7 @@ def drawStuff(screen,plain: list[list[list[int]]],lyx: int,lyy: int, photo: bool
             elif el == 69:
                 if et == 1:
                     if photo:
-                        eColor = Color(255,255,255)
+                        eColor = Color(255,200,0)
                     else:
                         pygame.draw.rect(screen,(255,random.randint(0,255),random.randint(0,255)),(j*lyx,i*lyy,lyx,lyy))
                 else:
@@ -491,7 +474,7 @@ def drawStuff(screen,plain: list[list[list[int]]],lyx: int,lyy: int, photo: bool
             
             #Dead Plant
             elif el == 72:
-                eColor = Color(120-et,60-(et//5),10-(et//10))
+                eColor = Color(clamp(120-et),clamp(60-(et//5)),clamp(10-(et//10)))
             
             #Coal
             elif el == 73:
@@ -520,7 +503,8 @@ def drawStuff(screen,plain: list[list[list[int]]],lyx: int,lyy: int, photo: bool
             
             #Wax
             elif el == 77:
-                eColor = Color(200+et*2,150+et*5,60+et*10)
+                
+                eColor = Color(clamp(200+et*2),clamp(150+et*5),clamp(60+et*10))
 
             #Honeycomb
             elif el == 78:
@@ -532,11 +516,7 @@ def drawStuff(screen,plain: list[list[list[int]]],lyx: int,lyy: int, photo: bool
             
             #Bees
             elif el == 80:
-                cool = 230+(et//100)*10
-                if cool > 255:
-                    cool = 255
-                elif cool < 0:
-                    cool = 0
+                cool = clamp(230+(et//100)*10)
                 override = True
                 pygame.draw.rect(screen,(cool,cool,100),(j*lyx,i*lyy,lyx,lyy))
                 #Wait...drawing more than just one thing? Only for lively creatures!
@@ -560,11 +540,11 @@ def drawStuff(screen,plain: list[list[list[int]]],lyx: int,lyy: int, photo: bool
 
             #Good Smoke
             elif el == 83:
-                cool = et*random.randint(10,20)
-                if cool > 255:
-                    cool = 255
-                elif cool < 0:
-                    cool = 0
+                if photo:
+                    cool = 15
+                else:
+                    cool = et*random.randint(10,20)
+                clamp(cool)
                 eColor = Color(cool,cool,cool)
         
             #Acid Waste
@@ -601,7 +581,7 @@ def drawStuff(screen,plain: list[list[list[int]]],lyx: int,lyy: int, photo: bool
                 if photo:
                     eColor = Color(55,55,55)
                 else:
-                    eColor = Color(60-et,60-et,60-et)
+                    eColor = Color(clamp(60-et),clamp(60-et),clamp(60-et))
 
             #Thunder Clouds
             elif el == 90:
@@ -609,7 +589,7 @@ def drawStuff(screen,plain: list[list[list[int]]],lyx: int,lyy: int, photo: bool
                     cool = 4
                 else:
                     cool = random.randint(0,8)
-                eColor = Color(120+cool,120+cool,120+cool)
+                eColor = Color(clamp(120+cool),clamp(120+cool),clamp(120+cool))
 
             #Pollen
             elif el == 91:
@@ -692,7 +672,10 @@ def drawStuff(screen,plain: list[list[list[int]]],lyx: int,lyy: int, photo: bool
                         et = 0
                     eColor = Color(et,et,et)
 
-
+            #Redundancy ftw!
+            eColor.r = clamp(int((eColor.r/100)*gamma))
+            eColor.g = clamp(int((eColor.g/100)*gamma))
+            eColor.b = clamp(int((eColor.b/100)*gamma))
 
             if not override:
                 pygame.draw.rect(screen,eColor,(j*lyx,i*lyy,lyx,lyy))
