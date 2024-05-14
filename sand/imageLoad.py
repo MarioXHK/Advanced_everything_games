@@ -22,5 +22,3 @@ def loadImage(file:str,res:int = 10) -> tuple[int,int,list]:
     return (sx,sy,imageLand)
 
 print("Bad apples are being thrown around!")
-
-pen = loadImage("nyan cat.png")
