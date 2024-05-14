@@ -1558,7 +1558,7 @@ try:
                         try:
                             if filename[-4:] in (".png",".jpg"):
                                 print("Loading", filename+ " from your saves folder...",end = " ")
-                                res = 2
+                                res = 10
                                 imagefile = loadImage(filename,res)
                                 screenx = imagefile[0]
                                 screeny = imagefile[1]

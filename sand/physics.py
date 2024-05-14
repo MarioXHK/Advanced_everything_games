@@ -258,6 +258,10 @@ def randomElement(randTemp:bool = True) -> list[int]:
     if randTemp:
         if e in (30,49):
             t = random.randint(0,5)
+        elif e == 5:
+            t = random.randint(0,255)
+            t += random.randint(0,255)*1000
+            t += random.randint(0,255)*1000000
         else:
             t = random.randint(0,20)
     return [e,t]
