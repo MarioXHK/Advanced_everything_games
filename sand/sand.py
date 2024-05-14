@@ -1,3 +1,5 @@
+#Libraries used: Pygame, Pillow
+
 aSeriousError = False
 killOrder = 100
 #Can someone please tell me how to give more resources to this app so I can throttle it and have a smooth 60 fps while my computer combusts into flames
@@ -27,6 +29,7 @@ import doing
 from drawing import drawStuff
 from inputkeys import keyboard
 from drawing import drawLessStuff
+from imageLoad import loadImage
 
 pygame.font.init()
 font = (
@@ -1534,6 +1537,7 @@ try:
             elif "loading" in gameState:
                 texts = (
                     font[1].render("What is the filename of the save you want to load?",1,Color(0,0,0)),
+                    font[1].render("(You can load images too!)",1,Color(0,0,0)),
                     font[1].render(str(filename),1,Color(0,0,0))
                 )
             else:
@@ -1550,29 +1554,42 @@ try:
                             backupsy = screeny
                             backupland = deepcopy(land)
                         fail = True
-                        print("Loading", filename+ ".txt from your saves folder...")
+                        
                         try:
-                            if usesavefolder:
-                                thefile = open('sandsaves/'+filename+'.txt', 'r')
+                            if filename[-4:] in (".png",".jpg"):
+                                print("Loading", filename+ " from your saves folder...",end = " ")
+                                res = 10
+                                imagefile = loadImage(filename,res)
+                                screenx = imagefile[0]
+                                screeny = imagefile[1]
+                                landx = screenx//10
+                                landy = screeny//10
+                                land = imagefile[2]
                             else:
-                                thefile = open(filename+'.txt', 'r')
-                            reading = thefile.read().split()
-                            thefile.close()
-                            print(filename, "read with", len(reading), "numbers!")
-                            readed = []
-                            for inny in range(len(reading)):
-                                readed.append(int(reading[inny]))
-                            landx = readed[0]
-                            landy = readed[1]
-                            screenx = readed[2]
-                            screeny = readed[3]
-                            print("Grid size:", landx, "by", landy, "pixels on a", screenx, "by", screeny, "gaming window.")
-                            land = []
-                            for ay in range(landy):
-                                land.append([])
-                                for bx in range(landx):
-                                    pxl = (bx+(landx*ay)) * 2 + 4
-                                    land[ay].append([readed[pxl],readed[pxl+1]])
+                                print("Loading", filename+ ".txt",end = " ")
+                                if usesavefolder:
+                                    print("from your saves folder...")
+                                    thefile = open('sandsaves/'+filename+'.txt', 'r')
+                                else:
+                                    print("from the game's directory...")
+                                    thefile = open(filename+'.txt', 'r')
+                                reading = thefile.read().split()
+                                thefile.close()
+                                print(filename, "read with", len(reading), "numbers!")
+                                readed = []
+                                for inny in range(len(reading)):
+                                    readed.append(int(reading[inny]))
+                                landx = readed[0]
+                                landy = readed[1]
+                                screenx = readed[2]
+                                screeny = readed[3]
+                                print("Grid size:", landx, "by", landy, "pixels on a", screenx, "by", screeny, "gaming window.")
+                                land = []
+                                for ay in range(landy):
+                                    land.append([])
+                                    for bx in range(landx):
+                                        pxl = (bx+(landx*ay)) * 2 + 4
+                                        land[ay].append([readed[pxl],readed[pxl+1]])
                             
                             screen = pygame.display.set_mode((screenx,screeny))
                             #The loading should go smoothly from here so we don't have to worry about these variables being screwed
@@ -1593,7 +1610,7 @@ try:
                             print("It's possible your grid isn't matching up with the data in a way!")
                         except Exception as ler:
                             print(f'An error occured, but it\'s complicated: {ler}')
-                            traceback.print_tb(err.__traceback__)
+                            traceback.print_tb(ler.__traceback__)
                             print("Please contact the creator of this sandbox to see what the issue could be")
                         if fail and actualGame == "sandbox":
                             undoList.pop()
