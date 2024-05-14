@@ -10,7 +10,8 @@ def loadImage(file:str,res:int = 10) -> tuple[int,int,list]:
     imageLand = [[[5,0] for _ in range(lx)] for i in range(ly)]
     for y in range(len(imageLand)):
         for x in range(len(imageLand[0])):
-            color = pix[x*10,y*10]
+            #print([x*res,y*res])
+            color = pix[x*res,y*res]
             if color[0]+color[1]+color[2] == 0:
                 imageLand[y][x] = [0,0]
             else:
@@ -21,3 +22,5 @@ def loadImage(file:str,res:int = 10) -> tuple[int,int,list]:
     return (sx,sy,imageLand)
 
 print("Bad apples are being thrown around!")
+
+pen = loadImage("nyan cat.png")

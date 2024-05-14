@@ -1558,12 +1558,12 @@ try:
                         try:
                             if filename[-4:] in (".png",".jpg"):
                                 print("Loading", filename+ " from your saves folder...",end = " ")
-                                res = 10
+                                res = 2
                                 imagefile = loadImage(filename,res)
                                 screenx = imagefile[0]
                                 screeny = imagefile[1]
-                                landx = screenx//10
-                                landy = screeny//10
+                                landx = screenx//res
+                                landy = screeny//res
                                 land = imagefile[2]
                             else:
                                 print("Loading", filename+ ".txt",end = " ")
@@ -1601,12 +1601,15 @@ try:
                             print("Load successful!")
                         except FileNotFoundError as e:
                             print(f'An error occured: {e}')
+                            traceback.print_tb(e.__traceback__)
                             print("Try again with a file that exists. (Maybe you don't have any :/))")
                         except TypeError as e:
                             print(f'An error occured: {e}')
+                            traceback.print_tb(e.__traceback__)
                             print("Your file might have more than just numbers in it.")
                         except IndexError as e:
                             print(f'An error occured: {e}')
+                            traceback.print_tb(e.__traceback__)
                             print("It's possible your grid isn't matching up with the data in a way!")
                         except Exception as ler:
                             print(f'An error occured, but it\'s complicated: {ler}')
@@ -1676,6 +1679,8 @@ try:
 
         if loadState != gameState:
             changeScreen = True
+            doingafilething = False
+            appendKey = ""
             tap = True
             ice = False
             loadState = gameState
