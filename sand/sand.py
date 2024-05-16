@@ -93,10 +93,6 @@ anElement = ""
 
 gamma = 100
 smoothColors = True
-# ===============================================================================================
-# ===================================== THE SETUP LOOP ==========================================
-# ===============================================================================================
-
 
 elementNameText = font[0].render("Sand",1,Color(255,255,255))
 elementText = [
@@ -122,18 +118,6 @@ wasdkeys = [False,False,False,False]
 
 unlockedElements = [0,1,2,3,4,5,6,7,8,9]
 
-def remindMe() -> None:
-    print("ELEMENTS: Press the keys for the element!  1: Sand  2: Stone  3: Water  4: Sugar  5: Wall  6: Dirt  7: Mud  8: Plant  9: Lava ")
-    print("ELEMENTS: Q: Iron  W: Gravel  E: Obsidian  R: Steam  T: Glass  Y: Salt  U: Cloud  I: Brick O: Clay  P: Void  A: Algae")
-    print("ELEMENTS: G: Snow  H: Ice  J: TNT  K: Sapling  L: Life particle (think the game of life, If turned off it will just be random)")
-    print("ELEMENTS: Z: Electricity  X: Flower Seed  C: Oil  V: Fire N: Jammer (Screws stuff up)  M: Cloner  B: Smart Remover  S: Smart Converter  D: Sun  F: Moon")
-    print("If you would like more information about how the smart remover/converter works, please visit https://www.youtube.com/watch?v=w_oNW7uHfcw")
-    #I'm sure dr. mo wouldn't mind......
-    print("PLACING CONTROLS: Left click to place down the element, Right click to use the eraser. You will have to discover the rest of the elements on your own through trial and error :)\nTo do multiple elements with a brush, press the comma for it to be random of some elements. To dither the brush, press the slash key.")
-    print("ELEMENT CONTROLS: To get an element that's not on this list, press the Right Shift key then enter the element's ID (number) in the console.\nAlternatively, you can eyedrop (copy) an element from the sandbox by pressing period and then clicking the element")
-    print("BRUSH CONTROLS: To enter/exit mirror mode, hit the backslash key. To undo an action, press the left square bracket, to redo said action, press the right square bracket ([ and ] respectively)")
-    print("IMPORTANT: To start/pause the sandbox, press Left Ctrl. To go a single step in the sandbox, press Space.\nTo clear the sandbox, press the left Alt key. To clear the sandbox and have there be an ocean, hit the right Alt key.\nThere are several other kinds of oceans that can be created on the right hand side of the keyboard by pressing it's buttons.\nTo activate/deactivate the game of life and all it's whimsy, press the CAPS LOCK key. To change the brush size, hit up to grow it, hit down to shrink it.")
-    print("SAVE/LOAD CONROLS: To save your sandbox, press either enter key. To load a sandbox, press the 0 key. To show this again, hit the backspace key")
 
 live = False
 alive = False
@@ -251,6 +235,15 @@ try:
                             preEl = 1
                     elif event.key == pygame.K_LALT:
                         titleLand = deepcopy(foreverglobals.titleScreenSandbox)
+                    elif event.key == pygame.K_F1:
+                        print("Skipping stuff!")
+                        tutorial = 0
+                        gameState = "setup"
+                        setup = False
+                        screenx = 500
+                        screeny = 500
+                        landx = 50
+                        landy = 50
             
 
             clock.tick(fps)
@@ -370,7 +363,10 @@ try:
             #pygame.display.flip()
 
         
-        #Sandbox Setup gamestate!
+        # ===============================================================================================
+        # ===================================== THE SETUP LOOP ==========================================
+        # ===============================================================================================
+
 
         elif gameState == "setup":
             fliposwitch = True
@@ -536,7 +532,6 @@ try:
 
                 print("Welcome to the sandbox!")
                 print(random.choice(foreverglobals.splashes))
-                remindMe()
 
 
                 
@@ -1299,7 +1294,7 @@ try:
                                             t = 100100100
                                         if element in (13, 30, 56,83):
                                             t = 5
-                                        elif element == 19:
+                                        elif element in (19,93,103):
                                             t = random.randint(0,255)
                                         elif element == 54:
                                             t = random.randint(1,6)
@@ -1544,6 +1539,7 @@ try:
                 gameState = "sandbox"            
             if doingafilething or gameState == "sandbox":
                 if gameState != "sandbox":
+                    fail = True
                     if "loading" in gameState:
                         tutorial = 0
                         if actualGame != "title":
@@ -1553,7 +1549,7 @@ try:
                             bacnupsx = screenx
                             backupsy = screeny
                             backupland = deepcopy(land)
-                        fail = True
+                        
                         
                         try:
                             if filename[-4:] in (".png",".jpg"):
@@ -1644,6 +1640,7 @@ try:
                             thefile.write(writing)
                             thefile.close()
                             print("Save successful!")
+                            fail = False
                             if tutorial == 8:
                                 tutorial = 9
                         except FileNotFoundError as e:
@@ -1756,7 +1753,7 @@ if aSeriousError:
         except:
             print("Backup folder spotted!")
         
-        open('backups/'+actualGame+h+'.txt', 'w')
+        thefile = open('backups/'+actualGame+h+'.txt', 'w')
         data = []
         data.append(str(landx))
         data.append(str(landy))

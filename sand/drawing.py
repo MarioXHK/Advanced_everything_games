@@ -629,6 +629,25 @@ def drawStuff(screen,plain: list[list[list[int]]],lyx: int,lyy: int, photo: bool
                 elif et == 11:
                     eColor = Color(128,128,128)
 
+            #Feathers
+            elif el == 93:
+                #Read glass shards
+                if photo:
+                    eColor = Color(235,235,235)
+                else:
+                    random.seed(et)
+                    cool = 200+random.randint(0,55)
+                    eColor = Color(cool,cool,cool)
+                    random.seed()
+
+            
+
+            #Molten Glass
+            elif el == 95:
+                if photo:
+                    eColor = Color(127,244,244)
+                else:
+                    eColor = Color(random.randint(0,172),200+random.randint(0,55),200+random.randint(0,55))
 
 
 

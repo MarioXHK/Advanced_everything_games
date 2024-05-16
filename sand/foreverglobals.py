@@ -109,7 +109,7 @@ elements = (
     elementIdentity(92,"Flower bud",Color(0,64,0),"The actual flower[n]part of the flower.[n]Will either require time[n]and sunlight or pollen[n]for it to bloom."),
     elementIdentity(93,"Feather",Color(235,235,235),"will slowly float down[n]in the air unless[n]something's in the way."),
     elementIdentity(94,"Chicken",Color(230,230,230),"Welcome to the alive[n]club, chicken! A simple[n]thing that moves around[n]on the ground and[n]floats down softly."),
-    elementIdentity(95,"Molten Glass",Color(255,255,127),"At last, molten glass[n]is much better at[n]being glass. If only it[n]wasn't so hot."),
+    elementIdentity(95,"Molten Glass",Color(127,255,255),"At last, molten glass[n]is much better at[n]being glass. If only it[n]wasn't so hot and[n]liquidy."),
     elementIdentity(96,"Molten Sugar",Color(255,255,128),"The heart of[n]cookie clicker"),
     elementIdentity(97,"Molten Cheese",Color(230,230,0),"A wonderful thing."),
     elementIdentity(98,"Primordeal Ooze",Color(200,0,0),"All life in the[n]sandbox canotically came[n]from this stuff."),
