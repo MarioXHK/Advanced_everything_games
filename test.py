@@ -1,2 +1,1 @@
-for i in "testerytestytest":
-    print(i)
+print("Hello, World!")
