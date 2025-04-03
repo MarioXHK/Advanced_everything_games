@@ -1,3 +1,7 @@
+uniqueElements = 103
+
+import sys
+print(sys.executable)
 #Libraries used: Pygame, Pillow
 
 aSeriousError = False
@@ -15,7 +19,6 @@ import pygame
 from pygame import Vector2
 from pygame.rect import Rect
 from pygame.color import Color
-#WHY DOES YOU NOT EVEN THE AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 from copy import deepcopy
 import random
 import time
@@ -189,7 +192,7 @@ aboutToDie = False
 # ====================================== THE GAME LOOP ==========================================
 # ===============================================================================================
 
-#this makes sure that the sand keeps going in a straight line while placing it when it's active, and also some other stuff
+# this makes sure that the sand keeps going in a straight line while placing it when it's active, and also some other stuff
 try:
     while playingMySandbox:
         yesbutton.box = Rect(screenx/2-(10+screenx/5),screeny*0.6,screenx/5,screeny/7)
@@ -274,7 +277,7 @@ try:
                             for pixl in range(30,60):
                                 if titleLand[layer][pixl] == 4:
                                     titleLand[layer][pixl] = 3
-                if titleState == 2:
+                elif titleState == 2:
 
                     if createButton.tick(fire,mousePos):
                         gameState = "setup"
@@ -290,7 +293,7 @@ try:
                     elif loadButton.tick(fire,mousePos):
                         gameState = "file loading"
                         buttonPressed = True
-                if titleState == 3:
+                elif titleState == 3:
 
                     if createButton.tick(fire,mousePos):
                         gameState = "terrarium"
@@ -1203,6 +1206,13 @@ try:
                             elif event.key == pygame.K_TAB:
                                 gameState = "elementmenu"
                                 buttonYOffset = 0
+                                
+                            elif event.key == pygame.K_F12:
+                                unlockedElements = []
+                                print("Oh dear, you unlocked ALL of the elements!")
+                                for i in range(uniqueElements):
+                                    unlockedElements.append(i)
+
             
             clock.tick(fps)
             if showfps and fps != int(clock.get_fps()):

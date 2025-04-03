@@ -214,7 +214,8 @@ crashSplash = (
         "Dociousaliexpilisticfragicalirupes",
         "There you go, yelling out the U word!",
         "I knew ya needed me!",
-        "Lmao bang!"
+        "Lmao bang!",
+        "It's been some time, hasn't it?"
     )
 
 
